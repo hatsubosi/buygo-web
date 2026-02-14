@@ -1,0 +1,223 @@
+<div class="min-h-screen pt-8 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <app-ui-container customClass="p-8">
+        <!-- Header -->
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <div class="mb-2 flex items-center gap-2">
+                    <a [routerLink]="['/manager/project', projectId(), 'orders']"
+                        class="text-gray-400 hover:text-white flex items-center gap-1">
+                        <span class="material-icons text-sm">arrow_back</span> Back to Orders
+                    </a>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Order Details <span class="text-gray-500 text-lg">#{{
+                        orderId().slice(0,8) }}</span></h2>
+            </div>
+            <div class="flex gap-2">
+                <app-ui-btn variant="primary" (onClick)="saveChanges()" [loading]="isSaving" [disabled]="!isDirty()">
+                    Save Changes
+                </app-ui-btn>
+            </div>
+        </div>
+
+        @if (isLoading()) {
+        <div class="text-center py-12 text-gray-500">Loading...</div>
+        } @else if (!order()) {
+        <div class="text-center py-12 text-red-500">Order not found.</div>
+        } @else {
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left: Items (Editable) -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-white mb-4">Order Items</h3>
+
+                    <div class="space-y-4">
+                        @for (item of editableItems(); track $index) {
+                        <div class="flex items-center gap-4 bg-black/20 p-3 rounded border border-white/5">
+                            <!-- Product Info -->
+                            <div class="flex-1">
+                                <div class="text-white font-medium">{{ getProductName(item.productId) }}</div>
+                                <div class="text-sm text-gray-500">{{ getSpecName(item.productId, item.specId) }}</div>
+                            </div>
+
+                            <!-- Quantity -->
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs text-gray-500">Qty</label>
+                                <input type="number" [(ngModel)]="item.quantity" min="1" (ngModelChange)="markDirty()"
+                                    class="w-20 bg-black/40 border border-white/10 rounded px-2 py-1 text-white text-center">
+                            </div>
+
+                            <!-- Remove -->
+                            <button (click)="removeItem($index)" class="text-red-400 hover:text-red-300 p-2">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                        }
+
+                        @if (editableItems().length === 0) {
+                        <div class="text-center text-gray-500 py-4 italic">No items in order</div>
+                        }
+                    </div>
+
+                    <!-- Add Item Form -->
+                    <div class="mt-6 pt-6 border-t border-white/10">
+                        <h4 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">Add Item</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                            <!-- Product Select -->
+                            <div class="sm:col-span-5">
+                                <select [(ngModel)]="newItem.productId"
+                                    class="w-full bg-black/40 border border-white/10 rounded px-3 py-2 text-white text-sm h-10">
+                                    <option value="" disabled>Select Product</option>
+                                    @for (p of products(); track p.id) {
+                                    <option [value]="p.id">{{ p.name }}</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Spec Select -->
+                            <div class="sm:col-span-4">
+                                <select [(ngModel)]="newItem.specId" [disabled]="!newItem.productId"
+                                    class="w-full bg-black/40 border border-white/10 rounded px-3 py-2 text-white text-sm h-10">
+                                    <option value="">Default / No Spec</option>
+                                    @for (s of getSpecs(newItem.productId); track s.id) {
+                                    <option [value]="s.id">{{ s.name }}</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Qty -->
+                            <div class="sm:col-span-2">
+                                <input type="number" [(ngModel)]="newItem.quantity" min="1" placeholder="Qty"
+                                    class="w-full bg-black/40 border border-white/10 rounded px-3 py-2 text-white text-sm h-10">
+                            </div>
+
+                            <!-- Add Btn -->
+                            <div class="sm:col-span-1">
+                                <button (click)="addItem()" [disabled]="!newItem.productId || newItem.quantity < 1"
+                                    class="w-full h-10 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 rounded text-white flex items-center justify-center">
+                                    <span class="material-icons">add</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Summary & Info -->
+            <div class="space-y-6">
+
+                <!-- Financial Summary -->
+                <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-white mb-4">Summary</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-gray-400">
+                            <span>Subtotal</span>
+                            <span>\${{ subtotal() | number }}</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400">
+                            <span>Shipping Fee</span>
+                            <span>\${{ shippingFee() | number }}</span>
+                        </div>
+                        <div class="border-t border-white/10 pt-2 flex justify-between text-white font-bold text-lg">
+                            <span>Total</span>
+                            <span>\${{ total() | number }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Info -->
+                <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-white mb-4">Customer Info</h3>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <label class="block text-gray-500">Contact</label>
+                            <div class="text-gray-200">{{ order()!.contactInfo }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-500">Shipping Address</label>
+                            <div class="text-gray-200">{{ order()!.shippingAddress }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-500">User ID</label>
+                            <div class="text-gray-500 font-mono text-xs">{{ order()!.userId }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-500">Note</label>
+                            <div class="text-white whitespace-pre-wrap">{{ orderNote() }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Info -->
+                <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-white mb-4">Payment</h3>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <label class="block text-gray-500">Status</label>
+                            <span class="px-2 py-1 rounded text-xs font-bold"
+                                [class.bg-green-900]="order()!.paymentStatus === 3"
+                                [class.text-green-300]="order()!.paymentStatus === 3"
+                                [class.bg-yellow-900]="order()!.paymentStatus === 2"
+                                [class.text-yellow-300]="order()!.paymentStatus === 2"
+                                [class.bg-gray-800]="order()!.paymentStatus === 1">
+                                {{ getPaymentLabel(order()!.paymentStatus) }}
+                            </span>
+                        </div>
+                        @if (order()!.paymentInfo) {
+                        <div>
+                            <label class="block text-gray-500">Method</label>
+                            <div class="text-gray-200">{{ order()!.paymentInfo!.method }}</div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-500">Account (Last 5)</label>
+                            <div class="text-gray-200">{{ order()!.paymentInfo!.accountLast5 }}</div>
+                        </div>
+                        }
+
+                        @if (order()!.paymentStatus !== 3) {
+                        <app-ui-btn variant="outline" size="sm" customClass="w-full mt-4" (onClick)="confirmPayment()">
+                            Confirm Payment & Lock
+                        </app-ui-btn>
+                        }
+                    </div>
+                </div>
+
+
+                <!-- Shipping Actions -->
+                <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-white mb-4">Fulfillment</h3>
+                    <div class="space-y-4">
+                        <div class="text-sm">
+                            <div class="flex justify-between text-gray-400 mb-2">
+                                <span>Status</span>
+                                <span class="text-white">{{ getShippingStatusLabel() }}</span>
+                            </div>
+                            <div class="h-2 w-full bg-black/40 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-500 transition-all"
+                                    [style.width]="getShippingProgress() + '%'"></div>
+                            </div>
+                        </div>
+
+                        @if (canShip()) {
+                        <app-ui-btn variant="primary" customClass="w-full bg-green-600 hover:bg-green-500"
+                            (onClick)="markAsShipped()" [loading]="isSaving">
+                            Mark as Shipped (Sent)
+                        </app-ui-btn>
+                        }
+
+                        @if (isFullyShipped()) {
+                        <div
+                            class="text-center text-green-400 font-bold py-2 border border-green-500/30 bg-green-500/10 rounded">
+                            <span class="material-icons text-sm align-middle mr-1">check_circle</span>
+                            Order Shipped
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        }
+    </app-ui-container>
+    <app-ui-dialog></app-ui-dialog>
+</div>

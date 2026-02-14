@@ -1,0 +1,88 @@
+<div class="min-h-screen pt-8 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <app-ui-container customClass="p-8">
+        @if (event(); as e) {
+        <!-- Header -->
+        <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="mb-2 flex items-center gap-2">
+                    <a [routerLink]="['/manager/event', e.id]" class="text-gray-400 hover:text-white">
+                        <span class="material-icons text-sm">arrow_back</span> Back to Event
+                    </a>
+                </div>
+                <h1 class="text-3xl font-bold text-white">Guests by Item</h1>
+                <p class="mt-2 text-gray-400">Breakdown of registrations per item</p>
+            </div>
+        </div>
+
+        <div class="space-y-8">
+            @for (group of itemGroups(); track group.itemId) {
+            <div class="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
+                <!-- Group Header -->
+                <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">{{ group.name }}</h2>
+                        <p class="text-sm text-gray-400 mt-1">Price: \${{ group.price }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-2xl font-bold text-blue-400">{{ group.totalQuantity }}</span>
+                        <span class="text-xs text-gray-500 uppercase tracking-wider">Sold</span>
+                    </div>
+                </div>
+
+                <!-- Participants List -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="border-b border-white/10 text-xs uppercase text-gray-500 bg-black/20">
+                            <tr>
+                                <th class="px-6 py-3">Guest Name</th>
+                                <th class="px-6 py-3">Email / Contact</th>
+                                <th class="px-6 py-3 text-right">Quantity</th>
+                                <th class="px-6 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            @for (entry of group.registrations; track entry.reg.id) {
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="px-6 py-3 font-medium text-white">
+                                    {{ entry.reg.user?.name || 'Guest' }}
+                                </td>
+                                <td class="px-6 py-3">
+                                    {{ entry.reg.user?.email || entry.reg.contactInfo || '-' }}
+                                </td>
+                                <td class="px-6 py-3 text-right text-white font-mono">
+                                    {{ entry.quantity }}
+                                </td>
+                                <td class="px-6 py-3">
+                                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                                        [class.bg-green-500/10]="entry.reg.status === 2"
+                                        [class.text-green-400]="entry.reg.status === 2"
+                                        [class.bg-yellow-500/10]="entry.reg.status === 1"
+                                        [class.text-yellow-400]="entry.reg.status === 1"
+                                        [class.bg-red-500/10]="entry.reg.status === 3"
+                                        [class.text-red-400]="entry.reg.status === 3">
+                                        {{ getRegStatus(entry.reg.status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            }
+                            @if (group.registrations.length === 0) {
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">No purchases for this item
+                                    yet.</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
+            @if (itemGroups().length === 0) {
+            <div class="text-center text-gray-500 py-12">No items found for this event.</div>
+            }
+        </div>
+
+        } @else {
+        <div class="py-12 text-center text-gray-400">Loading...</div>
+        }
+    </app-ui-container>
+</div>

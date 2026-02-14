@@ -1,0 +1,57 @@
+import { Routes } from '@angular/router';
+import { OrderListComponent } from './order-list/order-list.component';
+
+export const MANAGER_ROUTES: Routes = [
+    {
+        path: '',
+        loadComponent: () => import('./dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent)
+    },
+    {
+        path: 'project/create',
+        loadComponent: () => import('./project-form/project-form.component').then(m => m.ProjectFormComponent)
+    },
+    {
+        path: 'project/:id/products',
+        loadComponent: () => import('./product-list/manager-product-list.component').then(m => m.ManagerProductListComponent)
+    },
+    {
+        path: 'project/:id',
+        loadComponent: () => import('./project-detail/manager-project-detail.component').then(m => m.ManagerProjectDetailComponent)
+    },
+    {
+        path: 'project/:id/edit',
+        loadComponent: () => import('./project-form/project-form.component').then(m => m.ProjectFormComponent)
+    },
+    {
+        path: 'project/:id/orders',
+        component: OrderListComponent
+    },
+    {
+        path: 'project/:id/orders/:orderId',
+        loadComponent: () => import('./order-detail/manager-order-detail.component').then(m => m.ManagerOrderDetailComponent)
+    },
+    {
+        path: 'project/:id/fulfillment',
+        loadComponent: () => import('./status-dashboard/status-dashboard.component').then(m => m.StatusDashboardComponent)
+    },
+    {
+        path: 'users',
+        loadComponent: () => import('./user-list/manager-user-list.component').then(m => m.ManagerUserListComponent)
+    },
+    {
+        path: 'event/create',
+        loadComponent: () => import('./event-form/event-form.component').then(m => m.EventFormComponent)
+    },
+    {
+        path: 'event/:id',
+        loadComponent: () => import('./event-detail/manager-event-detail.component').then(m => m.ManagerEventDetailComponent)
+    },
+    {
+        path: 'event/:id/edit',
+        loadComponent: () => import('./event-form/event-form.component').then(m => m.EventFormComponent)
+    },
+    {
+        path: 'event/:id/items',
+        loadComponent: () => import('./event-items/manager-event-items.component').then(m => m.ManagerEventItemsComponent)
+    }
+];

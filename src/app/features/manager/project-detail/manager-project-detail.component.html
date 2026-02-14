@@ -1,0 +1,167 @@
+<div class="min-h-screen pt-8 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <app-ui-container customClass="p-8">
+        @if (project(); as p) {
+        <!-- Header -->
+        <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="mb-2 flex items-center gap-2">
+                    <a routerLink="/manager" class="text-gray-400 hover:text-white">
+                        <span class="material-icons text-sm">arrow_back</span> Back
+                    </a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-3xl font-bold text-white">{{ p.title }}</h1>
+                    <button (click)="copyPublicLink()" class="text-gray-400 hover:text-white transition-colors"
+                        title="Copy Public Link">
+                        <span class="material-icons text-xl">content_copy</span>
+                    </button>
+                </div>
+                <p class="mt-2 text-gray-400">Manage your project</p>
+            </div>
+            <div class="flex gap-4">
+                <a [routerLink]="['/project', p.id]" target="_blank">
+                    <app-ui-btn variant="outline" icon="open_in_new">View Public Page</app-ui-btn>
+                </a>
+                <a [routerLink]="['/manager/project', p.id, 'edit']">
+                    <app-ui-btn variant="primary" icon="edit">Edit Project</app-ui-btn>
+                </a>
+                @if (p.status === 1) {
+                <app-ui-btn variant="success" icon="publish" (click)="updateStatus(2)">Publish</app-ui-btn>
+                } @else if (p.status === 2) {
+                <app-ui-btn variant="danger" icon="stop_circle" (click)="updateStatus(3)">End Project</app-ui-btn>
+                } @else if (p.status === 3) {
+                <app-ui-btn variant="secondary" icon="archive" (click)="updateStatus(4)">Archive Project</app-ui-btn>
+                }
+            </div>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-3 mb-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Project Details Card -->
+                <div class="rounded-xl border border-white/10 bg-white/5 p-6">
+                    <h2 class="mb-4 text-xl font-bold text-white">Project Details</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Description</label>
+                            <p class="mt-1 text-white whitespace-pre-line">{{ p.description }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Status</label>
+                                <p class="mt-1 text-white flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full" [class.bg-gray-400]="p.status === 1"
+                                        [class.bg-green-500]="p.status === 2" [class.bg-red-500]="p.status === 3"
+                                        [class.bg-yellow-500]="p.status === 4"></span>
+                                    {{ getProjectStatus(p.status) }}
+                                </p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Created At</label>
+                                <p class="mt-1 text-white">{{ toDate(p.createdAt) | date:'medium' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Financial Summary -->
+                <div class="rounded-xl border border-white/10 bg-white/5 p-6">
+                    <h2 class="mb-4 text-xl font-bold text-white flex items-center gap-2">
+                        <span class="material-icons text-yellow-500">monetization_on</span>
+                        Financial Summary
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 rounded-lg bg-black/20 border border-white/5">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Total (Original
+                                Currency)</label>
+                            <div class="text-2xl font-bold text-white">
+                                {{ financialStats().totalOriginal | currency:(project()!.sourceCurrency |
+                                currencySymbol):'symbol':'1.0-0' }}
+                                <span class="text-sm font-normal text-gray-500">{{ project()!.sourceCurrency }}</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Based on confirmed/submitted orders</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-black/20 border border-white/5">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Total (Converted)</label>
+                            <div class="text-2xl font-bold text-green-400">
+                                {{ financialStats().totalConverted | currency:'TWD':'symbol':'1.0-0' }}
+                                <span class="text-sm font-normal text-gray-500">TWD</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Estimated TWD value</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <div class="rounded-xl border border-white/10 bg-white/5 p-6">
+                    <h2 class="mb-4 text-lg font-bold text-white">Quick Actions</h2>
+                    <div class="flex flex-col gap-3">
+                        <a [routerLink]="['/manager/project', p.id, 'orders']" class="w-full">
+                            <app-ui-btn class="w-full" variant="outline" customClass="w-full justify-center"
+                                icon="receipt_long">View Orders</app-ui-btn>
+                        </a>
+                        <a [routerLink]="['/manager/project', p.id, 'fulfillment']" class="w-full">
+                            <app-ui-btn class="w-full" variant="outline" customClass="w-full justify-center"
+                                icon="local_shipping">Fulfillment Dashboard</app-ui-btn>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Summary (Items) Full Width -->
+        <div class="rounded-xl border border-white/10 bg-white/5 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Sales Summary</h2>
+                <span class="text-sm text-gray-400">Total Valid Orders: {{ validOrdersCount() }}</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-400">
+                    <thead class="border-b border-white/10 text-xs uppercase text-gray-500 bg-white/5">
+                        <tr>
+                            <th class="px-4 py-3 rounded-tl-lg">Item</th>
+                            <th class="px-4 py-3 text-right">Price</th>
+                            <th class="px-4 py-3 text-right">Sold</th>
+                            <th class="px-4 py-3 text-right">Revenue (Orig)</th>
+                            <th class="px-4 py-3 text-right rounded-tr-lg">Revenue (Conv)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        @for (item of salesStats(); track item.id) {
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-4 py-3 font-medium text-white">{{ item.name }}</td>
+                            <td class="px-4 py-3 text-right">{{ item.price | currency:(project()!.sourceCurrency |
+                                currencySymbol):'symbol':'1.0-0' }}</td>
+                            <td class="px-4 py-3 text-right text-white">{{ item.quantity }}</td>
+                            <td class="px-4 py-3 text-right font-mono">{{ item.revenueOriginal |
+                                currency:(project()!.sourceCurrency | currencySymbol):'symbol':'1.0-0' }}</td>
+                            <td class="px-4 py-3 text-right font-mono text-green-400">{{ item.revenueConverted |
+                                currency:'TWD':'symbol':'1.0-0' }}</td>
+                        </tr>
+                        }
+                        @if (salesStats().length === 0) {
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                No sales data available.
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        } @else {
+        <div class="py-12 text-center text-gray-400">
+            Loading project...
+        </div>
+        }
+    </app-ui-container>
+
+    <app-ui-dialog></app-ui-dialog>
+</div>

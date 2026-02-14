@@ -1,0 +1,337 @@
+<app-ui-dialog></app-ui-dialog>
+<div class="min-h-screen pt-8 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <app-ui-container customClass="p-8">
+        @if (event(); as e) {
+        <!-- Header -->
+        <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="mb-2 flex items-center gap-2">
+                    <a routerLink="/manager" class="text-gray-400 hover:text-white">
+                        <span class="material-icons text-sm">arrow_back</span> Back
+                    </a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-3xl font-bold text-white">{{ e.title }}</h1>
+                    <button (click)="copyPublicLink()" class="text-gray-400 hover:text-white transition-colors"
+                        title="Copy Public Link">
+                        <span class="material-icons text-xl">content_copy</span>
+                    </button>
+                </div>
+                <p class="mt-2 text-gray-400">Manage your event</p>
+            </div>
+            <div class="flex gap-4">
+                <a [routerLink]="['/event', e.id]" target="_blank">
+                    <app-ui-btn variant="outline" icon="open_in_new">View Public Page</app-ui-btn>
+                </a>
+                <a [routerLink]="['/manager/event', e.id, 'edit']">
+                    <app-ui-btn variant="primary" icon="edit">Edit Event</app-ui-btn>
+                </a>
+                @if (e.status === 1) {
+                <app-ui-btn variant="success" icon="publish" (click)="changeEventStatus(2)">Publish</app-ui-btn>
+                } @else if (e.status === 2) {
+                <app-ui-btn variant="danger" icon="stop_circle" (click)="changeEventStatus(3)">End Event</app-ui-btn>
+                } @else if (e.status === 3) {
+                <app-ui-btn variant="secondary" icon="archive" (click)="changeEventStatus(4)">Archive Event</app-ui-btn>
+                }
+            </div>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-3 mb-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Event Details Card -->
+                <div class="rounded-xl border border-white/10 bg-white/5 p-6 h-full">
+                    <h2 class="mb-4 text-xl font-bold text-white">Event Details</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Description</label>
+                            <p class="mt-1 text-white">{{ e.description }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Status</label>
+                                <p class="mt-1 text-white">{{ getEventStatus(e.status) }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Start Time</label>
+                                <p class="mt-1 text-white">{{ toDate(e.startTime) | date:'medium' }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">End Time</label>
+                                <p class="mt-1 text-white">{{ toDate(e.endTime) | date:'medium' }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Location</label>
+                                <p class="mt-1 text-white">{{ e.location }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <div class="rounded-xl border border-white/10 bg-white/5 p-6 h-full">
+                    <h2 class="mb-4 text-lg font-bold text-white">Quick Actions</h2>
+                    <div class="flex flex-col gap-3">
+                        <a [routerLink]="['/manager/event', e.id, 'items']" class="w-full">
+                            <app-ui-btn class="w-full" variant="outline" customClass="w-full justify-center"
+                                icon="list_alt">View Guests by Item</app-ui-btn>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registrations List (Full Width) -->
+        <div id="registrations" class="rounded-xl border border-white/10 bg-white/5 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Registrations ({{ registrations().length }})</h2>
+                <app-ui-btn variant="outline" icon="refresh" (click)="loadRegistrations()">Refresh</app-ui-btn>
+            </div>
+
+            <!-- Desktop Table -->
+            <div class="hidden md:block overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-400">
+                    <thead class="border-b border-white/10 text-xs uppercase text-gray-500 bg-white/5">
+                        <tr>
+                            <th class="px-4 py-3 rounded-tl-lg">User</th>
+                            <th class="px-4 py-3">Items</th>
+                            <th class="px-4 py-3">Amount</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Payment</th>
+                            <th class="px-4 py-3">Notes</th>
+                            <th class="px-4 py-3 rounded-tr-lg">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        @for (reg of registrations(); track reg.id) {
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-4 py-3 text-white">
+                                <div class="flex flex-col">
+                                    <span class="font-medium">{{ reg.user?.name || 'Guest' }}</span>
+                                    <span class="text-xs text-gray-400">{{ reg.user?.email || reg.contactInfo || 'No
+                                        Contact Info' }}</span>
+                                    <span class="font-mono text-[10px] text-gray-600 mt-1">{{ reg.id | slice:0:8
+                                        }}</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-gray-300 text-xs">
+                                @for (item of reg.selectedItems; track item.eventItemId) {
+                                <div>
+                                    {{ getItemName(item.eventItemId) }} (x{{ item.quantity }})
+                                </div>
+                                }
+                                @if (!reg.selectedItems || reg.selectedItems.length === 0) {
+                                <div>-</div>
+                                }
+                            </td>
+                            <td class="px-4 py-3 text-white font-mono text-xs">
+                                {{ toNumber(reg.totalAmount) | currency }}
+                                @if (reg.discountApplied > 0) {
+                                <div class="text-[10px] text-green-400">
+                                    (-{{ toNumber(reg.discountApplied) | currency }})
+                                </div>
+                                }
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="px-2 py-1 rounded text-xs font-medium"
+                                    [class.bg-yellow-500/10]="reg.status === 1"
+                                    [class.text-yellow-500]="reg.status === 1"
+                                    [class.bg-green-500/10]="reg.status === 2" [class.text-green-500]="reg.status === 2"
+                                    [class.bg-red-500/10]="reg.status === 3" [class.text-red-500]="reg.status === 3">
+                                    {{ getRegStatus(reg.status) }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="px-2 py-1 rounded text-xs font-medium"
+                                    [class.bg-gray-500/10]="reg.paymentStatus === 1"
+                                    [class.text-gray-500]="reg.paymentStatus === 1"
+                                    [class.bg-blue-500/10]="reg.paymentStatus === 2"
+                                    [class.text-blue-500]="reg.paymentStatus === 2"
+                                    [class.bg-green-500/10]="reg.paymentStatus === 3"
+                                    [class.text-green-500]="reg.paymentStatus === 3"
+                                    [class.bg-purple-500/10]="reg.paymentStatus === 4"
+                                    [class.text-purple-500]="reg.paymentStatus === 4">
+                                    {{ getPaymentStatus(reg.paymentStatus) }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 max-w-xs truncate" [title]="reg.notes">{{ reg.notes || '-' }}</td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center gap-2">
+                                    @if (reg.status === 3) {
+                                    <ng-container>
+                                        <button (click)="updateStatus(reg, 1, reg.paymentStatus)"
+                                            class="p-1 rounded bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 transition-colors"
+                                            title="Revive (Restore)">
+                                            <span class="material-icons text-lg">restore</span>
+                                        </button>
+                                        @if (reg.paymentStatus === 2 || reg.paymentStatus === 3) {
+                                        <button (click)="updateStatus(reg, reg.status, 4)"
+                                            class="p-1 rounded bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors"
+                                            title="Confirm Refund">
+                                            <span class="material-icons text-lg">money_off</span>
+                                        </button>
+                                        }
+                                    </ng-container>
+                                    }
+
+                                    @if (reg.status === 1) {
+                                    <button (click)="updateStatus(reg, 2, reg.paymentStatus)"
+                                        class="p-1 rounded bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
+                                        title="Confirm Registration">
+                                        <span class="material-icons text-lg">check</span>
+                                    </button>
+                                    }
+                                    @if (reg.paymentStatus !== 3 && reg.paymentStatus !== 4) {
+                                    <button (click)="updateStatus(reg, reg.status, 3)"
+                                        class="p-1 rounded bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
+                                        title="Mark Paid">
+                                        <span class="material-icons text-lg">attach_money</span>
+                                    </button>
+                                    }
+                                    @if (reg.status !== 3) {
+                                    <button (click)="updateStatus(reg, 3, reg.paymentStatus)"
+                                        class="p-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+                                        title="Cancel/Reject">
+                                        <span class="material-icons text-lg">close</span>
+                                    </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                        @if (registrations().length === 0) {
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">No registrations found.</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="md:hidden space-y-4">
+                @for (reg of registrations(); track reg.id) {
+                <div class="rounded-lg bg-black/20 p-4 border border-white/10">
+                    <!-- Top Row: User -->
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <div class="font-medium text-white">{{ reg.user?.name || 'Guest' }}</div>
+                            <div class="text-xs text-gray-400">{{ reg.user?.email || reg.contactInfo || 'No Contact
+                                Info' }}</div>
+                            <div class="text-[10px] text-gray-600 font-mono mt-0.5">{{ reg.id | slice:0:8 }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Items -->
+                    <div class="mb-4 p-2.5 bg-black/30 rounded text-xs text-gray-300">
+                        @for (item of reg.selectedItems; track item.eventItemId) {
+                        <div class="flex justify-between">
+                            <span>{{ getItemName(item.eventItemId) }}</span>
+                            <span class="text-gray-500">x{{ item.quantity }}</span>
+                        </div>
+                        }
+                        @if (!reg.selectedItems || reg.selectedItems.length === 0) {
+                        <div class="text-gray-500 italic">No items</div>
+                        }
+                        @if (reg.notes) {
+                        <div class="mt-2 pt-2 border-t border-white/5 text-gray-400 italic">
+                            Note: {{ reg.notes }}
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Amount Row -->
+                    <div class="flex justify-between items-center bg-black/30 p-2 rounded mb-3">
+                        <span class="text-xs text-gray-500 uppercase tracking-wider">Total</span>
+                        <div class="text-right">
+                            <span class="text-white font-mono font-medium">{{ toNumber(reg.totalAmount) | currency
+                                }}</span>
+                            @if (reg.discountApplied > 0) {
+                            <span class="text-xs text-green-400 ml-2">(-{{ toNumber(reg.discountApplied) | currency
+                                }})</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Statuses -->
+                    <div class="flex flex-col gap-3">
+                        <div class="flex justify-between items-center bg-black/30 p-2 rounded">
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Status</span>
+                            <span class="px-2 py-1 rounded text-xs font-medium"
+                                [class.bg-yellow-500/10]="reg.status === 1" [class.text-yellow-500]="reg.status === 1"
+                                [class.bg-green-500/10]="reg.status === 2" [class.text-green-500]="reg.status === 2"
+                                [class.bg-red-500/10]="reg.status === 3" [class.text-red-500]="reg.status === 3">
+                                {{ getRegStatus(reg.status) }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center bg-black/30 p-2 rounded">
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Payment</span>
+                            <span class="px-2 py-1 rounded text-xs font-medium"
+                                [class.bg-gray-500/10]="reg.paymentStatus === 1"
+                                [class.text-gray-500]="reg.paymentStatus === 1"
+                                [class.bg-blue-500/10]="reg.paymentStatus === 2"
+                                [class.text-blue-500]="reg.paymentStatus === 2"
+                                [class.bg-green-500/10]="reg.paymentStatus === 3"
+                                [class.text-green-500]="reg.paymentStatus === 3"
+                                [class.bg-purple-500/10]="reg.paymentStatus === 4"
+                                [class.text-purple-500]="reg.paymentStatus === 4">
+                                {{ getPaymentStatus(reg.paymentStatus) }}
+                            </span>
+                        </div>
+                        <div class="flex gap-2 mt-1">
+                            @if (reg.status === 3) {
+                            <ng-container>
+                                <button (click)="updateStatus(reg, 1, reg.paymentStatus)"
+                                    class="flex-1 p-2 rounded bg-yellow-500/20 text-yellow-400 flex items-center justify-center"
+                                    title="Revive">
+                                    <span class="material-icons text-sm mr-1">restore</span> Revive
+                                </button>
+                                @if (reg.paymentStatus === 2 || reg.paymentStatus === 3) {
+                                <button (click)="updateStatus(reg, reg.status, 4)"
+                                    class="flex-1 p-2 rounded bg-purple-500/20 text-purple-400 flex items-center justify-center"
+                                    title="Refund">
+                                    <span class="material-icons text-sm mr-1">money_off</span> Refund
+                                </button>
+                                }
+                            </ng-container>
+                            }
+
+                            @if (reg.status === 1) {
+                            <button (click)="updateStatus(reg, 2, reg.paymentStatus)"
+                                class="flex-1 p-2 rounded bg-green-500/20 text-green-400 flex items-center justify-center">
+                                <span class="material-icons text-sm mr-1">check</span> Confirm
+                            </button>
+                            }
+                            @if (reg.paymentStatus !== 3 && reg.paymentStatus !== 4) {
+                            <button (click)="updateStatus(reg, reg.status, 3)"
+                                class="flex-1 p-2 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                                <span class="material-icons text-sm mr-1">attach_money</span> Pay
+                            </button>
+                            }
+                            @if (reg.status !== 3) {
+                            <button (click)="updateStatus(reg, 3, reg.paymentStatus)"
+                                class="flex-1 p-2 rounded bg-red-500/20 text-red-400 flex items-center justify-center">
+                                <span class="material-icons text-sm mr-1">close</span> Cancel
+                            </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (registrations().length === 0) {
+                <div class="text-center text-gray-500 py-8">
+                    No registrations found.
+                </div>
+                }
+            </div>
+        </div>
+
+        } @else {
+        <div class="py-12 text-center text-gray-400">
+            Loading event...
+        </div>
+        }
+    </app-ui-container>
+</div>
