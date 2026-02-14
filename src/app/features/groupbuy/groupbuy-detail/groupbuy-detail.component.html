@@ -1,12 +1,12 @@
 <div class="relative min-h-screen pb-24">
     <!-- Loading State -->
-    @if (projectService.isLoadingDetail()) {
+    @if (groupBuyService.isLoadingDetail()) {
     <div class="flex h-screen items-center justify-center">
         <span class="h-10 w-10 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></span>
     </div>
     }
 
-    @if (projectService.currentProject(); as project) {
+    @if (groupBuyService.currentGroupBuy(); as project) {
     <!-- Hero Section -->
     <div class="relative h-[40vh] w-full overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0a] z-10"></div>
@@ -45,14 +45,14 @@
                 <h2 class="text-2xl font-bold text-white mb-6">Products</h2>
 
                 <div class="space-y-4">
-                    @if (projectService.currentProducts().length === 0) {
+                    @if (groupBuyService.currentProducts().length === 0) {
                     <div class="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">
                         No products available yet.
                     </div>
                     }
 
                     <!-- Product List -->
-                    @for (product of projectService.currentProducts(); track product.id) {
+                    @for (product of groupBuyService.currentProducts(); track product.id) {
                     <div
                         class="flex flex-col sm:flex-row gap-4 rounded-xl bg-white/5 p-4 border border-white/10 hover:border-white/20 transition-all">
                         <!-- Image -->
@@ -143,7 +143,7 @@
     </div>
 
     <!-- Bottom Action Bar -->
-    @if (projectService.cartCount() > 0 || isOrderSubmittedOrConfirmed()) {
+    @if (groupBuyService.cartCount() > 0 || isOrderSubmittedOrConfirmed()) {
     <div
         class="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#0a0a0a]/90 p-4 backdrop-blur-xl animate-invoke">
         <div class="mx-auto flex max-w-4xl items-center justify-between">
@@ -154,11 +154,11 @@
                 <div class="flex items-center gap-4">
                     <div
                         class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-bold">
-                        {{ projectService.cartCount() }}
+                        {{ groupBuyService.cartCount() }}
                     </div>
                     <div class="flex flex-col">
                         <span class="text-xs text-gray-400">Total Estimated</span>
-                        <span class="text-xl font-bold text-white">NT$ {{ projectService.cartTotal() }}</span>
+                        <span class="text-xl font-bold text-white">NT$ {{ groupBuyService.cartTotal() }}</span>
                     </div>
                 </div>
                 <div class="flex gap-2">

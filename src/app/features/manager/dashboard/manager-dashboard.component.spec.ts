@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { AuthService } from '../../../core/auth/auth.service';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { EventService } from '../../../core/event/event.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
@@ -31,7 +31,7 @@ describe('ManagerDashboardComponent', () => {
             imports: [ManagerDashboardComponent],
             providers: [
                 { provide: AuthService, useValue: mockAuthService },
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 { provide: EventService, useValue: mockEventService },
                 provideRouter([])
             ]

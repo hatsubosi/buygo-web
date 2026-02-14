@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectDetailComponent } from './project-detail.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { ActivatedRoute, provideRouter } from '@angular/router';
@@ -38,7 +38,7 @@ describe('ProjectDetailComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ProjectDetailComponent],
       providers: [
-        { provide: ProjectService, useValue: mockProjectService },
+        { provide: GroupBuyService, useValue: mockProjectService },
         { provide: AuthService, useValue: mockAuthService },
         { provide: ToastService, useValue: mockToastService },
         provideRouter([]),

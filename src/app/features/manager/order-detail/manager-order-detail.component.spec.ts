@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ManagerOrderDetailComponent } from './manager-order-detail.component';
 import { ManagerService } from '../../../core/manager/manager.service';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
-import { PaymentStatus } from '../../../core/api/api/v1/project_pb';
+import { PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
 
 describe('ManagerOrderDetailComponent', () => {
     let component: ManagerOrderDetailComponent;
@@ -34,7 +34,7 @@ describe('ManagerOrderDetailComponent', () => {
             imports: [ManagerOrderDetailComponent],
             providers: [
                 { provide: ManagerService, useValue: mockManagerService },
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 { provide: ToastService, useValue: mockToastService },
                 provideRouter([{ path: '**', component: ManagerOrderDetailComponent }])
             ]

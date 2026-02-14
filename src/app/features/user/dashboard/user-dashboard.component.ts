@@ -1,12 +1,12 @@
 import { Component, inject, computed, signal, effect , ChangeDetectionStrategy } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { EventService } from '../../../core/event/event.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
-import { OrderItemStatus, PaymentStatus } from '../../../core/api/api/v1/project_pb';
+import { OrderItemStatus, PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
 import { RegistrationStatus } from '../../../core/api/api/v1/event_pb';
 
 @Component({
@@ -17,13 +17,13 @@ import { RegistrationStatus } from '../../../core/api/api/v1/event_pb';
     styleUrl: "./user-dashboard.component.css"
 })
 export class UserDashboardComponent {
-    projectService = inject(ProjectService);
+    groupBuyService = inject(GroupBuyService);
     eventService = inject(EventService);
     authService = inject(AuthService);
 
     activeTab = signal<'overview' | 'orders' | 'events' | 'settings'>('overview');
 
-    orders = computed(() => [...this.projectService.myOrders()].reverse());
+    orders = computed(() => [...this.groupBuyService.myOrders()].reverse());
     registrations = signal<any[]>([]);
 
     pendingPaymentCount = computed(() =>
@@ -38,7 +38,7 @@ export class UserDashboardComponent {
         effect(() => {
             const user = this.authService.user();
             if (user) {
-                this.projectService.loadMyOrders();
+                this.groupBuyService.loadMyOrders();
                 this.loadRegistrations();
             }
         });

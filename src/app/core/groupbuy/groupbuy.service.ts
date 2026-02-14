@@ -1,17 +1,17 @@
 import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ProjectActions, CartItem } from './project.actions';
-import { Project, Product, ProductSpec, CreateOrderItem, Order, OrderItem, ShippingConfig, RoundingConfig } from '../api/api/v1/project_pb';
+import { GroupBuyActions, CartItem } from './groupbuy.actions';
+import { GroupBuy, Product, ProductSpec, CreateOrderItem, Order, OrderItem, ShippingConfig, RoundingConfig } from '../api/api/v1/groupbuy_pb';
 import { createPromiseClient, Transport } from '@connectrpc/connect';
 import { TransportToken } from '../providers/transport.token';
-import { ProjectService as ProjectServiceDef } from '../api/api/v1/project_connect';
+import { GroupBuyService as ProjectServiceDef } from '../api/api/v1/groupbuy_connect';
 import { AuthService } from '../auth/auth.service';
 import {
-    selectAllProjects,
-    selectCurrentProject,
-    selectProjectsLoading,
-    selectProjectDetailLoading,
-    selectCurrentProjectProducts,
+    selectAllGroupBuys,
+    selectCurrentGroupBuy,
+    selectGroupBuysLoading,
+    selectGroupBuyDetailLoading,
+    selectCurrentGroupBuyProducts,
     selectIsSubmittingOrder,
     selectSubmitOrderError,
     selectLastCreatedOrderId,
@@ -21,26 +21,26 @@ import {
     selectLoadingMyOrders,
     selectUpdatingOrder,
     selectUpdateOrderError
-} from './project.selectors';
+} from './groupbuy.selectors';
 
 @Injectable({ providedIn: 'root' })
-export class ProjectService {
+export class GroupBuyService {
     private store = inject(Store);
     private transport = inject(TransportToken) as Transport;
     private client = createPromiseClient(ProjectServiceDef, this.transport);
 
     // Signals
-    projects = this.store.selectSignal(selectAllProjects);
-    currentProject = this.store.selectSignal(selectCurrentProject);
-    isLoadingList = this.store.selectSignal(selectProjectsLoading);
+    groupBuys = this.store.selectSignal(selectAllGroupBuys);
+    currentGroupBuy = this.store.selectSignal(selectCurrentGroupBuy);
+    isLoadingList = this.store.selectSignal(selectGroupBuysLoading);
 
     // Actions (Create/Update)
     isActionLoading = this.store.selectSignal(selectActionLoading);
     actionError = this.store.selectSignal(selectActionError);
 
     // Detail & Products
-    isLoadingDetail = this.store.selectSignal(selectProjectDetailLoading);
-    currentProducts = this.store.selectSignal(selectCurrentProjectProducts);
+    isLoadingDetail = this.store.selectSignal(selectGroupBuyDetailLoading);
+    currentProducts = this.store.selectSignal(selectCurrentGroupBuyProducts);
 
     // Cart (Local State)
     cart = signal<CartItem[]>([]);
@@ -63,24 +63,24 @@ export class ProjectService {
     updatingOrder = this.store.selectSignal(selectUpdatingOrder);
     updateOrderError = this.store.selectSignal(selectUpdateOrderError);
 
-    loadProjects() {
-        this.store.dispatch(ProjectActions.loadProjects());
+    loadGroupBuys() {
+        this.store.dispatch(GroupBuyActions.loadGroupBuys());
     }
 
     loadMyOrders() {
-        this.store.dispatch(ProjectActions.loadMyOrders());
+        this.store.dispatch(GroupBuyActions.loadMyOrders());
     }
 
     // Manager State
-    managerProjects = signal<Project[]>([]);
+    managerGroupBuys = signal<GroupBuy[]>([]);
 
     async loadManagerProjects() {
-        const res = await this.client['listManagerProjects']({ pageSize: 100 });
-        this.managerProjects.set(res.projects);
+        const res = await this.client['listManagerGroupBuys']({ pageSize: 100 });
+        this.managerGroupBuys.set(res.groupBuys);
     }
 
-    loadProject(id: string) {
-        this.store.dispatch(ProjectActions.loadProjectDetail({ id }));
+    loadGroupBuy(id: string) {
+        this.store.dispatch(GroupBuyActions.loadGroupBuyDetail({ id }));
     }
 
     constructor() {
@@ -89,9 +89,9 @@ export class ProjectService {
         effect(() => {
             if (!authService.user()) {
                 this.clearCart();
-                this.myProjectOrder.set(null);
+                this.myGroupBuyOrder.set(null);
                 this.existingOrderId.set(null);
-                this.loadedProjectCartId.set(null);
+                this.loadedGroupBuyCartId.set(null);
             }
         });
     }
@@ -102,7 +102,7 @@ export class ProjectService {
         const currentCart = this.cart();
 
         // Failsafe: If cart has items from another project, clear it first
-        if (currentCart.length > 0 && currentCart[0].projectId !== product.projectId) {
+        if (currentCart.length > 0 && currentCart[0].groupBuyId !== product.groupBuyId) {
             this.clearCart();
         }
 
@@ -125,7 +125,7 @@ export class ProjectService {
             }
         } else {
             const newItem: CartItem = {
-                projectId: product.projectId,
+                groupBuyId: product.groupBuyId,
                 productId: product.id,
                 specId: spec?.id || '',
                 productName: product.name,
@@ -167,12 +167,12 @@ export class ProjectService {
 
     clearCart() {
         this.cart.set([]);
-        this.loadedProjectCartId.set(null);
+        this.loadedGroupBuyCartId.set(null);
     }
 
-    async getMyProjectOrder(projectId: string) {
+    async getMyGroupBuyOrder(groupBuyId: string) {
         try {
-            const res = await this.client.getMyProjectOrder({ projectId });
+            const res = await this.client['getMyGroupBuyOrder']({ groupBuyId });
             if (res.order) {
                 this.existingOrderId.set(res.order.id);
                 return res.order;
@@ -187,25 +187,25 @@ export class ProjectService {
     }
 
     // Track which project's cart is loaded to prevent overwrites
-    loadedProjectCartId = signal<string | null>(null);
+    loadedGroupBuyCartId = signal<string | null>(null);
 
     // Track the active order state
-    myProjectOrder = signal<Order | null>(null);
+    myGroupBuyOrder = signal<Order | null>(null);
 
-    async loadExistingOrderIntoCart(projectId: string) {
+    async loadExistingOrderIntoCart(groupBuyId: string) {
         // Always fetch the latest order state first
-        const order = await this.getMyProjectOrder(projectId);
-        this.myProjectOrder.set(order || null);
+        const order = await this.getMyGroupBuyOrder(groupBuyId);
+        this.myGroupBuyOrder.set(order || null);
 
         // If we already loaded the cart for this project, don't overwrite local edits
-        if (this.loadedProjectCartId() === projectId) {
+        if (this.loadedGroupBuyCartId() === groupBuyId) {
             return order;
         }
 
         if (order && order.paymentStatus < 2) {
             // Map to Cart items
             const cartItems: CartItem[] = order.items.map((i: OrderItem) => ({
-                projectId: order.projectId,
+                groupBuyId: order.groupBuyId,
                 productId: i.productId,
                 specId: i.specId,
                 quantity: i.quantity,
@@ -216,22 +216,22 @@ export class ProjectService {
             }));
             this.setCart(cartItems);
             // Sync loaded ID
-            this.loadedProjectCartId.set(projectId);
+            this.loadedGroupBuyCartId.set(groupBuyId);
             return order;
         }
 
         // If no existing order, or order is submitted/finished, and we are switching projects, we MUST clear the previous cart
         this.clearCart();
-        this.loadedProjectCartId.set(projectId);
+        this.loadedGroupBuyCartId.set(groupBuyId);
         return order;
     }
 
     // Force load an order into cart for editing (even if status is submitted)
     editSubmittedOrder() {
-        const order = this.myProjectOrder();
+        const order = this.myGroupBuyOrder();
         if (order) {
             const cartItems: CartItem[] = order.items.map((i: OrderItem) => ({
-                projectId: order.projectId,
+                groupBuyId: order.groupBuyId,
                 productId: i.productId,
                 specId: i.specId,
                 quantity: i.quantity,
@@ -241,11 +241,11 @@ export class ProjectService {
                 maxQuantity: 100
             }));
             this.setCart(cartItems);
-            // We don't need to change loadedProjectCartId if it's already set or matches
+            // We don't need to change loadedGroupBuyCartId if it's already set or matches
         }
     }
 
-    async submitOrder(projectId: string, contactInfo: string, shippingAddress: string, items: CartItem[], shippingMethodId?: string, note?: string) {
+    async submitOrder(groupBuyId: string, contactInfo: string, shippingAddress: string, items: CartItem[], shippingMethodId?: string, note?: string) {
         this.isSubmittingOrder.set(true);
         this.submitOrderError.set(null);
         try {
@@ -279,7 +279,7 @@ export class ProjectService {
             } else {
                 // Create Order
                 const res = await this.client.createOrder({
-                    projectId,
+                    groupBuyId,
                     items: orderItems,
                     contactInfo,
                     shippingAddress,
@@ -290,8 +290,8 @@ export class ProjectService {
             }
 
             // Refresh the local order state to ensure UI reflects changes immediately
-            const freshOrder = await this.getMyProjectOrder(projectId);
-            this.myProjectOrder.set(freshOrder || null);
+            const freshOrder = await this.getMyGroupBuyOrder(groupBuyId);
+            this.myGroupBuyOrder.set(freshOrder || null);
 
             // Refresh global store state
             this.loadMyOrders();
@@ -306,23 +306,23 @@ export class ProjectService {
     }
 
     updateUserOrder(orderId: string, items: CartItem[], note?: string) {
-        this.store.dispatch(ProjectActions.updateUserOrder({ orderId, items, note }));
+        this.store.dispatch(GroupBuyActions.updateUserOrder({ orderId, items, note }));
     }
 
     updatePaymentInfo(orderId: string, method: string, accountLast5: string) {
-        this.store.dispatch(ProjectActions.updatePaymentInfo({ orderId, method, accountLast5 }));
+        this.store.dispatch(GroupBuyActions.updatePaymentInfo({ orderId, method, accountLast5 }));
     }
 
-    createProject(title: string, description: string) {
-        this.store.dispatch(ProjectActions.createProject({ title, description }));
+    createGroupBuy(title: string, description: string) {
+        this.store.dispatch(GroupBuyActions.createGroupBuy({ title, description }));
     }
 
-    updateProject(id: string, title: string, description: string, status: number, products: Product[], coverImage: string, deadline: Date | undefined, shippingConfigs: ShippingConfig[], managerIds?: string[], exchangeRate?: number, roundingConfig?: RoundingConfig, sourceCurrency?: string) {
-        this.store.dispatch(ProjectActions.updateProject({ id, title, description, status, products, coverImage, deadline, shippingConfigs, managerIds, exchangeRate, roundingConfig, sourceCurrency }));
+    updateGroupBuy(id: string, title: string, description: string, status: number, products: Product[], coverImage: string, deadline: Date | undefined, shippingConfigs: ShippingConfig[], managerIds?: string[], exchangeRate?: number, roundingConfig?: RoundingConfig, sourceCurrency?: string) {
+        this.store.dispatch(GroupBuyActions.updateGroupBuy({ id, title, description, status, products, coverImage, deadline, shippingConfigs, managerIds, exchangeRate, roundingConfig, sourceCurrency }));
     }
 
-    addProduct(projectId: string, name: string, priceOriginal: number, exchangeRate: number, specs: string[]) {
-        this.store.dispatch(ProjectActions.addProduct({ projectId, name, priceOriginal, exchangeRate, specs }));
+    addProduct(groupBuyId: string, name: string, priceOriginal: number, exchangeRate: number, specs: string[]) {
+        this.store.dispatch(GroupBuyActions.addProduct({ groupBuyId, name, priceOriginal, exchangeRate, specs }));
     }
 
     async updateOrder(orderId: string, items: CreateOrderItem[], note?: string) {

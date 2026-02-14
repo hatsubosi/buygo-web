@@ -1,22 +1,22 @@
 import { Component, inject, effect, OnInit, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProjectService } from '../../../core/project/project.service';
-import { CartItem } from '../../../core/project/project.actions';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
+import { CartItem } from '../../../core/groupbuy/groupbuy.actions';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
-import { ShippingType } from '../../../core/api/api/v1/project_pb';
+import { ShippingType } from '../../../core/api/api/v1/groupbuy_pb';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 
 @Component({
-    selector: 'app-project-checkout',
+    selector: 'app-groupbuy-checkout',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormsModule, UiContainerComponent, UiBtnComponent],
-    templateUrl: './project-checkout.component.html',
-    styleUrl: './project-checkout.component.css'
+    templateUrl: './groupbuy-checkout.component.html',
+    styleUrl: './groupbuy-checkout.component.css'
 })
-export class ProjectCheckoutComponent implements OnInit {
-    projectService = inject(ProjectService);
+export class GroupBuyCheckoutComponent implements OnInit {
+    groupBuyService = inject(GroupBuyService);
     router = inject(Router);
     route = inject(ActivatedRoute);
     toast = inject(ToastService);
@@ -28,7 +28,7 @@ export class ProjectCheckoutComponent implements OnInit {
     selectedShippingMethodId = '';
 
     get project() {
-        return this.projectService.currentProject();
+        return this.groupBuyService.currentGroupBuy();
     }
 
     get shippingConfigs() {
@@ -44,7 +44,7 @@ export class ProjectCheckoutComponent implements OnInit {
     }
 
     get totalAmount() {
-        return this.projectService.cartTotal() + this.shippingFee;
+        return this.groupBuyService.cartTotal() + this.shippingFee;
     }
 
     // Helper Methods for Template
@@ -81,19 +81,19 @@ export class ProjectCheckoutComponent implements OnInit {
 
     constructor() {
         // Clear previous successful order ID to prevent auto-redirect
-        this.projectService.lastCreatedOrderId.set(null);
+        this.groupBuyService.lastCreatedOrderId.set(null);
 
         effect(() => {
-            const orderId = this.projectService.lastCreatedOrderId();
-            const projectId = this.projectService.currentProject()?.id;
+            const orderId = this.groupBuyService.lastCreatedOrderId();
+            const projectId = this.groupBuyService.currentGroupBuy()?.id;
             if (orderId && projectId) {
-                this.router.navigate(['project', projectId, 'order-confirmation', orderId]);
+                this.router.navigate(['groupbuy', projectId, 'order-confirmation', orderId]);
             }
         });
 
         effect(() => {
             // Load existing order on init effectively
-            const projectId = this.projectService.currentProject()?.id;
+            const projectId = this.groupBuyService.currentGroupBuy()?.id;
             if (projectId) {
                 this.checkExistingOrder(projectId);
             }
@@ -105,13 +105,13 @@ export class ProjectCheckoutComponent implements OnInit {
             const id = params.get('id');
             if (id) {
                 // Ensure project is loaded
-                this.projectService.loadProject(id);
+                this.groupBuyService.loadGroupBuy(id);
             }
         });
     }
 
     async checkExistingOrder(projectId: string) {
-        const order = await this.projectService.loadExistingOrderIntoCart(projectId);
+        const order = await this.groupBuyService.loadExistingOrderIntoCart(projectId);
 
         if (order && order.paymentStatus > 2) { // 3 = CONFIRMED/PAID
             this.router.navigate(['/user/orders', order.id]);
@@ -140,9 +140,9 @@ export class ProjectCheckoutComponent implements OnInit {
     updateQuantity(item: any, change: number) {
         const newQty = item.quantity + change;
         if (newQty <= 0) {
-            this.projectService.removeFromCart(item.productId, item.specId);
+            this.groupBuyService.removeFromCart(item.productId, item.specId);
         } else {
-            this.projectService.updateCartQuantity(item.productId, item.specId, newQty);
+            this.groupBuyService.updateCartQuantity(item.productId, item.specId, newQty);
         }
     }
 
@@ -165,10 +165,10 @@ export class ProjectCheckoutComponent implements OnInit {
             return;
         }
 
-        const projectId = this.projectService.currentProject()?.id;
+        const projectId = this.groupBuyService.currentGroupBuy()?.id;
         if (!projectId) return;
 
-        this.projectService.submitOrder(projectId, this.contactInfo, this.shippingAddress, this.projectService.cart(), this.selectedShippingMethodId, this.note);
+        this.groupBuyService.submitOrder(projectId, this.contactInfo, this.shippingAddress, this.groupBuyService.cart(), this.selectedShippingMethodId, this.note);
 
         // We should probably listen to success to navigate away, 
         // but simpler for now:

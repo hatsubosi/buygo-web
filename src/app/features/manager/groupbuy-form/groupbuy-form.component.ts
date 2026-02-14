@@ -3,21 +3,21 @@ import { DecimalPipe } from '@angular/common';
 import { ManagerSelectorComponent } from '../components/manager-selector/manager-selector.component';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
-import { Product, ProductSpec, RoundingConfig, RoundingMethod, ShippingConfig, ShippingType, Category, PriceTemplate } from '../../../core/api/api/v1/project_pb';
+import { Product, ProductSpec, RoundingConfig, RoundingMethod, ShippingConfig, ShippingType, Category, PriceTemplate } from '../../../core/api/api/v1/groupbuy_pb';
 
 @Component({
     selector: 'app-project-form',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, RouterLink, UiContainerComponent, UiBtnComponent, UiDialogComponent, ManagerSelectorComponent, DecimalPipe],
-    templateUrl: './project-form.component.html',
-    styleUrl: './project-form.component.css'
+    templateUrl: './groupbuy-form.component.html',
+    styleUrl: './groupbuy-form.component.css'
 })
 export class ProjectFormComponent {
-    projectService = inject(ProjectService);
+    groupBuyService = inject(GroupBuyService);
     fb = inject(FormBuilder);
     router = inject(Router);
 
@@ -71,7 +71,7 @@ export class ProjectFormComponent {
             const projectId = this.id();
             if (projectId) {
                 this.isEditMode.set(true);
-                this.projectService.loadProject(projectId);
+                this.groupBuyService.loadGroupBuy(projectId);
             }
         }, { allowSignalWrites: true });
 
@@ -84,8 +84,8 @@ export class ProjectFormComponent {
         // Populate Form when Project Loaded (Edit Mode)
         effect(() => {
             if (this.isEditMode()) {
-                const p = this.projectService.currentProject();
-                const products = this.projectService.currentProducts();
+                const p = this.groupBuyService.currentGroupBuy();
+                const products = this.groupBuyService.currentProducts();
 
                 if (p && p.id === this.id()) {
                     let deadlineStr = '';
@@ -132,7 +132,7 @@ export class ProjectFormComponent {
 
     async loadCategories() {
         try {
-            const cats = await this.projectService.listCategories();
+            const cats = await this.groupBuyService.listCategories();
             this.categories.set(cats);
         } catch (e) {
             console.error('Failed to load categories', e);
@@ -141,7 +141,7 @@ export class ProjectFormComponent {
 
     async loadPriceTemplates() {
         try {
-            const list = await this.projectService.listPriceTemplates();
+            const list = await this.groupBuyService.listPriceTemplates();
             this.priceTemplates.set(list);
         } catch (e) {
             console.error('Failed to load price templates', e);
@@ -218,8 +218,8 @@ export class ProjectFormComponent {
     private submitted = false;
 
     constructor_effect = effect(() => {
-        const loading = this.projectService.isActionLoading();
-        const error = this.projectService.actionError();
+        const loading = this.groupBuyService.isActionLoading();
+        const error = this.groupBuyService.actionError();
 
         if (this.submitted && !loading && !error) {
             if (this.isEditMode()) {
@@ -368,14 +368,14 @@ export class ProjectFormComponent {
             if (projectId) {
                 const deadline = val.deadline ? new Date(val.deadline) : undefined;
                 const managerIds = val.managerIds || [];
-                const currentStatus = this.projectService.currentProject()?.status || 1;
+                const currentStatus = this.groupBuyService.currentGroupBuy()?.status || 1;
 
                 const roundingConfig = new RoundingConfig({
                     method: Number(val.roundingMethod) as RoundingMethod,
                     digit: Number(val.roundingDigit)
                 });
 
-                this.projectService.updateProject(
+                this.groupBuyService.updateGroupBuy(
                     projectId,
                     val.title,
                     val.description,
@@ -391,7 +391,7 @@ export class ProjectFormComponent {
                 );
             }
         } else {
-            this.projectService.createProject(val.title, val.description);
+            this.groupBuyService.createGroupBuy(val.title, val.description);
             // We can't set currency/rate during createProject yet (API limits creation to title/desc usually)
             // But wait, user requirement says "Update Project Entity". 
             // If CreateProjectRequest only has title/desc, we can't set it initially.

@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection, APP_INITIALIZER, inject } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, APP_INITIALIZER } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -9,14 +9,13 @@ import { authReducer } from './core/auth/auth.reducer';
 import { AuthEffects } from './core/auth/auth.effects';
 import { AuthActions } from './core/auth/auth.actions';
 
-import { projectReducer } from './core/project/project.reducer';
-import { ProjectEffects } from './core/project/project.effects';
+import { groupBuyReducer } from './core/groupbuy/groupbuy.reducer';
+import { GroupBuyEffects } from './core/groupbuy/groupbuy.effects';
 
 function initAuth(store: Store) {
   return () => new Promise<void>((resolve) => {
     store.dispatch(AuthActions.checkSession());
-    resolve(); // Resolve immediately, let effect run async or return promise if checkSession was async
-    // For simple local storage check, synchronous dispatch is fine, effect will handle state update.
+    resolve();
   });
 }
 
@@ -27,11 +26,11 @@ export const appConfig: ApplicationConfig = {
     provideTransport(),
     provideStore({
       auth: authReducer,
-      project: projectReducer
+      groupbuy: groupBuyReducer
     }),
     provideEffects([
       AuthEffects,
-      ProjectEffects
+      GroupBuyEffects
     ]),
     {
       provide: APP_INITIALIZER,

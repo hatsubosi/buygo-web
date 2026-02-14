@@ -4,7 +4,7 @@ import { ManagerService } from '../../../core/manager/manager.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
-import { PaymentStatus } from '../../../core/api/api/v1/project_pb';
+import { PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
 
 describe('OrderListComponent', () => {
     let component: OrderListComponent;

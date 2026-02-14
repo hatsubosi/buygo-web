@@ -1,12 +1,12 @@
 import { Component, inject, input, computed, effect, signal , ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ManagerService } from '../../../core/manager/manager.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
-import { OrderItemStatus } from '../../../core/api/api/v1/project_pb';
+import { OrderItemStatus } from '../../../core/api/api/v1/groupbuy_pb';
 
 interface StatusCell {
     status: OrderItemStatus;
@@ -142,12 +142,12 @@ interface StatusRow {
     `
 })
 export class StatusDashboardComponent {
-    projectService = inject(ProjectService);
+    groupBuyService = inject(GroupBuyService);
     managerService = inject(ManagerService);
     toast = inject(ToastService);
     id = input<string>(); // Project ID
 
-    products = this.projectService.currentProducts;
+    products = this.groupBuyService.currentProducts;
     orders = this.managerService.orders;
 
     // Computed Matrix
@@ -207,8 +207,8 @@ export class StatusDashboardComponent {
         effect(() => {
             const id = this.id();
             if (id) {
-                this.projectService.loadProject(id);
-                this.managerService.loadProjectOrders(id);
+                this.groupBuyService.loadGroupBuy(id);
+                this.managerService.loadGroupBuyOrders(id);
             }
         });
     }
@@ -265,7 +265,7 @@ export class StatusDashboardComponent {
                 this.moveCount
             );
             // Reload
-            await this.managerService.loadProjectOrders(this.id()!);
+            await this.managerService.loadGroupBuyOrders(this.id()!);
             this.closeDialog();
             this.toast.show('Status updated successfully', 'success');
         } catch (err: any) {

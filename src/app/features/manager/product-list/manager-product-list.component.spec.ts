@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ManagerProductListComponent } from './manager-product-list.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 
@@ -21,7 +21,7 @@ describe('ManagerProductListComponent', () => {
         await TestBed.configureTestingModule({
             imports: [ManagerProductListComponent],
             providers: [
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 provideRouter([])
             ]
         }).compileComponents();

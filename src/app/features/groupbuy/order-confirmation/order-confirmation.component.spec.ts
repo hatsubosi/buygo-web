@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OrderConfirmationComponent } from './order-confirmation.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
@@ -20,7 +20,7 @@ describe('OrderConfirmationComponent', () => {
         await TestBed.configureTestingModule({
             imports: [OrderConfirmationComponent],
             providers: [
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 provideRouter([
                     { path: 'project/:id', component: OrderConfirmationComponent },
                     { path: 'user/orders/:id', component: OrderConfirmationComponent },
@@ -48,13 +48,13 @@ describe('OrderConfirmationComponent', () => {
     });
 
     it('should navigate to project when backToProject is called', () => {
-        component.projectId = 'proj-1';
+        component.groupBuyId = 'proj-1';
         component.backToProject();
-        expect(router.navigate).toHaveBeenCalledWith(['project', 'proj-1']);
+        expect(router.navigate).toHaveBeenCalledWith(['groupbuy', 'proj-1']);
     });
 
     it('should navigate home when backToProject has no projectId', () => {
-        component.projectId = null;
+        component.groupBuyId = null;
         component.backToProject();
         expect(router.navigate).toHaveBeenCalledWith(['/']);
     });

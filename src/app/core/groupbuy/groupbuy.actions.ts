@@ -1,8 +1,8 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Project, Product, Order, ShippingConfig, RoundingConfig } from '../api/api/v1/project_pb';
+import { GroupBuy, Product, Order, ShippingConfig, RoundingConfig } from '../api/api/v1/groupbuy_pb';
 
 export interface CartItem {
-    projectId: string;
+    groupBuyId: string;
     productId: string;
     specId: string;
     quantity: number;
@@ -12,26 +12,24 @@ export interface CartItem {
     maxQuantity: number;
 }
 
-export const ProjectActions = createActionGroup({
-    source: 'Project',
+export const GroupBuyActions = createActionGroup({
+    source: 'GroupBuy',
     events: {
-        'Load Projects': emptyProps(),
-        'Load Projects Success': props<{ projects: Project[] }>(),
-        'Load Projects Failure': props<{ error: string }>(),
+        'Load GroupBuys': emptyProps(),
+        'Load GroupBuys Success': props<{ groupBuys: GroupBuy[] }>(),
+        'Load GroupBuys Failure': props<{ error: string }>(),
 
-        'Load Project Detail': props<{ id: string }>(),
-        'Load Project Detail Success': props<{ project: Project; products: Product[] }>(),
-        'Load Project Detail Failure': props<{ error: string }>(),
+        'Load GroupBuy Detail': props<{ id: string }>(),
+        'Load GroupBuy Detail Success': props<{ groupBuy: GroupBuy; products: Product[] }>(),
+        'Load GroupBuy Detail Failure': props<{ error: string }>(),
 
-        // Create Project
-        'Create Project': props<{ title: string; description: string }>(),
-        'Create Project Success': props<{ project: Project }>(),
-        'Create Project Failure': props<{ error: string }>(),
+        // Create GroupBuy
+        'Create GroupBuy': props<{ title: string; description: string }>(),
+        'Create GroupBuy Success': props<{ groupBuy: GroupBuy }>(),
+        'Create GroupBuy Failure': props<{ error: string }>(),
 
-        // Update Project
-        // Update Project
-        // Update Project
-        'Update Project': props<{
+        // Update GroupBuy
+        'Update GroupBuy': props<{
             id: string;
             title: string;
             description: string;
@@ -46,7 +44,7 @@ export const ProjectActions = createActionGroup({
             roundingConfig?: RoundingConfig;
             sourceCurrency?: string;
         }>(),
-        // Checking Proto: service ProjectService { rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse); }
+        // Checking Proto: service ProjectService { rpc UpdateProject(UpdateProjectRequest) returns (UpdateGroupBuyResponse); }
         // message UpdateProjectRequest { string project_id = 1; ProjectStatus status = 2; }
         // Ah, it seems only status update is supported by the current API definition? 
         // Let's stick to what's available or check if I need to update API.
@@ -59,11 +57,11 @@ export const ProjectActions = createActionGroup({
         // CreateProject takes title/description.
         // So Edit might be limited to Status for now unless I update backend.
         // I will implement Update Project for status now.
-        'Update Project Success': props<{ project: Project }>(),
-        'Update Project Failure': props<{ error: string }>(),
+        'Update GroupBuy Success': props<{ groupBuy: GroupBuy }>(),
+        'Update GroupBuy Failure': props<{ error: string }>(),
 
         // Product Actions
-        'Add Product': props<{ projectId: string; name: string; priceOriginal: number; exchangeRate: number; specs: string[] }>(),
+        'Add Product': props<{ groupBuyId: string; name: string; priceOriginal: number; exchangeRate: number; specs: string[] }>(),
         'Add Product Success': props<{ product: Product }>(),
         'Add Product Failure': props<{ error: string }>(),
 
@@ -88,7 +86,7 @@ export const ProjectActions = createActionGroup({
 
         // Order Actions
         'Submit Order': props<{
-            projectId: string;
+            groupBuyId: string;
             contactInfo: string;
             shippingAddress: string;
             shippingMethodId?: string;

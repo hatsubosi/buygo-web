@@ -1,22 +1,22 @@
 import { Component, OnInit, inject, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
-import { Product, Order, OrderItem, PaymentStatus } from '../../../core/api/api/v1/project_pb';
+import { Product, Order, OrderItem, PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
 import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
-  selector: 'app-project-detail',
+  selector: 'app-groupbuy-detail',
   imports: [UiContainerComponent, UiBtnComponent, RouterLink, CurrencySymbolPipe],
-  templateUrl: './project-detail.component.html',
-  styleUrl: './project-detail.component.css',
+  templateUrl: './groupbuy-detail.component.html',
+  styleUrl: './groupbuy-detail.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectDetailComponent implements OnInit {
-  projectService = inject(ProjectService);
+export class GroupBuyDetailComponent implements OnInit {
+  groupBuyService = inject(GroupBuyService);
   authService = inject(AuthService); // Inject Auth Service
   toastService = inject(ToastService);
   route = inject(ActivatedRoute);
@@ -28,12 +28,12 @@ export class ProjectDetailComponent implements OnInit {
   // Permissions & State
   canManage = computed(() => {
     const user = this.authService.user();
-    const project = this.projectService.currentProject();
+    const project = this.groupBuyService.currentGroupBuy();
     if (!user || !project) return false;
     return project.creator?.id === user.id || project.managers.some(m => m.id === user.id);
   });
 
-  existingOrder = this.projectService.myProjectOrder;
+  existingOrder = this.groupBuyService.myGroupBuyOrder;
 
   isOrderSubmittedOrConfirmed = computed(() => {
     const order = this.existingOrder();
@@ -60,8 +60,8 @@ export class ProjectDetailComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.projectService.loadProject(id);
-        this.projectService.loadExistingOrderIntoCart(id).then(order => {
+        this.groupBuyService.loadGroupBuy(id);
+        this.groupBuyService.loadExistingOrderIntoCart(id).then(order => {
           // Check for edit mode query param
           const editMode = this.route.snapshot.queryParamMap.get('edit') === 'true';
           if (order) {
@@ -69,7 +69,7 @@ export class ProjectDetailComponent implements OnInit {
 
             if (editMode && order.paymentStatus >= PaymentStatus.SUBMITTED && !isLocked) {
               this.isEditing = true;
-              this.projectService.editSubmittedOrder();
+              this.groupBuyService.editSubmittedOrder();
             } else {
               this.isEditing = false;
               if (editMode && isLocked) {
@@ -113,14 +113,14 @@ export class ProjectDetailComponent implements OnInit {
       spec = product.specs.find(s => s.id === specId);
     }
 
-    this.projectService.addToCart(product, spec, 1);
+    this.groupBuyService.addToCart(product, spec, 1);
     this.toastService.show('Added to order', 'success');
   }
 
   // Helper: Get Qty for current selected spec
   getQuantity(product: Product): number {
     const specId = this.selectedSpecs[product.id] || (product.specs.length > 0 ? product.specs[0].id : '');
-    const item = this.projectService.cart().find(i => i.productId === product.id && i.specId === specId);
+    const item = this.groupBuyService.cart().find(i => i.productId === product.id && i.specId === specId);
     return item ? item.quantity : 0;
   }
 
@@ -135,14 +135,14 @@ export class ProjectDetailComponent implements OnInit {
     if (currentQty === 0 && delta > 0) {
       // Add new item
       let spec = product.specs.find(s => s.id === specId);
-      this.projectService.addToCart(product, spec, 1);
+      this.groupBuyService.addToCart(product, spec, 1);
       this.toastService.show('Added to order', 'success');
     } else if (newQty <= 0) {
       // Remove item
-      this.projectService.removeFromCart(product.id, specId);
+      this.groupBuyService.removeFromCart(product.id, specId);
     } else {
       // Update item
-      this.projectService.updateCartQuantity(product.id, specId, newQty);
+      this.groupBuyService.updateCartQuantity(product.id, specId, newQty);
     }
   }
 
@@ -155,12 +155,12 @@ export class ProjectDetailComponent implements OnInit {
 
   editOrder() {
     this.isEditing = true;
-    this.projectService.editSubmittedOrder();
+    this.groupBuyService.editSubmittedOrder();
   }
 
   cancelEdit() {
     this.isEditing = false;
-    this.projectService.clearCart();
+    this.groupBuyService.clearCart();
     // Remove query param
     this.router.navigate([], {
       queryParams: { edit: null },
@@ -170,6 +170,6 @@ export class ProjectDetailComponent implements OnInit {
 
   goToCheckout(projectId: string) {
     if (!this.checkAuth()) return; // Require Login
-    this.router.navigate(['project', projectId, 'checkout']);
+    this.router.navigate(['groupbuy', projectId, 'checkout']);
   }
 }

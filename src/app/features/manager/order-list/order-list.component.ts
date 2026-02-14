@@ -5,7 +5,7 @@ import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-contain
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
-import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/project_pb';
+import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/groupbuy_pb';
 
 @Component({
     selector: 'app-order-list',
@@ -18,7 +18,7 @@ import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/project
             <div class="mb-8 flex items-center justify-between">
                 <div>
                     <div class="mb-2 flex items-center gap-2">
-                        <a [routerLink]="['/manager/project', projectId()]" class="text-gray-400 hover:text-white">
+                        <a [routerLink]="['/manager/project', groupBuyId()]" class="text-gray-400 hover:text-white">
                             <span class="material-icons text-sm">arrow_back</span> Back to Project
                         </a>
                     </div>
@@ -118,7 +118,7 @@ import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/project
                                                     Confirm Pay
                                                 </app-ui-btn>
                                             }
-                                            <a [routerLink]="['/manager/project', projectId(), 'orders', order.id]" class="ml-2 inline-block">
+                                            <a [routerLink]="['/manager/project', groupBuyId(), 'orders', order.id]" class="ml-2 inline-block">
                                                 <app-ui-btn variant="ghost" size="sm">Manage</app-ui-btn>
                                             </a>
                                         </td>
@@ -148,7 +148,7 @@ export class OrderListComponent implements OnInit {
     @ViewChild(UiDialogComponent) dialog!: UiDialogComponent;
 
     paymentStatus = PaymentStatus;
-    projectId = signal('');
+    groupBuyId = signal('');
 
     // Filter State
     filter = signal<'all' | 'ready'>('all');
@@ -170,8 +170,8 @@ export class OrderListComponent implements OnInit {
         this.route.paramMap.subscribe(params => {
             const id = params.get('id');
             if (id) {
-                this.projectId.set(id);
-                this.managerService.loadProjectOrders(id);
+                this.groupBuyId.set(id);
+                this.managerService.loadGroupBuyOrders(id);
             }
         });
     }
@@ -204,7 +204,7 @@ export class OrderListComponent implements OnInit {
         if (confirmed) {
             try {
                 await this.managerService.confirmPayment(orderId);
-                this.managerService.loadProjectOrders(this.projectId());
+                this.managerService.loadGroupBuyOrders(this.groupBuyId());
                 this.toast.show('Payment confirmed', 'success');
             } catch (err: any) {
                 this.toast.show('Failed to confirm payment', 'error');

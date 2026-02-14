@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ManagerProjectDetailComponent } from './manager-project-detail.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { ManagerGroupBuyDetailComponent } from './manager-project-detail.component';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ManagerService } from '../../../core/manager/manager.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 
-describe('ManagerProjectDetailComponent', () => {
-    let component: ManagerProjectDetailComponent;
-    let fixture: ComponentFixture<ManagerProjectDetailComponent>;
+describe('ManagerGroupBuyDetailComponent', () => {
+    let component: ManagerGroupBuyDetailComponent;
+    let fixture: ComponentFixture<ManagerGroupBuyDetailComponent>;
 
     const mockProjectService = {
         currentProject: signal(null),
@@ -33,9 +33,9 @@ describe('ManagerProjectDetailComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ManagerProjectDetailComponent],
+            imports: [ManagerGroupBuyDetailComponent],
             providers: [
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 { provide: AuthService, useValue: mockAuthService },
                 { provide: ManagerService, useValue: mockManagerService },
                 { provide: ToastService, useValue: mockToastService },
@@ -43,7 +43,7 @@ describe('ManagerProjectDetailComponent', () => {
             ]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ManagerProjectDetailComponent);
+        fixture = TestBed.createComponent(ManagerGroupBuyDetailComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

@@ -7,10 +7,10 @@
                 <app-ui-btn variant="ghost" (onClick)="goBack()">Cancel</app-ui-btn>
             </div>
 
-            @if (projectService.cartCount() === 0) {
+            @if (groupBuyService.cartCount() === 0) {
             <div class="text-center py-12 text-gray-500">
                 <!-- Loading State or Empty -->
-                @if (projectService.isLoadingDetail()) {
+                @if (groupBuyService.isLoadingDetail()) {
                 <div class="mb-4">
                     <span
                         class="block h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mx-auto"></span>
@@ -25,7 +25,7 @@
             } @else {
             <!-- Items -->
             <div class="space-y-4 mb-8">
-                @for (item of projectService.cart(); track item.productId + item.specId) {
+                @for (item of groupBuyService.cart(); track item.productId + item.specId) {
                 <div class="flex items-center justify-between rounded-lg bg-white/5 p-4 border border-white/10">
                     <div class="flex flex-col">
                         <span class="text-white font-medium">{{ item.productName }}</span>
@@ -124,14 +124,14 @@
             <!-- Submit -->
             <div class="flex justify-end mt-6">
                 <app-ui-btn variant="primary" customClass="w-full sm:w-auto px-8"
-                    [loading]="projectService.isSubmittingOrder()" (onClick)="submitOrder()">
+                    [loading]="groupBuyService.isSubmittingOrder()" (onClick)="submitOrder()">
                     Confirm Order
                 </app-ui-btn>
             </div>
 
-            @if (projectService.submitOrderError()) {
+            @if (groupBuyService.submitOrderError()) {
             <div class="mt-4 p-3 bg-red-900/40 border border-red-500/50 rounded-lg text-red-200 text-sm">
-                {{ projectService.submitOrderError() }}
+                {{ groupBuyService.submitOrderError() }}
             </div>
             }
             }

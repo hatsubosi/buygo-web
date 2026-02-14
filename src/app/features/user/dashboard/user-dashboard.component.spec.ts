@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserDashboardComponent } from './user-dashboard.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { EventService } from '../../../core/event/event.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
-import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/project_pb';
+import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/groupbuy_pb';
 import { RegistrationStatus } from '../../../core/api/api/v1/event_pb';
 
 describe('UserDashboardComponent', () => {
@@ -29,7 +29,7 @@ describe('UserDashboardComponent', () => {
         await TestBed.configureTestingModule({
             imports: [UserDashboardComponent],
             providers: [
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 { provide: EventService, useValue: mockEventService },
                 { provide: AuthService, useValue: mockAuthService },
                 provideRouter([])

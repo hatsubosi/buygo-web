@@ -305,9 +305,9 @@
             </div>
 
             <!-- Error Message -->
-            @if (projectService.actionError()) {
+            @if (groupBuyService.actionError()) {
             <div class="rounded-lg bg-red-500/10 p-4 text-red-400 border border-red-500/20">
-                {{ projectService.actionError() }}
+                {{ groupBuyService.actionError() }}
             </div>
             }
 
@@ -316,7 +316,7 @@
                 <a [routerLink]="backLink()">
                     <app-ui-btn variant="ghost" type="button">Cancel</app-ui-btn>
                 </a>
-                <app-ui-btn variant="primary" type="submit" [loading]="projectService.isActionLoading()"
+                <app-ui-btn variant="primary" type="submit" [loading]="groupBuyService.isActionLoading()"
                     [disabled]="form.invalid">
                     {{ isEditMode() ? 'Save Changes' : 'Create Project' }}
                 </app-ui-btn>

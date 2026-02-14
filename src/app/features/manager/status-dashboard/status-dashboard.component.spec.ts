@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StatusDashboardComponent } from './status-dashboard.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ManagerService } from '../../../core/manager/manager.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { provideRouter } from '@angular/router';
@@ -30,7 +30,7 @@ describe('StatusDashboardComponent', () => {
         await TestBed.configureTestingModule({
             imports: [StatusDashboardComponent],
             providers: [
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 { provide: ManagerService, useValue: mockManagerService },
                 { provide: ToastService, useValue: mockToastService },
                 provideRouter([])

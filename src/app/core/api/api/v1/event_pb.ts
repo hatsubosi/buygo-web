@@ -5,7 +5,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3, protoInt64, Timestamp } from "@bufbuild/protobuf";
-import { PaymentStatus } from "./project_pb.js";
+import { PaymentStatus } from "./groupbuy_pb.js";
 import { User } from "./auth_pb.js";
 
 /**

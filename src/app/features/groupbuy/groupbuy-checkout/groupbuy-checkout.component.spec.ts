@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectCheckoutComponent } from './project-checkout.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
-import { ShippingType } from '../../../core/api/api/v1/project_pb';
+import { ShippingType } from '../../../core/api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
 
 describe('ProjectCheckoutComponent', () => {
@@ -38,7 +38,7 @@ describe('ProjectCheckoutComponent', () => {
         await TestBed.configureTestingModule({
             imports: [ProjectCheckoutComponent],
             providers: [
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 { provide: ToastService, useValue: mockToastService },
                 provideRouter([{ path: '**', component: ProjectCheckoutComponent }])
             ]
@@ -83,7 +83,7 @@ describe('ProjectCheckoutComponent', () => {
 
         it('should show error when shipping method not selected', () => {
             component.contactInfo = 'test@test.com';
-            mockProjectService.currentProject.set({
+            mockProjectService.currentGroupBuy.set({
                 id: 'p1',
                 shippingConfigs: [{ id: 'sc1', name: 'Standard', type: 2, price: BigInt(100) }]
             } as any);
@@ -95,7 +95,7 @@ describe('ProjectCheckoutComponent', () => {
         it('should show error when address missing for non-meetup', () => {
             component.contactInfo = 'test@test.com';
             component.shippingAddress = '';
-            mockProjectService.currentProject.set({ id: 'p1', shippingConfigs: [] } as any);
+            mockProjectService.currentGroupBuy.set({ id: 'p1', shippingConfigs: [] } as any);
             component.submitOrder();
             expect(mockToastService.show).toHaveBeenCalledWith('Please fill in Shipping Address', 'error');
         });
@@ -115,7 +115,7 @@ describe('ProjectCheckoutComponent', () => {
 
     describe('isMeetup and address labels', () => {
         it('should detect meetup config', () => {
-            mockProjectService.currentProject.set({
+            mockProjectService.currentGroupBuy.set({
                 id: 'p1',
                 shippingConfigs: [{ id: 'sc1', type: ShippingType.MEETUP }]
             } as any);
@@ -124,7 +124,7 @@ describe('ProjectCheckoutComponent', () => {
         });
 
         it('should return delivery address label', () => {
-            mockProjectService.currentProject.set({
+            mockProjectService.currentGroupBuy.set({
                 id: 'p1',
                 shippingConfigs: [{ id: 'sc1', type: ShippingType.DELIVERY }]
             } as any);
@@ -133,7 +133,7 @@ describe('ProjectCheckoutComponent', () => {
         });
 
         it('should return store pickup placeholder', () => {
-            mockProjectService.currentProject.set({
+            mockProjectService.currentGroupBuy.set({
                 id: 'p1',
                 shippingConfigs: [{ id: 'sc1', type: ShippingType.STORE_PICKUP }]
             } as any);

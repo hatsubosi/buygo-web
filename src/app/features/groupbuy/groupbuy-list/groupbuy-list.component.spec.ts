@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectListComponent } from './project-list.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
-import { ProjectStatus } from '../../../core/api/api/v1/project_pb';
+import { GroupBuyStatus } from '../../../core/api/api/v1/groupbuy_pb';
 
 describe('ProjectListComponent', () => {
   let component: ProjectListComponent;
@@ -26,7 +26,7 @@ describe('ProjectListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ProjectListComponent],
       providers: [
-        { provide: ProjectService, useValue: mockProjectService },
+        { provide: GroupBuyService, useValue: mockProjectService },
         { provide: AuthService, useValue: mockAuthService },
         provideRouter([])
       ]
@@ -44,10 +44,10 @@ describe('ProjectListComponent', () => {
   });
 
   it('should return correct status labels', () => {
-    expect(component.getStatusLabel(ProjectStatus.ACTIVE)).toBe('Active');
-    expect(component.getStatusLabel(ProjectStatus.DRAFT)).toBe('Draft');
-    expect(component.getStatusLabel(ProjectStatus.ENDED)).toBe('Ended');
-    expect(component.getStatusLabel(ProjectStatus.ARCHIVED)).toBe('Archived');
+    expect(component.getStatusLabel(GroupBuyStatus.ACTIVE)).toBe('Active');
+    expect(component.getStatusLabel(GroupBuyStatus.DRAFT)).toBe('Draft');
+    expect(component.getStatusLabel(GroupBuyStatus.ENDED)).toBe('Ended');
+    expect(component.getStatusLabel(GroupBuyStatus.ARCHIVED)).toBe('Archived');
     expect(component.getStatusLabel(99 as ProjectStatus)).toBe('Unknown');
   });
 

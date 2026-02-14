@@ -3,12 +3,12 @@ import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ManagerService } from '../../../core/manager/manager.service';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
-import { PaymentStatus, CreateOrderItem, OrderItemStatus } from '../../../core/api/api/v1/project_pb';
+import { PaymentStatus, CreateOrderItem, OrderItemStatus } from '../../../core/api/api/v1/groupbuy_pb';
 
 @Component({
   selector: 'app-manager-order-detail',
@@ -21,15 +21,15 @@ export class ManagerOrderDetailComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   managerService = inject(ManagerService);
-  projectService = inject(ProjectService);
+  groupBuyService = inject(GroupBuyService);
   toastService = inject(ToastService);
 
   @ViewChild(UiDialogComponent) dialog!: UiDialogComponent;
 
-  projectId = signal('');
+  groupBuyId = signal('');
   orderId = signal('');
 
-  products = this.projectService.currentProducts;
+  products = this.groupBuyService.currentProducts;
 
   // Find order in managerService list
   order = computed(() => {
@@ -74,13 +74,13 @@ export class ManagerOrderDetailComponent {
     const oid = params.get('orderId');
 
     if (pid && oid) {
-      this.projectId.set(pid);
+      this.groupBuyId.set(pid);
       this.orderId.set(oid);
 
       // Load Project (for products)
-      this.projectService.loadProject(pid);
+      this.groupBuyService.loadGroupBuy(pid);
       // Load Orders (for finding this order)
-      this.managerService.loadProjectOrders(pid);
+      this.managerService.loadGroupBuyOrders(pid);
     }
 
     // Sync Order Items to Edit State
@@ -136,9 +136,9 @@ export class ManagerOrderDetailComponent {
     if (!this.isDirty()) return;
     this.isSaving = true;
     try {
-      await this.projectService.updateOrder(this.orderId(), this.editableItems());
+      await this.groupBuyService.updateOrder(this.orderId(), this.editableItems());
       // Reload orders to refresh UI
-      await this.managerService.loadProjectOrders(this.projectId());
+      await this.managerService.loadGroupBuyOrders(this.groupBuyId());
       this.isDirty.set(false);
       this.toastService.show('Order updated successfully', 'success');
     } catch (err: any) {
@@ -159,7 +159,7 @@ export class ManagerOrderDetailComponent {
     try {
       await this.managerService.confirmPayment(this.orderId());
       // Reload
-      await this.managerService.loadProjectOrders(this.projectId());
+      await this.managerService.loadGroupBuyOrders(this.groupBuyId());
       this.toastService.show('Payment confirmed', 'success');
     } catch (err: any) {
       this.toastService.show(err.message, 'error');
@@ -249,10 +249,10 @@ export class ManagerOrderDetailComponent {
         status: 6 // SENT
       }));
 
-      await this.projectService.updateOrder(this.orderId(), updatedItems);
+      await this.groupBuyService.updateOrder(this.orderId(), updatedItems);
 
       // Reload
-      await this.managerService.loadProjectOrders(this.projectId());
+      await this.managerService.loadGroupBuyOrders(this.groupBuyId());
       this.toastService.show('Order marked as shipped!', 'success');
     } catch (err: any) {
       this.toastService.show('Failed to update: ' + err.message, 'error');

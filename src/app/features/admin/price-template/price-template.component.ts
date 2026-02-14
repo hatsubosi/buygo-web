@@ -1,7 +1,7 @@
 import { Component, inject, signal, ViewChild , ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProjectService } from '../../../core/project/project.service';
-import { PriceTemplate, RoundingMethod, RoundingConfig } from '../../../core/api/api/v1/project_pb';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
+import { PriceTemplate, RoundingMethod, RoundingConfig } from '../../../core/api/api/v1/groupbuy_pb';
 
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
@@ -15,7 +15,7 @@ import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.compon
     styleUrl: './price-template.component.css'
 })
 export class PriceTemplateComponent {
-    private projectService = inject(ProjectService);
+    private groupBuyService = inject(GroupBuyService);
     private fb = inject(FormBuilder);
 
     @ViewChild(UiDialogComponent) dialog!: UiDialogComponent;
@@ -44,7 +44,7 @@ export class PriceTemplateComponent {
     async loadTemplates() {
         this.isLoading.set(true);
         try {
-            const list = await this.projectService.listPriceTemplates();
+            const list = await this.groupBuyService.listPriceTemplates();
             this.templates.set(list);
         } catch (err) {
             console.error(err);
@@ -67,7 +67,7 @@ export class PriceTemplateComponent {
                 digit: Number(roundingDigit)
             });
 
-            await this.projectService.createPriceTemplate(name, sourceCurrency, exchangeRate, rounding);
+            await this.groupBuyService.createPriceTemplate(name, sourceCurrency, exchangeRate, rounding);
 
             this.form.reset({
                 name: '',
@@ -105,7 +105,7 @@ export class PriceTemplateComponent {
 
         this.isLoading.set(true);
         try {
-            await this.projectService.deletePriceTemplate(id);
+            await this.groupBuyService.deletePriceTemplate(id);
             await this.loadTemplates();
         } catch (err) {
             await this.dialog.open({

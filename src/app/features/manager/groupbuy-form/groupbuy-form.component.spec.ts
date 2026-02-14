@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectFormComponent } from './project-form.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 
@@ -26,7 +26,7 @@ describe('ProjectFormComponent', () => {
         await TestBed.configureTestingModule({
             imports: [ProjectFormComponent],
             providers: [
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 provideRouter([])
             ]
         }).compileComponents();

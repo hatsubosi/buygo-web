@@ -1,12 +1,12 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
-import { ProjectStatus } from '../../../core/api/api/v1/project_pb';
+import { GroupBuyStatus } from '../../../core/api/api/v1/groupbuy_pb';
 
 @Component({
-  selector: 'app-project-list',
+  selector: 'app-groupbuy-list',
   imports: [UiContainerComponent, UiBtnComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -18,7 +18,7 @@ import { ProjectStatus } from '../../../core/api/api/v1/project_pb';
       </div>
 
       <!-- Loading State -->
-      @if (projectService.isLoadingList()) {
+      @if (groupBuyService.isLoadingList()) {
       <div class="flex justify-center p-12">
         <span class="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></span>
       </div>
@@ -26,7 +26,7 @@ import { ProjectStatus } from '../../../core/api/api/v1/project_pb';
 
       <!-- Grid -->
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        @for (project of projectService.projects(); track project.id) {
+        @for (project of groupBuyService.groupBuys(); track project.id) {
         <app-ui-container customClass="h-full flex flex-col p-0">
            <!-- Image Placeholder -->
            <div class="h-48 w-full bg-gradient-to-br from-blue-900/50 to-purple-900/50"></div>
@@ -59,20 +59,20 @@ import { ProjectStatus } from '../../../core/api/api/v1/project_pb';
   `,
   styles: []
 })
-export class ProjectListComponent implements OnInit {
-  projectService = inject(ProjectService);
+export class GroupBuyListComponent implements OnInit {
+  groupBuyService = inject(GroupBuyService);
   router = inject(Router);
 
   ngOnInit() {
-    this.projectService.loadProjects();
+    this.groupBuyService.loadGroupBuys();
   }
 
-  getStatusLabel(status: ProjectStatus): string {
+  getStatusLabel(status: GroupBuyStatus): string {
     switch (status) {
-      case ProjectStatus.ACTIVE: return 'Active';
-      case ProjectStatus.DRAFT: return 'Draft';
-      case ProjectStatus.ENDED: return 'Ended';
-      case ProjectStatus.ARCHIVED: return 'Archived';
+      case GroupBuyStatus.ACTIVE: return 'Active';
+      case GroupBuyStatus.DRAFT: return 'Draft';
+      case GroupBuyStatus.ENDED: return 'Ended';
+      case GroupBuyStatus.ARCHIVED: return 'Archived';
       default: return 'Unknown';
     }
   }

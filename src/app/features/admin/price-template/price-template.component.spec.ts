@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PriceTemplateComponent } from './price-template.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { signal } from '@angular/core';
 
@@ -23,7 +23,7 @@ describe('PriceTemplateComponent', () => {
         await TestBed.configureTestingModule({
             imports: [PriceTemplateComponent],
             providers: [
-                { provide: ProjectService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockProjectService },
                 { provide: ToastService, useValue: mockToastService }
             ]
         }).compileComponents();

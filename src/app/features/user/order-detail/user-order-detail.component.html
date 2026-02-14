@@ -138,7 +138,7 @@
                     <div class="flex gap-2 pt-2">
                         <app-ui-btn variant="ghost" size="sm" (click)="cancelEditPayment()">Cancel</app-ui-btn>
                         <app-ui-btn variant="primary" size="sm" (click)="savePayment()"
-                            [loading]="projectService.updatingOrder()">
+                            [loading]="groupBuyService.updatingOrder()">
                             Submit Payment Info
                         </app-ui-btn>
                     </div>
@@ -177,13 +177,13 @@
                 }
             </div>
 
-            @if (projectService.updateOrderError()) {
+            @if (groupBuyService.updateOrderError()) {
             <div class="mt-4 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded">
-                {{ projectService.updateOrderError() }}
+                {{ groupBuyService.updateOrderError() }}
             </div>
             }
 
-            } @else if (projectService.loadingMyOrders()) {
+            } @else if (groupBuyService.loadingMyOrders()) {
             <div class="text-center py-12">
                 <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
                 <div class="text-gray-400">Loading order details...</div>

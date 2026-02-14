@@ -1,7 +1,7 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
-import { ProjectService } from '../../../core/project/project.service';
-import { Category } from '../../../core/api/api/v1/project_pb';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
+import { Category } from '../../../core/api/api/v1/groupbuy_pb';
 
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
@@ -15,7 +15,7 @@ import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
   styleUrl: './category-management.component.css'
 })
 export class CategoryManagementComponent {
-  private projectService = inject(ProjectService);
+  private groupBuyService = inject(GroupBuyService);
   private fb = inject(FormBuilder);
   private toast = inject(ToastService);
 
@@ -38,7 +38,7 @@ export class CategoryManagementComponent {
   async loadCategories() {
     this.isLoading.set(true);
     try {
-      const cats = await this.projectService.listCategories();
+      const cats = await this.groupBuyService.listCategories();
       this.categories.set(cats);
     } catch (err) {
       console.error(err);
@@ -66,7 +66,7 @@ export class CategoryManagementComponent {
 
     this.isLoading.set(true);
     try {
-      await this.projectService.createCategory(name, validSpecs);
+      await this.groupBuyService.createCategory(name, validSpecs);
       this.form.reset();
       this.specs.clear();
       await this.loadCategories();

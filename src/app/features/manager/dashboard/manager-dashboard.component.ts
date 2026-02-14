@@ -1,7 +1,7 @@
 import { Component, inject, computed, OnInit , ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { EventService } from '../../../core/event/event.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
@@ -18,17 +18,17 @@ import { UserRole } from '../../../core/api/api/v1/auth_pb';
 })
 export class ManagerDashboardComponent implements OnInit {
   auth = inject(AuthService);
-  projectService = inject(ProjectService);
+  groupBuyService = inject(GroupBuyService);
   eventService = inject(EventService);
 
   ngOnInit() {
-    this.projectService.loadManagerProjects();
+    this.groupBuyService.loadManagerProjects();
     this.eventService.loadManagerEvents();
   }
 
   isAdmin = computed(() => this.auth.user()?.role === UserRole.SYS_ADMIN);
 
-  projects = computed(() => this.projectService.managerProjects());
+  projects = computed(() => this.groupBuyService.managerGroupBuys());
 
   events = computed(() => this.eventService.managerEvents());
 

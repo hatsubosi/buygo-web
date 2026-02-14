@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CategoryManagementComponent } from './category-management.component';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { signal } from '@angular/core';
 
@@ -25,7 +25,7 @@ describe('CategoryManagementComponent', () => {
     await TestBed.configureTestingModule({
       imports: [CategoryManagementComponent],
       providers: [
-        { provide: ProjectService, useValue: mockProjectService },
+        { provide: GroupBuyService, useValue: mockProjectService },
         { provide: ToastService, useValue: mockToastService }
       ]
     })

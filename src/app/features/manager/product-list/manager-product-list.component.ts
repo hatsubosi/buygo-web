@@ -1,7 +1,7 @@
 import { Component, inject, input, effect, signal , ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 
@@ -71,12 +71,12 @@ import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
                     </div>
 
                     <!-- Error -->
-                     @if (projectService.actionError()) {
-                        <p class="text-sm text-red-500">{{ projectService.actionError() }}</p>
+                     @if (groupBuyService.actionError()) {
+                        <p class="text-sm text-red-500">{{ groupBuyService.actionError() }}</p>
                      }
 
                     <div class="flex justify-end pt-2">
-                        <app-ui-btn variant="primary" type="submit" [loading]="projectService.isActionLoading()" [disabled]="form.invalid">
+                        <app-ui-btn variant="primary" type="submit" [loading]="groupBuyService.isActionLoading()" [disabled]="form.invalid">
                             Save Product
                         </app-ui-btn>
                     </div>
@@ -111,14 +111,14 @@ import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
   `
 })
 export class ManagerProductListComponent {
-    projectService = inject(ProjectService);
+    groupBuyService = inject(GroupBuyService);
     fb = inject(FormBuilder);
 
     id = input<string>(); // Project ID
 
     showForm = signal(false);
 
-    products = this.projectService.currentProducts;
+    products = this.groupBuyService.currentProducts;
 
     form: FormGroup = this.fb.group({
         name: ['', Validators.required],
@@ -144,14 +144,14 @@ export class ManagerProductListComponent {
         // We assume we are navigating here so we should ensure project details (and products) are loaded.
         effect(() => {
             const pid = this.id();
-            if (pid && !this.projectService.currentProject()) {
-                this.projectService.loadProject(pid);
+            if (pid && !this.groupBuyService.currentGroupBuy()) {
+                this.groupBuyService.loadGroupBuy(pid);
             }
         }, { allowSignalWrites: true });
 
         // Reset form on success
         effect(() => {
-            if (!this.projectService.isActionLoading() && !this.projectService.actionError() && this.showForm() && this.submitted) {
+            if (!this.groupBuyService.isActionLoading() && !this.groupBuyService.actionError() && this.showForm() && this.submitted) {
                 this.showForm.set(false);
                 this.form.reset({ exchangeRate: 1.0 });
                 this.specs.clear();
@@ -173,7 +173,7 @@ export class ManagerProductListComponent {
         const val = this.form.value;
         const projectId = this.id();
         if (projectId) {
-            this.projectService.addProduct(
+            this.groupBuyService.addProduct(
                 projectId,
                 val.name,
                 val.priceOriginal,

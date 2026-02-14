@@ -45,19 +45,19 @@ export class OrderConfirmationComponent implements OnInit {
   route = inject(ActivatedRoute);
   router = inject(Router);
 
-  projectId: string | null = null;
+  groupBuyId: string | null = null;
   orderId: string | null = null;
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.projectId = params.get('id');
+      this.groupBuyId = params.get('id');
       this.orderId = params.get('orderId');
     });
   }
 
   backToProject() {
-    if (this.projectId) {
-      this.router.navigate(['project', this.projectId]);
+    if (this.groupBuyId) {
+      this.router.navigate(['groupbuy', this.groupBuyId]);
     } else {
       this.router.navigate(['/']);
     }

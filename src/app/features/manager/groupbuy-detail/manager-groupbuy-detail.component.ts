@@ -2,7 +2,7 @@ import { Component, inject, computed, input, effect, signal, ViewChild , ChangeD
 import { DatePipe, CurrencyPipe } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ManagerService } from '../../../core/manager/manager.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
@@ -14,14 +14,14 @@ import { UserRole } from '../../../core/api/api/v1/auth_pb';
 import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
-    selector: 'app-manager-project-detail',
+    selector: 'app-manager-groupbuy-detail',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterLink, UiContainerComponent, UiBtnComponent, DatePipe, CurrencyPipe, FormsModule, UiDialogComponent, CurrencySymbolPipe],
-    templateUrl: './manager-project-detail.component.html',
-    styleUrl: './manager-project-detail.component.css'
+    templateUrl: './manager-groupbuy-detail.component.html',
+    styleUrl: './manager-groupbuy-detail.component.css'
 })
-export class ManagerProjectDetailComponent {
-    projectService = inject(ProjectService);
+export class ManagerGroupBuyDetailComponent {
+    groupBuyService = inject(GroupBuyService);
     managerService = inject(ManagerService);
     auth = inject(AuthService);
     router = inject(Router);
@@ -52,14 +52,14 @@ export class ManagerProjectDetailComponent {
         effect(() => {
             const id = this.id();
             if (id) {
-                this.projectService.loadProject(id);
-                this.managerService.loadProjectOrders(id);
+                this.groupBuyService.loadGroupBuy(id);
+                this.managerService.loadGroupBuyOrders(id);
             }
         });
     }
 
-    project = this.projectService.currentProject;
-    products = this.projectService.currentProducts;
+    project = this.groupBuyService.currentGroupBuy;
+    products = this.groupBuyService.currentProducts;
     orders = this.managerService.orders;
 
     // Filter out cancelled/invalid orders for stats
@@ -143,7 +143,7 @@ export class ManagerProjectDetailComponent {
 
         if (!confirmed) return;
 
-        this.projectService.updateProject(
+        this.groupBuyService.updateGroupBuy(
             p.id,
             p.title,
             p.description,

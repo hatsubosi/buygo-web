@@ -2,10 +2,10 @@ import { Component, inject, input, computed, signal, effect, ChangeDetectionStra
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProjectService } from '../../../core/project/project.service';
+import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
-import { Order, OrderItemStatus } from '../../../core/api/api/v1/project_pb';
+import { Order, OrderItemStatus } from '../../../core/api/api/v1/groupbuy_pb';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 
 @Component({
@@ -16,12 +16,12 @@ import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
     styleUrl: "./user-order-detail.component.css"
 })
 export class UserOrderDetailComponent {
-    projectService = inject(ProjectService);
+    groupBuyService = inject(GroupBuyService);
     router = inject(Router);
     toast = inject(ToastService);
     id = input<string>();
 
-    orders = this.projectService.myOrders;
+    orders = this.groupBuyService.myOrders;
     order = computed(() => this.orders().find(o => o.id === this.id()));
 
     isEditable = computed(() => {
@@ -67,7 +67,7 @@ export class UserOrderDetailComponent {
         effect(() => {
             // Load if empty
             if (this.orders().length === 0) {
-                this.projectService.loadMyOrders();
+                this.groupBuyService.loadMyOrders();
             }
         });
 
@@ -119,7 +119,7 @@ export class UserOrderDetailComponent {
 
 
         effect(() => {
-            if (this.projectService.updatingOrder() === false && !this.projectService.updateOrderError()) {
+            if (this.groupBuyService.updatingOrder() === false && !this.groupBuyService.updateOrderError()) {
                 // Success - close forms
                 this.isEditingItems.set(false);
                 this.isEditingPayment.set(false);
@@ -130,7 +130,7 @@ export class UserOrderDetailComponent {
     navigateToProject() {
         const o = this.order();
         if (o) {
-            this.router.navigate(['/project', o.projectId], { queryParams: { edit: 'true' } });
+            this.router.navigate(['/project', o.groupBuyId], { queryParams: { edit: 'true' } });
         }
     }
 
@@ -181,7 +181,7 @@ export class UserOrderDetailComponent {
         // Let's cast or ensure properties exist.
         const startItems = this.currentItems();
         const itemsToSave: any[] = startItems.map(i => ({
-            projectId: this.order()!.projectId,
+            projectId: this.order()!.groupBuyId,
             productId: i.productId,
             specId: i.specId,
             quantity: i.quantity,
@@ -192,7 +192,7 @@ export class UserOrderDetailComponent {
             maxQuantity: 0
         }));
 
-        this.projectService.updateUserOrder(this.order()!.id, itemsToSave, this.note);
+        this.groupBuyService.updateUserOrder(this.order()!.id, itemsToSave, this.note);
     }
 
 
@@ -216,7 +216,7 @@ export class UserOrderDetailComponent {
     async savePayment() {
         if (!this.order()) return;
         try {
-            await this.projectService.updatePaymentInfoAsync(
+            await this.groupBuyService.updatePaymentInfoAsync(
                 this.order()!.id,
                 this.paymentMethod,
                 this.accountLast5,
@@ -226,7 +226,7 @@ export class UserOrderDetailComponent {
                 this.paymentAmount
             );
             // Reload to reflect changes if not auto-updated by service effect (service implementation of updatePaymentInfoAsync assumes success but doesn't auto-refresh store unless we call loadMyOrders)
-            this.projectService.loadMyOrders();
+            this.groupBuyService.loadMyOrders();
             this.isEditingPayment.set(false);
         } catch (err) {
             console.error(err);
