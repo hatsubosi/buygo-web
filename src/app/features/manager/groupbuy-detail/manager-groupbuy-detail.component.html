@@ -22,7 +22,7 @@
                 <a [routerLink]="['/project', p.id]" target="_blank">
                     <app-ui-btn variant="outline" icon="open_in_new">View Public Page</app-ui-btn>
                 </a>
-                <a [routerLink]="['/manager/project', p.id, 'edit']">
+                <a [routerLink]="['/manager/groupbuy', p.id, 'edit']">
                     <app-ui-btn variant="primary" icon="edit">Edit Project</app-ui-btn>
                 </a>
                 @if (p.status === 1) {
@@ -100,11 +100,11 @@
                 <div class="rounded-xl border border-white/10 bg-white/5 p-6">
                     <h2 class="mb-4 text-lg font-bold text-white">Quick Actions</h2>
                     <div class="flex flex-col gap-3">
-                        <a [routerLink]="['/manager/project', p.id, 'orders']" class="w-full">
+                        <a [routerLink]="['/manager/groupbuy', p.id, 'orders']" class="w-full">
                             <app-ui-btn class="w-full" variant="outline" customClass="w-full justify-center"
                                 icon="receipt_long">View Orders</app-ui-btn>
                         </a>
-                        <a [routerLink]="['/manager/project', p.id, 'fulfillment']" class="w-full">
+                        <a [routerLink]="['/manager/groupbuy', p.id, 'fulfillment']" class="w-full">
                             <app-ui-btn class="w-full" variant="outline" customClass="w-full justify-center"
                                 icon="local_shipping">Fulfillment Dashboard</app-ui-btn>
                         </a>

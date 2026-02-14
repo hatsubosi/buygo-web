@@ -7,31 +7,31 @@ export const MANAGER_ROUTES: Routes = [
         loadComponent: () => import('./dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent)
     },
     {
-        path: 'project/create',
+        path: 'groupbuy/create',
         loadComponent: () => import('./groupbuy-form/groupbuy-form.component').then(m => m.GroupBuyFormComponent)
     },
     {
-        path: 'project/:id/products',
+        path: 'groupbuy/:id/products',
         loadComponent: () => import('./product-list/manager-product-list.component').then(m => m.ManagerProductListComponent)
     },
     {
-        path: 'project/:id',
+        path: 'groupbuy/:id',
         loadComponent: () => import('./groupbuy-detail/manager-groupbuy-detail.component').then(m => m.ManagerGroupBuyDetailComponent)
     },
     {
-        path: 'project/:id/edit',
+        path: 'groupbuy/:id/edit',
         loadComponent: () => import('./groupbuy-form/groupbuy-form.component').then(m => m.GroupBuyFormComponent)
     },
     {
-        path: 'project/:id/orders',
+        path: 'groupbuy/:id/orders',
         component: OrderListComponent
     },
     {
-        path: 'project/:id/orders/:orderId',
+        path: 'groupbuy/:id/orders/:orderId',
         loadComponent: () => import('./order-detail/manager-order-detail.component').then(m => m.ManagerOrderDetailComponent)
     },
     {
-        path: 'project/:id/fulfillment',
+        path: 'groupbuy/:id/fulfillment',
         loadComponent: () => import('./status-dashboard/status-dashboard.component').then(m => m.StatusDashboardComponent)
     },
     {

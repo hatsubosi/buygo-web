@@ -26,7 +26,7 @@ export class GroupBuyFormComponent {
     id = input<string>(); // Router param for Edit Mode
     isEditMode = signal(false);
 
-    backLink = computed(() => this.isEditMode() ? ['/manager/project', this.id()] : ['/manager']);
+    backLink = computed(() => this.isEditMode() ? ['/manager/groupbuy', this.id()] : ['/manager']);
 
     form: FormGroup = this.fb.group({
         title: ['', [Validators.required, Validators.minLength(3)]],
@@ -223,7 +223,7 @@ export class GroupBuyFormComponent {
 
         if (this.submitted && !loading && !error) {
             if (this.isEditMode()) {
-                this.router.navigate(['/manager/project', this.id()]);
+                this.router.navigate(['/manager/groupbuy', this.id()]);
             } else {
                 this.router.navigate(['/manager']);
             }

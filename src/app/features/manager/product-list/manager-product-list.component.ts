@@ -16,7 +16,7 @@ import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
         <div class="mb-8 flex items-center justify-between">
           <div>
             <div class="mb-2 flex items-center gap-2">
-                <a [routerLink]="['/manager/project', id()]" class="text-gray-400 hover:text-white">
+                <a [routerLink]="['/manager/groupbuy', id()]" class="text-gray-400 hover:text-white">
                     <span class="material-icons text-sm">arrow_back</span> Back to Project
                 </a>
             </div>

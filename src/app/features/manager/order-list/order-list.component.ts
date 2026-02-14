@@ -18,7 +18,7 @@ import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/groupbu
             <div class="mb-8 flex items-center justify-between">
                 <div>
                     <div class="mb-2 flex items-center gap-2">
-                        <a [routerLink]="['/manager/project', groupBuyId()]" class="text-gray-400 hover:text-white">
+                        <a [routerLink]="['/manager/groupbuy', groupBuyId()]" class="text-gray-400 hover:text-white">
                             <span class="material-icons text-sm">arrow_back</span> Back to Project
                         </a>
                     </div>
@@ -118,7 +118,7 @@ import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/groupbu
                                                     Confirm Pay
                                                 </app-ui-btn>
                                             }
-                                            <a [routerLink]="['/manager/project', groupBuyId(), 'orders', order.id]" class="ml-2 inline-block">
+                                            <a [routerLink]="['/manager/groupbuy', groupBuyId(), 'orders', order.id]" class="ml-2 inline-block">
                                                 <app-ui-btn variant="ghost" size="sm">Manage</app-ui-btn>
                                             </a>
                                         </td>

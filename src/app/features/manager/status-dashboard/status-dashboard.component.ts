@@ -33,7 +33,7 @@ interface StatusRow {
             <div class="mb-8 flex items-center justify-between">
                 <div>
                    <div class="mb-2 flex items-center gap-2">
-                        <a [routerLink]="['/manager/project', id()]" class="text-gray-400 hover:text-white flex items-center gap-1">
+                        <a [routerLink]="['/manager/groupbuy', id()]" class="text-gray-400 hover:text-white flex items-center gap-1">
                             <span class="material-icons text-sm">arrow_back</span> Back to Project
                         </a>
                    </div>

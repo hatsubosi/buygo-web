@@ -22,7 +22,7 @@ describe('OrderConfirmationComponent', () => {
             providers: [
                 { provide: GroupBuyService, useValue: mockGroupBuyService },
                 provideRouter([
-                    { path: 'project/:id', component: OrderConfirmationComponent },
+                    { path: 'groupbuy/:id', component: OrderConfirmationComponent },
                     { path: 'user/orders/:id', component: OrderConfirmationComponent },
                     { path: 'user/orders', component: OrderConfirmationComponent },
                     { path: '**', component: OrderConfirmationComponent },
