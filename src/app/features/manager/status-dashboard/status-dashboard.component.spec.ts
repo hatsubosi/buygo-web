@@ -11,7 +11,7 @@ describe('StatusDashboardComponent', () => {
     let fixture: ComponentFixture<StatusDashboardComponent>;
 
     const mockProjectService = {
-        currentProject: signal(null),
+        currentGroupBuy: signal(null),
         currentProducts: signal([]),
         loadProject: async () => { }
     };

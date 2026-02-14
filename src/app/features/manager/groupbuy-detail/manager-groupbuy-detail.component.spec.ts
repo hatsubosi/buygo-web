@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ManagerGroupBuyDetailComponent } from './manager-project-detail.component';
+import { ManagerGroupBuyDetailComponent } from './manager-groupbuy-detail.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ManagerService } from '../../../core/manager/manager.service';
@@ -12,7 +12,7 @@ describe('ManagerGroupBuyDetailComponent', () => {
     let fixture: ComponentFixture<ManagerGroupBuyDetailComponent>;
 
     const mockProjectService = {
-        currentProject: signal(null),
+        currentGroupBuy: signal(null),
         currentProducts: signal([]),
         loadProject: async () => { },
         updateProject: async () => { }

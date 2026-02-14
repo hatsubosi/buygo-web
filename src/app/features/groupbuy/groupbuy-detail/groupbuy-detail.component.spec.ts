@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProjectDetailComponent } from './project-detail.component';
+import { GroupBuyDetailComponent } from './groupbuy-detail.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
@@ -7,14 +7,14 @@ import { ActivatedRoute, provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { of } from 'rxjs';
 
-describe('ProjectDetailComponent', () => {
-  let component: ProjectDetailComponent;
-  let fixture: ComponentFixture<ProjectDetailComponent>;
+describe('GroupBuyDetailComponent', () => {
+  let component: GroupBuyDetailComponent;
+  let fixture: ComponentFixture<GroupBuyDetailComponent>;
 
   const mockProjectService = {
-    currentProject: signal(null),
+    currentGroupBuy: signal(null),
     isLoadingDetail: signal(false),
-    myProjectOrder: signal(null),
+    myGroupBuyOrder: signal(null),
     cart: signal([]),
     loadProject: () => { },
     loadExistingOrderIntoCart: async () => { },
@@ -36,7 +36,7 @@ describe('ProjectDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProjectDetailComponent],
+      imports: [GroupBuyDetailComponent],
       providers: [
         { provide: GroupBuyService, useValue: mockProjectService },
         { provide: AuthService, useValue: mockAuthService },
@@ -53,7 +53,7 @@ describe('ProjectDetailComponent', () => {
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(ProjectDetailComponent);
+    fixture = TestBed.createComponent(GroupBuyDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

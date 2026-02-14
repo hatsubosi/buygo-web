@@ -9,7 +9,7 @@ describe('ManagerProductListComponent', () => {
     let fixture: ComponentFixture<ManagerProductListComponent>;
 
     const mockProjectService = {
-        currentProject: signal(null),
+        currentGroupBuy: signal(null),
         currentProducts: signal([]),
         isActionLoading: signal(false),
         actionError: signal(null),

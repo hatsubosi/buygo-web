@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { GroupBuyService } from './project.service';
+import { GroupBuyService } from './groupbuy.service';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { AuthService } from '../auth/auth.service';
 import { TransportToken } from '../providers/transport.token';
 import { GroupBuyActions } from './groupbuy.actions';
 import { signal } from '@angular/core';
-import { Product, ProductSpec, Project, Order } from '../api/api/v1/groupbuy_pb';
+import { Product, ProductSpec, GroupBuy, Order } from '../api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
 
-describe('ProjectService', () => {
-    let service: ProjectService;
+describe('GroupBuyService', () => {
+    let service: GroupBuyService;
     let store: MockStore;
     const mockAuthService = {
         user: signal(null)
@@ -19,7 +19,7 @@ describe('ProjectService', () => {
     const initialState = {
         groupBuy: {
             groupBuys: [],
-            currentProject: null,
+            currentGroupBuy: null,
             loading: false,
             detailLoading: false,
             myOrders: [],
@@ -30,7 +30,7 @@ describe('ProjectService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                ProjectService,
+                GroupBuyService,
                 provideMockStore({ initialState }),
                 { provide: AuthService, useValue: mockAuthService },
                 { provide: TransportToken, useValue: mockTransport }
@@ -103,7 +103,7 @@ describe('ProjectService', () => {
 
             const cart = service.cart();
             expect(cart.length).toBe(1);
-            expect(cart[0].projectId).toBe('proj2');
+            expect(cart[0].groupBuyId).toBe('proj2');
         });
 
         it('should remove item from cart', () => {
@@ -129,13 +129,13 @@ describe('ProjectService', () => {
 
     describe('Store Interactions', () => {
         it('should dispatch loadProjects action', () => {
-            service.loadProjects();
-            expect(store.dispatch).toHaveBeenCalledWith(GroupBuyActions.loadProjects());
+            service.loadGroupBuys();
+            expect(store.dispatch).toHaveBeenCalledWith(GroupBuyActions.loadGroupBuys());
         });
 
         it('should dispatch loadProjectDetail action', () => {
-            service.loadProject('123');
-            expect(store.dispatch).toHaveBeenCalledWith(GroupBuyActions.loadProjectDetail({ id: '123' }));
+            service.loadGroupBuy('123');
+            expect(store.dispatch).toHaveBeenCalledWith(GroupBuyActions.loadGroupBuyDetail({ id: '123' }));
         });
     });
 
@@ -153,7 +153,7 @@ describe('ProjectService', () => {
 
             await service.loadExistingOrderIntoCart('proj1');
 
-            expect(service.myProjectOrder()).toEqual(mockOrder);
+            expect(service.myGroupBuyOrder()).toEqual(mockOrder);
         });
     });
 
@@ -189,7 +189,7 @@ describe('ProjectService', () => {
                 ],
                 paymentStatus: 1
             });
-            service.myProjectOrder.set(order);
+            service.myGroupBuyOrder.set(order);
             service.editSubmittedOrder();
             const cart = service.cart();
             expect(cart.length).toBe(1);

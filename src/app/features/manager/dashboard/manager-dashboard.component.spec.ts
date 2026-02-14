@@ -17,7 +17,7 @@ describe('ManagerDashboardComponent', () => {
     };
 
     const mockProjectService = {
-        managerProjects: signal([]),
+        managerGroupBuys: signal([]),
         loadManagerProjects: async () => { }
     };
 

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProjectCheckoutComponent } from './project-checkout.component';
+import { GroupBuyCheckoutComponent } from './groupbuy-checkout.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { provideRouter } from '@angular/router';
@@ -7,12 +7,12 @@ import { signal } from '@angular/core';
 import { ShippingType } from '../../../core/api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
 
-describe('ProjectCheckoutComponent', () => {
-    let component: ProjectCheckoutComponent;
-    let fixture: ComponentFixture<ProjectCheckoutComponent>;
+describe('GroupBuyCheckoutComponent', () => {
+    let component: GroupBuyCheckoutComponent;
+    let fixture: ComponentFixture<GroupBuyCheckoutComponent>;
 
     const mockProjectService = {
-        currentProject: signal(null),
+        currentGroupBuy: signal(null),
         currentProducts: signal([]),
         cartItems: signal([]),
         cartTotal: signal(0),
@@ -36,15 +36,15 @@ describe('ProjectCheckoutComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ProjectCheckoutComponent],
+            imports: [GroupBuyCheckoutComponent],
             providers: [
                 { provide: GroupBuyService, useValue: mockProjectService },
                 { provide: ToastService, useValue: mockToastService },
-                provideRouter([{ path: '**', component: ProjectCheckoutComponent }])
+                provideRouter([{ path: '**', component: GroupBuyCheckoutComponent }])
             ]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ProjectCheckoutComponent);
+        fixture = TestBed.createComponent(GroupBuyCheckoutComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
 

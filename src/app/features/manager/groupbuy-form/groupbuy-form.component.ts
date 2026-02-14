@@ -16,7 +16,7 @@ import { Product, ProductSpec, RoundingConfig, RoundingMethod, ShippingConfig, S
     templateUrl: './groupbuy-form.component.html',
     styleUrl: './groupbuy-form.component.css'
 })
-export class ProjectFormComponent {
+export class GroupBuyFormComponent {
     groupBuyService = inject(GroupBuyService);
     fb = inject(FormBuilder);
     router = inject(Router);

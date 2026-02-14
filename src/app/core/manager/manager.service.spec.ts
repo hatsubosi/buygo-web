@@ -32,7 +32,7 @@ describe('ManagerService', () => {
             const mockOrders = [{ id: 'o1' }, { id: 'o2' }];
             vi.spyOn((service as any).client, 'listProjectOrders').mockResolvedValue({ orders: mockOrders });
 
-            await service.loadProjectOrders('proj-1');
+            await service.loadGroupBuyOrders('proj-1');
 
             expect(service.orders()).toEqual(mockOrders);
             expect(service.isLoading()).toBe(false);
@@ -42,7 +42,7 @@ describe('ManagerService', () => {
         it('should set error on failure', async () => {
             vi.spyOn((service as any).client, 'listProjectOrders').mockRejectedValue(new Error('Network error'));
 
-            await service.loadProjectOrders('proj-1');
+            await service.loadGroupBuyOrders('proj-1');
 
             expect(service.orders()).toEqual([]);
             expect(service.isLoading()).toBe(false);
@@ -54,7 +54,7 @@ describe('ManagerService', () => {
             const pendingPromise = new Promise(resolve => { resolvePromise = resolve; });
             vi.spyOn((service as any).client, 'listProjectOrders').mockReturnValue(pendingPromise);
 
-            const loadPromise = service.loadProjectOrders('proj-1');
+            const loadPromise = service.loadGroupBuyOrders('proj-1');
             expect(service.isLoading()).toBe(true);
 
             resolvePromise({ orders: [] });

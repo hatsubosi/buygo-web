@@ -19,7 +19,7 @@ describe('ManagerOrderDetailComponent', () => {
     };
 
     const mockProjectService = {
-        currentProject: signal(null),
+        currentGroupBuy: signal(null),
         currentProducts: signal([]),
         loadProject: async () => { },
         updateOrder: async () => { }

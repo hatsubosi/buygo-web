@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProjectListComponent } from './project-list.component';
+import { GroupBuyListComponent } from './groupbuy-list.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
 import { GroupBuyStatus } from '../../../core/api/api/v1/groupbuy_pb';
 
-describe('ProjectListComponent', () => {
-  let component: ProjectListComponent;
-  let fixture: ComponentFixture<ProjectListComponent>;
+describe('GroupBuyListComponent', () => {
+  let component: GroupBuyListComponent;
+  let fixture: ComponentFixture<GroupBuyListComponent>;
   let router: Router;
 
   const mockProjectService = {
@@ -24,7 +24,7 @@ describe('ProjectListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProjectListComponent],
+      imports: [GroupBuyListComponent],
       providers: [
         { provide: GroupBuyService, useValue: mockProjectService },
         { provide: AuthService, useValue: mockAuthService },
@@ -33,7 +33,7 @@ describe('ProjectListComponent', () => {
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(ProjectListComponent);
+    fixture = TestBed.createComponent(GroupBuyListComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     fixture.detectChanges();
@@ -48,7 +48,7 @@ describe('ProjectListComponent', () => {
     expect(component.getStatusLabel(GroupBuyStatus.DRAFT)).toBe('Draft');
     expect(component.getStatusLabel(GroupBuyStatus.ENDED)).toBe('Ended');
     expect(component.getStatusLabel(GroupBuyStatus.ARCHIVED)).toBe('Archived');
-    expect(component.getStatusLabel(99 as ProjectStatus)).toBe('Unknown');
+    expect(component.getStatusLabel(99 as GroupBuyStatus)).toBe('Unknown');
   });
 
   it('should navigate to project detail', () => {

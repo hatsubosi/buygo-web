@@ -10,7 +10,7 @@ describe('UserOrderDetailComponent', () => {
     let fixture: ComponentFixture<UserOrderDetailComponent>;
 
     const mockProjectService = {
-        currentProject: signal(null),
+        currentGroupBuy: signal(null),
         currentProducts: signal([]),
         myOrders: signal([]),
         loadingMyOrders: signal(false),

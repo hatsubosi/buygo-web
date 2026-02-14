@@ -11,7 +11,7 @@ describe('OrderConfirmationComponent', () => {
     let router: Router;
 
     const mockProjectService = {
-        currentProject: signal(null),
+        currentGroupBuy: signal(null),
         lastCreatedOrderId: signal(null),
         loadProject: async () => { }
     };

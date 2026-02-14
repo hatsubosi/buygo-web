@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProjectFormComponent } from './project-form.component';
+import { GroupBuyFormComponent } from './groupbuy-form.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 
-describe('ProjectFormComponent', () => {
-    let component: ProjectFormComponent;
-    let fixture: ComponentFixture<ProjectFormComponent>;
+describe('GroupBuyFormComponent', () => {
+    let component: GroupBuyFormComponent;
+    let fixture: ComponentFixture<GroupBuyFormComponent>;
 
     const mockProjectService = {
-        currentProject: signal(null),
+        currentGroupBuy: signal(null),
         currentProducts: signal([]),
         isActionLoading: signal(false),
         actionError: signal(null),
@@ -24,14 +24,14 @@ describe('ProjectFormComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ProjectFormComponent],
+            imports: [GroupBuyFormComponent],
             providers: [
                 { provide: GroupBuyService, useValue: mockProjectService },
                 provideRouter([])
             ]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ProjectFormComponent);
+        fixture = TestBed.createComponent(GroupBuyFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
