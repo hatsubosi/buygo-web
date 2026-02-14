@@ -30,7 +30,7 @@ describe('ManagerService', () => {
     describe('loadProjectOrders', () => {
         it('should set orders on success', async () => {
             const mockOrders = [{ id: 'o1' }, { id: 'o2' }];
-            vi.spyOn((service as any).client, 'listProjectOrders').mockResolvedValue({ orders: mockOrders });
+            vi.spyOn((service as any).client, 'listGroupBuyOrders').mockResolvedValue({ orders: mockOrders });
 
             await service.loadGroupBuyOrders('proj-1');
 
@@ -40,7 +40,7 @@ describe('ManagerService', () => {
         });
 
         it('should set error on failure', async () => {
-            vi.spyOn((service as any).client, 'listProjectOrders').mockRejectedValue(new Error('Network error'));
+            vi.spyOn((service as any).client, 'listGroupBuyOrders').mockRejectedValue(new Error('Network error'));
 
             await service.loadGroupBuyOrders('proj-1');
 
@@ -52,7 +52,7 @@ describe('ManagerService', () => {
         it('should set isLoading during fetch', async () => {
             let resolvePromise!: (value: any) => void;
             const pendingPromise = new Promise(resolve => { resolvePromise = resolve; });
-            vi.spyOn((service as any).client, 'listProjectOrders').mockReturnValue(pendingPromise);
+            vi.spyOn((service as any).client, 'listGroupBuyOrders').mockReturnValue(pendingPromise);
 
             const loadPromise = service.loadGroupBuyOrders('proj-1');
             expect(service.isLoading()).toBe(true);
@@ -92,7 +92,7 @@ describe('ManagerService', () => {
             const result = await service.batchUpdateStatus('proj-1', 'spec-1', 2, 10);
 
             expect(spy).toHaveBeenCalledWith({
-                projectId: 'proj-1',
+                groupBuyId: 'proj-1',
                 specId: 'spec-1',
                 targetStatus: 2,
                 count: 10,

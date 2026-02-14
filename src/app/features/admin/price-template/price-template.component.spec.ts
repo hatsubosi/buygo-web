@@ -8,7 +8,7 @@ describe('PriceTemplateComponent', () => {
     let component: PriceTemplateComponent;
     let fixture: ComponentFixture<PriceTemplateComponent>;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         listPriceTemplates: async () => [],
         createPriceTemplate: async () => { },
         updatePriceTemplate: async () => { },
@@ -23,7 +23,7 @@ describe('PriceTemplateComponent', () => {
         await TestBed.configureTestingModule({
             imports: [PriceTemplateComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 { provide: ToastService, useValue: mockToastService }
             ]
         }).compileComponents();

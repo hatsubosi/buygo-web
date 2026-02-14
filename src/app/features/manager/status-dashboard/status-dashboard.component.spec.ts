@@ -10,7 +10,7 @@ describe('StatusDashboardComponent', () => {
     let component: StatusDashboardComponent;
     let fixture: ComponentFixture<StatusDashboardComponent>;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         currentGroupBuy: signal(null),
         currentProducts: signal([]),
         loadProject: async () => { }
@@ -30,7 +30,7 @@ describe('StatusDashboardComponent', () => {
         await TestBed.configureTestingModule({
             imports: [StatusDashboardComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 { provide: ManagerService, useValue: mockManagerService },
                 { provide: ToastService, useValue: mockToastService },
                 provideRouter([])

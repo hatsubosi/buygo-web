@@ -11,12 +11,12 @@ describe('GroupBuyDetailComponent', () => {
   let component: GroupBuyDetailComponent;
   let fixture: ComponentFixture<GroupBuyDetailComponent>;
 
-  const mockProjectService = {
+  const mockGroupBuyService = {
     currentGroupBuy: signal(null),
     isLoadingDetail: signal(false),
     myGroupBuyOrder: signal(null),
     cart: signal([]),
-    loadProject: () => { },
+    loadGroupBuy: () => { },
     loadExistingOrderIntoCart: async () => { },
     addToCart: () => { },
     removeFromCart: () => { },
@@ -38,7 +38,7 @@ describe('GroupBuyDetailComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GroupBuyDetailComponent],
       providers: [
-        { provide: GroupBuyService, useValue: mockProjectService },
+        { provide: GroupBuyService, useValue: mockGroupBuyService },
         { provide: AuthService, useValue: mockAuthService },
         { provide: ToastService, useValue: mockToastService },
         provideRouter([]),

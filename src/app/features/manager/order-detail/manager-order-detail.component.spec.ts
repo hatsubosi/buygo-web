@@ -18,7 +18,7 @@ describe('ManagerOrderDetailComponent', () => {
         confirmPayment: async () => { }
     };
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         currentGroupBuy: signal(null),
         currentProducts: signal([]),
         loadProject: async () => { },
@@ -34,7 +34,7 @@ describe('ManagerOrderDetailComponent', () => {
             imports: [ManagerOrderDetailComponent],
             providers: [
                 { provide: ManagerService, useValue: mockManagerService },
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 { provide: ToastService, useValue: mockToastService },
                 provideRouter([{ path: '**', component: ManagerOrderDetailComponent }])
             ]

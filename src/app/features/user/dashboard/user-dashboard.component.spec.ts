@@ -12,7 +12,7 @@ describe('UserDashboardComponent', () => {
     let component: UserDashboardComponent;
     let fixture: ComponentFixture<UserDashboardComponent>;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         myOrders: signal([]),
         loadMyOrders: async () => { }
     };
@@ -29,7 +29,7 @@ describe('UserDashboardComponent', () => {
         await TestBed.configureTestingModule({
             imports: [UserDashboardComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 { provide: EventService, useValue: mockEventService },
                 { provide: AuthService, useValue: mockAuthService },
                 provideRouter([])

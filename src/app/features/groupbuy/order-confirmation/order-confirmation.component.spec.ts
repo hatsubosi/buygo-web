@@ -10,7 +10,7 @@ describe('OrderConfirmationComponent', () => {
     let fixture: ComponentFixture<OrderConfirmationComponent>;
     let router: Router;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         currentGroupBuy: signal(null),
         lastCreatedOrderId: signal(null),
         loadProject: async () => { }
@@ -20,7 +20,7 @@ describe('OrderConfirmationComponent', () => {
         await TestBed.configureTestingModule({
             imports: [OrderConfirmationComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 provideRouter([
                     { path: 'project/:id', component: OrderConfirmationComponent },
                     { path: 'user/orders/:id', component: OrderConfirmationComponent },

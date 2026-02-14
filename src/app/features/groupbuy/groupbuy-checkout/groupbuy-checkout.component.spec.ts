@@ -11,7 +11,7 @@ describe('GroupBuyCheckoutComponent', () => {
     let component: GroupBuyCheckoutComponent;
     let fixture: ComponentFixture<GroupBuyCheckoutComponent>;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         currentGroupBuy: signal(null),
         currentProducts: signal([]),
         cartItems: signal([]),
@@ -38,7 +38,7 @@ describe('GroupBuyCheckoutComponent', () => {
         await TestBed.configureTestingModule({
             imports: [GroupBuyCheckoutComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 { provide: ToastService, useValue: mockToastService },
                 provideRouter([{ path: '**', component: GroupBuyCheckoutComponent }])
             ]
@@ -83,7 +83,7 @@ describe('GroupBuyCheckoutComponent', () => {
 
         it('should show error when shipping method not selected', () => {
             component.contactInfo = 'test@test.com';
-            mockProjectService.currentGroupBuy.set({
+            mockGroupBuyService.currentGroupBuy.set({
                 id: 'p1',
                 shippingConfigs: [{ id: 'sc1', name: 'Standard', type: 2, price: BigInt(100) }]
             } as any);
@@ -95,7 +95,7 @@ describe('GroupBuyCheckoutComponent', () => {
         it('should show error when address missing for non-meetup', () => {
             component.contactInfo = 'test@test.com';
             component.shippingAddress = '';
-            mockProjectService.currentGroupBuy.set({ id: 'p1', shippingConfigs: [] } as any);
+            mockGroupBuyService.currentGroupBuy.set({ id: 'p1', shippingConfigs: [] } as any);
             component.submitOrder();
             expect(mockToastService.show).toHaveBeenCalledWith('Please fill in Shipping Address', 'error');
         });
@@ -104,18 +104,18 @@ describe('GroupBuyCheckoutComponent', () => {
     describe('updateQuantity', () => {
         it('should remove item when quantity reaches 0', () => {
             component.updateQuantity({ productId: 'p1', specId: 's1', quantity: 1 }, -1);
-            expect(mockProjectService.removeFromCart).toHaveBeenCalledWith('p1', 's1');
+            expect(mockGroupBuyService.removeFromCart).toHaveBeenCalledWith('p1', 's1');
         });
 
         it('should update quantity when above 0', () => {
             component.updateQuantity({ productId: 'p1', specId: 's1', quantity: 2 }, 1);
-            expect(mockProjectService.updateCartQuantity).toHaveBeenCalledWith('p1', 's1', 3);
+            expect(mockGroupBuyService.updateCartQuantity).toHaveBeenCalledWith('p1', 's1', 3);
         });
     });
 
     describe('isMeetup and address labels', () => {
         it('should detect meetup config', () => {
-            mockProjectService.currentGroupBuy.set({
+            mockGroupBuyService.currentGroupBuy.set({
                 id: 'p1',
                 shippingConfigs: [{ id: 'sc1', type: ShippingType.MEETUP }]
             } as any);
@@ -124,7 +124,7 @@ describe('GroupBuyCheckoutComponent', () => {
         });
 
         it('should return delivery address label', () => {
-            mockProjectService.currentGroupBuy.set({
+            mockGroupBuyService.currentGroupBuy.set({
                 id: 'p1',
                 shippingConfigs: [{ id: 'sc1', type: ShippingType.DELIVERY }]
             } as any);
@@ -133,7 +133,7 @@ describe('GroupBuyCheckoutComponent', () => {
         });
 
         it('should return store pickup placeholder', () => {
-            mockProjectService.currentGroupBuy.set({
+            mockGroupBuyService.currentGroupBuy.set({
                 id: 'p1',
                 shippingConfigs: [{ id: 'sc1', type: ShippingType.STORE_PICKUP }]
             } as any);

@@ -8,7 +8,7 @@ describe('CategoryManagementComponent', () => {
   let component: CategoryManagementComponent;
   let fixture: ComponentFixture<CategoryManagementComponent>;
 
-  const mockProjectService = {
+  const mockGroupBuyService = {
     listCategories: async () => [],
     createCategory: async () => { },
     listPriceTemplates: async () => [],
@@ -25,7 +25,7 @@ describe('CategoryManagementComponent', () => {
     await TestBed.configureTestingModule({
       imports: [CategoryManagementComponent],
       providers: [
-        { provide: GroupBuyService, useValue: mockProjectService },
+        { provide: GroupBuyService, useValue: mockGroupBuyService },
         { provide: ToastService, useValue: mockToastService }
       ]
     })

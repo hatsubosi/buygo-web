@@ -9,7 +9,7 @@ describe('UserOrderDetailComponent', () => {
     let component: UserOrderDetailComponent;
     let fixture: ComponentFixture<UserOrderDetailComponent>;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         currentGroupBuy: signal(null),
         currentProducts: signal([]),
         myOrders: signal([]),
@@ -33,7 +33,7 @@ describe('UserOrderDetailComponent', () => {
         await TestBed.configureTestingModule({
             imports: [UserOrderDetailComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 { provide: ToastService, useValue: mockToastService },
                 provideRouter([])
             ]

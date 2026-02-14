@@ -149,7 +149,7 @@ describe('GroupBuyService', () => {
             });
 
             // Mock client response
-            const clientSpy = vi.spyOn((service as any).client, 'getMyProjectOrder').mockResolvedValue({ order: mockOrder });
+            const clientSpy = vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockResolvedValue({ order: mockOrder });
 
             await service.loadExistingOrderIntoCart('proj1');
 

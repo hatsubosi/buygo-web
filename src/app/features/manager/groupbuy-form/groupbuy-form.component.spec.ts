@@ -8,7 +8,7 @@ describe('GroupBuyFormComponent', () => {
     let component: GroupBuyFormComponent;
     let fixture: ComponentFixture<GroupBuyFormComponent>;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         currentGroupBuy: signal(null),
         currentProducts: signal([]),
         isActionLoading: signal(false),
@@ -26,7 +26,7 @@ describe('GroupBuyFormComponent', () => {
         await TestBed.configureTestingModule({
             imports: [GroupBuyFormComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 provideRouter([])
             ]
         }).compileComponents();

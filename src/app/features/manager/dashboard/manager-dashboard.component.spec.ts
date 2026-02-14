@@ -16,7 +16,7 @@ describe('ManagerDashboardComponent', () => {
         isManager: signal(false)
     };
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         managerGroupBuys: signal([]),
         loadManagerProjects: async () => { }
     };
@@ -31,7 +31,7 @@ describe('ManagerDashboardComponent', () => {
             imports: [ManagerDashboardComponent],
             providers: [
                 { provide: AuthService, useValue: mockAuthService },
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 { provide: EventService, useValue: mockEventService },
                 provideRouter([])
             ]

@@ -11,7 +11,7 @@ describe('ManagerGroupBuyDetailComponent', () => {
     let component: ManagerGroupBuyDetailComponent;
     let fixture: ComponentFixture<ManagerGroupBuyDetailComponent>;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         currentGroupBuy: signal(null),
         currentProducts: signal([]),
         loadProject: async () => { },
@@ -35,7 +35,7 @@ describe('ManagerGroupBuyDetailComponent', () => {
         await TestBed.configureTestingModule({
             imports: [ManagerGroupBuyDetailComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 { provide: AuthService, useValue: mockAuthService },
                 { provide: ManagerService, useValue: mockManagerService },
                 { provide: ToastService, useValue: mockToastService },

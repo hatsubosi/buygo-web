@@ -11,10 +11,10 @@ describe('GroupBuyListComponent', () => {
   let fixture: ComponentFixture<GroupBuyListComponent>;
   let router: Router;
 
-  const mockProjectService = {
-    projects: signal([]),
+  const mockGroupBuyService = {
+    groupBuys: signal([]),
     isLoadingList: signal(false),
-    loadProjects: () => { }
+    loadGroupBuys: () => { }
   };
 
   const mockAuthService = {
@@ -26,7 +26,7 @@ describe('GroupBuyListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GroupBuyListComponent],
       providers: [
-        { provide: GroupBuyService, useValue: mockProjectService },
+        { provide: GroupBuyService, useValue: mockGroupBuyService },
         { provide: AuthService, useValue: mockAuthService },
         provideRouter([])
       ]

@@ -8,7 +8,7 @@ describe('ManagerProductListComponent', () => {
     let component: ManagerProductListComponent;
     let fixture: ComponentFixture<ManagerProductListComponent>;
 
-    const mockProjectService = {
+    const mockGroupBuyService = {
         currentGroupBuy: signal(null),
         currentProducts: signal([]),
         isActionLoading: signal(false),
@@ -21,7 +21,7 @@ describe('ManagerProductListComponent', () => {
         await TestBed.configureTestingModule({
             imports: [ManagerProductListComponent],
             providers: [
-                { provide: GroupBuyService, useValue: mockProjectService },
+                { provide: GroupBuyService, useValue: mockGroupBuyService },
                 provideRouter([])
             ]
         }).compileComponents();
