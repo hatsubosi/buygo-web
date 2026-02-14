@@ -8,7 +8,7 @@ export const MANAGER_ROUTES: Routes = [
     },
     {
         path: 'project/create',
-        loadComponent: () => import('./groupbuy-form/groupbuy-form.component').then(m => m.ProjectFormComponent)
+        loadComponent: () => import('./groupbuy-form/groupbuy-form.component').then(m => m.GroupBuyFormComponent)
     },
     {
         path: 'project/:id/products',
@@ -20,7 +20,7 @@ export const MANAGER_ROUTES: Routes = [
     },
     {
         path: 'project/:id/edit',
-        loadComponent: () => import('./groupbuy-form/groupbuy-form.component').then(m => m.ProjectFormComponent)
+        loadComponent: () => import('./groupbuy-form/groupbuy-form.component').then(m => m.GroupBuyFormComponent)
     },
     {
         path: 'project/:id/orders',
