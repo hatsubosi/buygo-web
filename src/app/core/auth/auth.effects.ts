@@ -65,7 +65,7 @@ export class AuthEffects {
             this.actions$.pipe(
                 ofType(AuthActions.loginSuccess),
                 tap(({ user, token, redirect }) => {
-                    console.log('Login success');
+
                     localStorage.setItem('auth_token', token);
                     localStorage.setItem('auth_user', JSON.stringify(user.toJson()));
 
@@ -85,7 +85,7 @@ export class AuthEffects {
             this.actions$.pipe(
                 ofType(AuthActions.logout),
                 tap(() => {
-                    console.log('Logging out');
+
                     localStorage.removeItem('auth_token');
                     localStorage.removeItem('auth_user');
 

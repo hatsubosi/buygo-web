@@ -12,45 +12,45 @@
 
 ### Phase 1: Foundation & Core
 - [x] **Project Setup**: Angular CLI, TailwindCSS, API Client Generation.
-- [ ] **Core Architecture**:
+- [x] **Core Architecture**:
     - `ApiModule`: ConnectRPC Transport configuration (Interceptors).
     - `AuthState`: NgRx Store for User Session & JWT.
     - `AuthService`: Facade exposing Signals from Store.
     - `Guard`: AuthGuard linked to Store state.
-- [ ] **Shared UI (Design System)**:
+- [x] **Shared UI (Design System)**:
     - `Layout`: Responsive Navbar (Glass effect), Sidenav.
     - `Components`: 
         - `Btn`: Gradient buttons with loading state.
         - `Card`: Glassmorphism container.
-        - `Badge`: Status indicators (Order/Project status).
+        - `Badge`: Status indicators (Order/GroupBuy status).
         - `Input`: Floated label inputs.
 
 ### Phase 2: Authentication
-- [ ] **Login Page**: 
+- [x] **Login Page**: 
     - Hero section background.
     - "Login with Line/Google" mock buttons.
     - Integration with `AuthService.Login`.
 
-### Phase 3: Project Domain (Group Buying)
-- [ ] **Project List**: Card grid with "Status" and "Deadline" countdown.
-- [ ] **Project Detail**:
+### Phase 3: GroupBuy Domain
+- [x] **GroupBuy List**: Card grid with "Status" and "Deadline" countdown.
+- [x] **GroupBuy Detail**:
     - Hero Image (Parallax).
     - Product List with "Add to Order" counters.
     - Dynamic Price Calculator (based on Rounding Config).
-- [ ] **Checkout**:
+- [x] **Checkout**:
     - Order Summary.
     - Contact/Shipping Form.
     - `CreateOrder` RPC integration.
 
 ### Phase 4: Dashboard (User)
-- [ ] **My Orders**:
+- [x] **My Orders**:
     - List with Status Timeline (Unordered -> ... -> Sent).
     - Payment Upload (Mock UI).
-- [ ] **My Registrations**:
+- [x] **My Registrations**:
     - Event signup status.
 
 ### Phase 5: Management Dashboard (Creator)
-- [ ] **Project Manager**:
+- [x] **GroupBuy Manager**:
     - **Batch Operations**: UI to "Receive items" and see Orders move status.
     - **Payment Verification**: Table of pending payments with "Confirm" action.
 
@@ -64,6 +64,7 @@
 - **Tools**:
     - `Vitest`: Fast unit testing.
     - `Protobuf-ES`: Mocking generated clients.
+    - `@vitest/coverage-v8`: Code coverage reporting.
 
 ## Design Aesthetic
 - **Theme**: Dark Mode focus.

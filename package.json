@@ -46,6 +46,7 @@
     "@connectrpc/connect": "^1.6.0",
     "@connectrpc/connect-web": "^1.6.0",
     "@connectrpc/protoc-gen-connect-es": "^1.6.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "autoprefixer": "^10.4.23",
     "jsdom": "^27.1.0",
     "postcss": "^8.5.6",

@@ -639,6 +639,36 @@ export class CreateEventRequest extends Message<CreateEventRequest> {
    */
   items: EventItem[] = [];
 
+  /**
+   * @generated from field: string location = 7;
+   */
+  location = "";
+
+  /**
+   * @generated from field: string cover_image_url = 8;
+   */
+  coverImageUrl = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp registration_deadline = 9;
+   */
+  registrationDeadline?: Timestamp;
+
+  /**
+   * @generated from field: repeated string payment_methods = 10;
+   */
+  paymentMethods: string[] = [];
+
+  /**
+   * @generated from field: bool allow_modification = 11;
+   */
+  allowModification = false;
+
+  /**
+   * @generated from field: repeated string manager_ids = 12;
+   */
+  managerIds: string[] = [];
+
   constructor(data?: PartialMessage<CreateEventRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -653,6 +683,12 @@ export class CreateEventRequest extends Message<CreateEventRequest> {
     { no: 4, name: "end_time", kind: "message", T: Timestamp },
     { no: 5, name: "discounts", kind: "message", T: DiscountRule, repeated: true },
     { no: 6, name: "items", kind: "message", T: EventItem, repeated: true },
+    { no: 7, name: "location", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "cover_image_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "registration_deadline", kind: "message", T: Timestamp },
+    { no: 10, name: "payment_methods", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 11, name: "allow_modification", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 12, name: "manager_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateEventRequest {
