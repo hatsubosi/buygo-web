@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { AuthActions } from './auth.actions';
-import { User, UserRole } from '../api/api/v1/auth_pb';
+import { User } from '../api/api/v1/auth_pb';
 
 export interface AuthState {
     user: User | null;
@@ -9,13 +9,10 @@ export interface AuthState {
     error: string | null;
 }
 
-const savedToken = localStorage.getItem('auth_token');
-const savedUser = localStorage.getItem('auth_user');
-
 export const initialState: AuthState = {
-    user: savedUser ? User.fromJson(JSON.parse(savedUser)) : null,
-    token: savedToken,
-    loading: false,
+    user: null,
+    token: null,
+    loading: true,
     error: null,
 };
 
@@ -32,6 +29,10 @@ export const authReducer = createReducer(
         ...state,
         loading: false,
         error,
+    })),
+    on(AuthActions.sessionCheckDone, (state) => ({
+        ...state,
+        loading: false,
     })),
     on(AuthActions.logout, (state) => ({
         ...state,

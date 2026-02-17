@@ -52,10 +52,10 @@ export class AuthEffects {
                         return AuthActions.loginSuccess({ user, token, redirect: false });
                     } catch {
                         localStorage.removeItem('auth_user'); // Clean up bad data
-                        return { type: 'NOOP' };
+                        return AuthActions.sessionCheckDone();
                     }
                 }
-                return { type: 'NOOP' };
+                return AuthActions.sessionCheckDone();
             })
         )
     );
