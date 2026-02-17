@@ -14,7 +14,7 @@ describe('GroupBuyFormComponent', () => {
         isActionLoading: signal(false),
         actionError: signal(null),
         loadProject: async () => { },
-        createProject: async () => ({ id: 'test' }),
+        createGroupBuy: async () => ({ id: 'test' }),
         updateProject: async () => { },
         addProduct: async () => { },
         listCategories: async () => [],
@@ -104,5 +104,29 @@ describe('GroupBuyFormComponent', () => {
             component.addShippingConfig();
             expect(component.shippingConfigs.length).toBe(before + 1);
         });
+    });
+    it('should call createGroupBuy with full payload on submit', () => {
+        component.form.patchValue({
+            title: 'Test GB',
+            description: 'Description must be long enough',
+            exchangeRate: 4.5,
+            sourceCurrency: 'USD'
+        });
+
+        const spy = vi.spyOn(mockGroupBuyService, 'createGroupBuy');
+        component.onSubmit();
+
+        expect(spy).toHaveBeenCalledWith(
+            'Test GB',
+            'Description must be long enough',
+            expect.any(Array), // products
+            expect.any(String), // coverImage
+            undefined, // deadline (or null/undefined)
+            expect.any(Array), // shippingConfigs
+            expect.any(Array), // managerIds
+            4.5, // exchangeRate
+            expect.anything(), // roundingConfig
+            'USD' // sourceCurrency
+        );
     });
 });

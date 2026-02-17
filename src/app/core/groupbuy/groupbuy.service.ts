@@ -313,8 +313,19 @@ export class GroupBuyService {
         this.store.dispatch(GroupBuyActions.updatePaymentInfo({ orderId, method, accountLast5 }));
     }
 
-    createGroupBuy(title: string, description: string) {
-        this.store.dispatch(GroupBuyActions.createGroupBuy({ title, description }));
+    createGroupBuy(title: string, description: string, products: Product[], coverImage: string, deadline: Date | undefined, shippingConfigs: ShippingConfig[], managerIds: string[], exchangeRate: number, roundingConfig: RoundingConfig | undefined, sourceCurrency: string) {
+        this.store.dispatch(GroupBuyActions.createGroupBuy({
+            title,
+            description,
+            products,
+            coverImage,
+            deadline,
+            shippingConfigs,
+            managerIds,
+            exchangeRate,
+            roundingConfig,
+            sourceCurrency
+        }));
     }
 
     updateGroupBuy(id: string, title: string, description: string, status: number, products: Product[], coverImage: string, deadline: Date | undefined, shippingConfigs: ShippingConfig[], managerIds?: string[], exchangeRate?: number, roundingConfig?: RoundingConfig, sourceCurrency?: string) {

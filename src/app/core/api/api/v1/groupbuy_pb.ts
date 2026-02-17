@@ -647,6 +647,46 @@ export class CreateGroupBuyRequest extends Message<CreateGroupBuyRequest> {
    */
   description = "";
 
+  /**
+   * @generated from field: repeated buygo.v1.Product products = 4;
+   */
+  products: Product[] = [];
+
+  /**
+   * @generated from field: string cover_image_url = 5;
+   */
+  coverImageUrl = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp deadline = 6;
+   */
+  deadline?: Timestamp;
+
+  /**
+   * @generated from field: repeated buygo.v1.ShippingConfig shipping_configs = 7;
+   */
+  shippingConfigs: ShippingConfig[] = [];
+
+  /**
+   * @generated from field: repeated string manager_ids = 8;
+   */
+  managerIds: string[] = [];
+
+  /**
+   * @generated from field: double exchange_rate = 9;
+   */
+  exchangeRate = 0;
+
+  /**
+   * @generated from field: buygo.v1.RoundingConfig rounding_config = 10;
+   */
+  roundingConfig?: RoundingConfig;
+
+  /**
+   * @generated from field: string source_currency = 11;
+   */
+  sourceCurrency = "";
+
   constructor(data?: PartialMessage<CreateGroupBuyRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -657,6 +697,14 @@ export class CreateGroupBuyRequest extends Message<CreateGroupBuyRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "products", kind: "message", T: Product, repeated: true },
+    { no: 5, name: "cover_image_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "deadline", kind: "message", T: Timestamp },
+    { no: 7, name: "shipping_configs", kind: "message", T: ShippingConfig, repeated: true },
+    { no: 8, name: "manager_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 9, name: "exchange_rate", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 10, name: "rounding_config", kind: "message", T: RoundingConfig },
+    { no: 11, name: "source_currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateGroupBuyRequest {

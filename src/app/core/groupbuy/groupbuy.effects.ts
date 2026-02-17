@@ -65,8 +65,19 @@ export class GroupBuyEffects {
     createGroupBuy$ = createEffect(() =>
         this.actions$.pipe(
             ofType(GroupBuyActions.createGroupBuy),
-            switchMap(({ title, description }) =>
-                this.client.createGroupBuy({ title, description }).then(
+            switchMap(({ title, description, products, coverImage, deadline, shippingConfigs, managerIds, exchangeRate, roundingConfig, sourceCurrency }) =>
+                this.client.createGroupBuy({
+                    title,
+                    description,
+                    products,
+                    coverImageUrl: coverImage,
+                    deadline: deadline ? Timestamp.fromDate(deadline) : undefined,
+                    shippingConfigs,
+                    managerIds,
+                    exchangeRate,
+                    roundingConfig,
+                    sourceCurrency
+                }).then(
                     (res: CreateGroupBuyResponse) => {
                         if (!res.groupBuy) throw new Error('No project returned');
                         return GroupBuyActions.createGroupBuySuccess({ groupBuy: res.groupBuy });

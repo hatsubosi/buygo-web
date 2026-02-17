@@ -121,7 +121,11 @@ describe('GroupBuy Reducer', () => {
         it('createGroupBuy should set actionLoading true and clear actionError', () => {
             const state = groupBuyReducer(
                 { ...initialState, actionError: 'old' },
-                GroupBuyActions.createGroupBuy({ title: 'T', description: 'D' }),
+                GroupBuyActions.createGroupBuy({
+                    title: 'T', description: 'D',
+                    products: [], coverImage: '', shippingConfigs: [], managerIds: [],
+                    exchangeRate: 0, sourceCurrency: '', roundingConfig: undefined, deadline: undefined
+                }),
             );
             expect(state.actionLoading).toBe(true);
             expect(state.actionError).toBeNull();

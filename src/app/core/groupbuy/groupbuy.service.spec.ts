@@ -5,7 +5,7 @@ import { AuthService } from '../auth/auth.service';
 import { TransportToken } from '../providers/transport.token';
 import { GroupBuyActions } from './groupbuy.actions';
 import { signal } from '@angular/core';
-import { Product, ProductSpec, GroupBuy, Order } from '../api/api/v1/groupbuy_pb';
+import { Product, ProductSpec, GroupBuy, Order, RoundingConfig } from '../api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
 
 describe('GroupBuyService', () => {
@@ -195,6 +195,42 @@ describe('GroupBuyService', () => {
             expect(cart.length).toBe(1);
             expect(cart[0].productId).toBe('p1');
             expect(cart[0].quantity).toBe(2);
+        });
+    });
+    describe('GroupBuy Creation', () => {
+        it('should create group buy with full payload', async () => {
+            const mockTitle = 'New GB';
+            const mockDesc = 'Desc';
+            const mockProducts = [new Product({ name: 'P1' })];
+            const mockSettings = {
+                exchangeRate: 5.0,
+                roundingConfig: new RoundingConfig({ method: 1, digit: 0 }),
+                sourceCurrency: 'USD',
+                deadline: undefined,
+                coverImage: 'img.jpg',
+                shippingConfigs: [],
+                managerIds: []
+            };
+
+            const mockResponse = new GroupBuy({ id: 'gb1', title: mockTitle });
+
+            // Spy on client
+            const clientSpy = vi.spyOn((service as any).client, 'createGroupBuy').mockResolvedValue({ groupBuy: mockResponse });
+
+            await service.createGroupBuy(mockTitle, mockDesc, mockProducts, mockSettings.coverImage, mockSettings.deadline, mockSettings.shippingConfigs, mockSettings.managerIds, mockSettings.exchangeRate, mockSettings.roundingConfig, mockSettings.sourceCurrency);
+
+            expect(store.dispatch).toHaveBeenCalledWith(GroupBuyActions.createGroupBuy({
+                title: mockTitle,
+                description: mockDesc,
+                products: mockProducts,
+                coverImage: mockSettings.coverImage,
+                deadline: mockSettings.deadline,
+                shippingConfigs: mockSettings.shippingConfigs,
+                managerIds: mockSettings.managerIds,
+                exchangeRate: mockSettings.exchangeRate,
+                roundingConfig: mockSettings.roundingConfig,
+                sourceCurrency: mockSettings.sourceCurrency
+            }));
         });
     });
 });

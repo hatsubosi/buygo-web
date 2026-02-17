@@ -391,14 +391,27 @@ export class GroupBuyFormComponent {
                 );
             }
         } else {
-            this.groupBuyService.createGroupBuy(val.title, val.description);
-            // We can't set currency/rate during createProject yet (API limits creation to title/desc usually)
-            // But wait, user requirement says "Update Project Entity". 
-            // If CreateProjectRequest only has title/desc, we can't set it initially.
-            // Assuming "CreateProject" creates draft, then we update it?
-            // Actually, CreateProject usually returns the project.
-            // If the user wants to set this info immediately, we probably need to Update it immediately after creating?
-            // Or maybe CreateProjectRequest needs update?
+            // Create Mode
+            const deadline = val.deadline ? new Date(val.deadline) : undefined;
+            const managerIds = val.managerIds || [];
+
+            const roundingConfig = new RoundingConfig({
+                method: Number(val.roundingMethod) as RoundingMethod,
+                digit: Number(val.roundingDigit)
+            });
+
+            this.groupBuyService.createGroupBuy(
+                val.title,
+                val.description,
+                productsList,
+                val.coverImage,
+                deadline,
+                shippingConfigsList,
+                managerIds,
+                Number(val.exchangeRate),
+                roundingConfig,
+                val.sourceCurrency
+            );
         }
     }
 }

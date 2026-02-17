@@ -24,7 +24,18 @@ export const GroupBuyActions = createActionGroup({
         'Load GroupBuy Detail Failure': props<{ error: string }>(),
 
         // Create GroupBuy
-        'Create GroupBuy': props<{ title: string; description: string }>(),
+        'Create GroupBuy': props<{
+            title: string;
+            description: string;
+            products: Product[];
+            coverImage: string;
+            deadline?: Date;
+            shippingConfigs: ShippingConfig[];
+            managerIds: string[];
+            exchangeRate: number;
+            roundingConfig?: RoundingConfig;
+            sourceCurrency: string;
+        }>(),
         'Create GroupBuy Success': props<{ groupBuy: GroupBuy }>(),
         'Create GroupBuy Failure': props<{ error: string }>(),
 

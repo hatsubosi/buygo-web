@@ -129,7 +129,18 @@ describe('GroupBuyEffects', () => {
     describe('createGroupBuy$', () => {
         it('should dispatch createGroupBuySuccess on success', async () => {
             const groupBuy = new GroupBuy({ id: 'new1', title: 'New' });
-            setupEffect(of(GroupBuyActions.createGroupBuy({ title: 'New', description: 'Desc' })));
+            setupEffect(of(GroupBuyActions.createGroupBuy({
+                title: 'New',
+                description: 'Desc',
+                products: [],
+                coverImage: 'img',
+                deadline: undefined,
+                shippingConfigs: [],
+                managerIds: [],
+                exchangeRate: 4.5,
+                roundingConfig: undefined,
+                sourceCurrency: 'JPY'
+            })));
 
             vi.spyOn((effects as any).client, 'createGroupBuy').mockResolvedValue({ groupBuy });
 
@@ -138,7 +149,10 @@ describe('GroupBuyEffects', () => {
         });
 
         it('should dispatch createGroupBuyFailure when no groupBuy returned', async () => {
-            setupEffect(of(GroupBuyActions.createGroupBuy({ title: 'T', description: 'D' })));
+            setupEffect(of(GroupBuyActions.createGroupBuy({
+                title: 'T', description: 'D',
+                products: [], exchangeRate: 0, sourceCurrency: '', coverImage: '', shippingConfigs: [], managerIds: []
+            })));
 
             vi.spyOn((effects as any).client, 'createGroupBuy').mockResolvedValue({ groupBuy: null });
 
@@ -147,7 +161,10 @@ describe('GroupBuyEffects', () => {
         });
 
         it('should dispatch createGroupBuyFailure on error', async () => {
-            setupEffect(of(GroupBuyActions.createGroupBuy({ title: 'T', description: 'D' })));
+            setupEffect(of(GroupBuyActions.createGroupBuy({
+                title: 'T', description: 'D',
+                products: [], exchangeRate: 0, sourceCurrency: '', coverImage: '', shippingConfigs: [], managerIds: []
+            })));
 
             vi.spyOn((effects as any).client, 'createGroupBuy').mockRejectedValue(new Error('create err'));
 
