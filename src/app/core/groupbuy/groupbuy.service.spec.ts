@@ -7,6 +7,7 @@ import { GroupBuyActions } from './groupbuy.actions';
 import { signal } from '@angular/core';
 import { Product, ProductSpec, GroupBuy, Order, RoundingConfig } from '../api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
+import { CreateOrderItem } from '../api/api/v1/groupbuy_pb';
 
 describe('GroupBuyService', () => {
   let service: GroupBuyService;
@@ -176,6 +177,84 @@ describe('GroupBuyService', () => {
       await service.loadExistingOrderIntoCart('proj1');
 
       expect(service.myGroupBuyOrder()).toEqual(mockOrder);
+      expect(clientSpy).toHaveBeenCalledWith({ groupBuyId: 'proj1' });
+    });
+
+    it('should submit order by creating new order when no existing order id', async () => {
+      const createOrderSpy = vi
+        .spyOn((service as any).client, 'createOrder')
+        .mockResolvedValue({ orderId: 'order-new' });
+      const getMyOrderSpy = vi
+        .spyOn((service as any).client, 'getMyGroupBuyOrder')
+        .mockResolvedValue({ order: null });
+      const loadMyOrdersSpy = vi.spyOn(service, 'loadMyOrders');
+
+      await service.submitOrder('proj1', 'line:abc', 'addr', [
+        {
+          groupBuyId: 'proj1',
+          productId: 'p1',
+          specId: 's1',
+          quantity: 2,
+          productName: 'P1',
+          specName: 'S1',
+          price: 100,
+          maxQuantity: 10,
+        },
+      ]);
+
+      expect(createOrderSpy).toHaveBeenCalledTimes(1);
+      expect(getMyOrderSpy).toHaveBeenCalledWith({ groupBuyId: 'proj1' });
+      expect(loadMyOrdersSpy).toHaveBeenCalled();
+      expect(service.lastCreatedOrderId()).toBe('order-new');
+      expect(service.submitOrderError()).toBeNull();
+      expect(service.isSubmittingOrder()).toBe(false);
+    });
+
+    it('should submit order by updating existing order', async () => {
+      service.existingOrderId.set('order-existing');
+      const updateOrderSpy = vi
+        .spyOn((service as any).client, 'updateOrder')
+        .mockResolvedValue({ order: new Order({ id: 'order-existing' }) });
+      const updatePaymentSpy = vi
+        .spyOn((service as any).client, 'updatePaymentInfo')
+        .mockResolvedValue({});
+      vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockResolvedValue({ order: null });
+      const createOrderSpy = vi.spyOn((service as any).client, 'createOrder');
+
+      await service.submitOrder('proj1', 'line:abc', 'addr', []);
+
+      expect(createOrderSpy).not.toHaveBeenCalled();
+      expect(updateOrderSpy).toHaveBeenCalledTimes(1);
+      expect(updatePaymentSpy).toHaveBeenCalledWith({
+        orderId: 'order-existing',
+        contactInfo: 'line:abc',
+        shippingAddress: 'addr',
+      });
+      expect(service.lastCreatedOrderId()).toBe('order-existing');
+      expect(service.isSubmittingOrder()).toBe(false);
+    });
+
+    it('should set submitOrderError when submit order fails', async () => {
+      vi.spyOn((service as any).client, 'createOrder').mockRejectedValue(
+        new Error('submit failed'),
+      );
+
+      await service.submitOrder('proj1', 'line:abc', 'addr', []);
+
+      expect(service.submitOrderError()).toBe('submit failed');
+      expect(service.isSubmittingOrder()).toBe(false);
+    });
+
+    it('should set existingOrderId to null when getMyGroupBuyOrder fails', async () => {
+      service.existingOrderId.set('old-order');
+      vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockRejectedValue(
+        new Error('network'),
+      );
+
+      const order = await service.getMyGroupBuyOrder('proj1');
+
+      expect(order).toBeNull();
+      expect(service.existingOrderId()).toBeNull();
     });
   });
 
@@ -275,6 +354,114 @@ describe('GroupBuyService', () => {
           sourceCurrency: mockSettings.sourceCurrency,
         }),
       );
+    });
+  });
+
+  describe('Action Wrappers', () => {
+    it('should dispatch updateGroupBuy action', () => {
+      service.updateGroupBuy('gb1', 'title', 'desc', 2, [], 'cover', undefined, []);
+
+      expect(store.dispatch).toHaveBeenCalledWith(
+        GroupBuyActions.updateGroupBuy({
+          id: 'gb1',
+          title: 'title',
+          description: 'desc',
+          status: 2,
+          products: [],
+          coverImage: 'cover',
+          deadline: undefined,
+          shippingConfigs: [],
+          managerIds: undefined,
+          exchangeRate: undefined,
+          roundingConfig: undefined,
+          sourceCurrency: undefined,
+        }),
+      );
+    });
+
+    it('should dispatch addProduct action', () => {
+      service.addProduct('gb1', 'new product', 100, 0.23, ['size']);
+
+      expect(store.dispatch).toHaveBeenCalledWith(
+        GroupBuyActions.addProduct({
+          groupBuyId: 'gb1',
+          name: 'new product',
+          priceOriginal: 100,
+          exchangeRate: 0.23,
+          specs: ['size'],
+        }),
+      );
+    });
+  });
+
+  describe('Client Wrappers', () => {
+    it('should call updateOrder API', async () => {
+      const items = [new CreateOrderItem({ productId: 'p1', specId: 's1', quantity: 1 })];
+      const updateOrderSpy = vi.spyOn((service as any).client, 'updateOrder').mockResolvedValue({});
+
+      await service.updateOrder('o1', items, 'note');
+
+      expect(updateOrderSpy).toHaveBeenCalledWith({ orderId: 'o1', items, note: 'note' });
+    });
+
+    it('should rethrow friendly error when updateOrder fails', async () => {
+      vi.spyOn((service as any).client, 'updateOrder').mockRejectedValue(new Error('x'));
+
+      await expect(service.updateOrder('o1', [], 'note')).rejects.toThrow('x');
+    });
+
+    it('should call updatePaymentInfoAsync with paidAt and amount', async () => {
+      const updatePaymentSpy = vi
+        .spyOn((service as any).client, 'updatePaymentInfo')
+        .mockResolvedValue({});
+      const paidAt = new Date('2025-01-01T00:00:00.000Z');
+
+      await service.updatePaymentInfoAsync('o1', 'bank', '12345', 'line', 'addr', paidAt, 300);
+
+      expect(updatePaymentSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderId: 'o1',
+          method: 'bank',
+          accountLast5: '12345',
+          contactInfo: 'line',
+          shippingAddress: 'addr',
+          amount: BigInt(300),
+        }),
+      );
+    });
+
+    it('should call category and template APIs', async () => {
+      vi.spyOn((service as any).client, 'createCategory').mockResolvedValue({
+        category: { id: 'c1' },
+      });
+      vi.spyOn((service as any).client, 'listCategories').mockResolvedValue({
+        categories: [{ id: 'c1' }],
+      });
+      vi.spyOn((service as any).client, 'createPriceTemplate').mockResolvedValue({
+        template: { id: 't1' },
+      });
+      vi.spyOn((service as any).client, 'listPriceTemplates').mockResolvedValue({
+        templates: [{ id: 't1' }],
+      });
+      vi.spyOn((service as any).client, 'getPriceTemplate').mockResolvedValue({
+        template: { id: 't1' },
+      });
+      vi.spyOn((service as any).client, 'updatePriceTemplate').mockResolvedValue({
+        template: { id: 't1-updated' },
+      });
+      vi.spyOn((service as any).client, 'deletePriceTemplate').mockResolvedValue({});
+
+      await expect(service.createCategory('cat', ['size'])).resolves.toEqual({
+        category: { id: 'c1' },
+      });
+      await expect(service.listCategories()).resolves.toEqual([{ id: 'c1' }]);
+      await expect(service.createPriceTemplate('tpl', 'JPY', 0.23)).resolves.toEqual({ id: 't1' });
+      await expect(service.listPriceTemplates()).resolves.toEqual([{ id: 't1' }]);
+      await expect(service.getPriceTemplate('t1')).resolves.toEqual({ id: 't1' });
+      await expect(service.updatePriceTemplate('t1', 'name')).resolves.toEqual({
+        id: 't1-updated',
+      });
+      await expect(service.deletePriceTemplate('t1')).resolves.toEqual({});
     });
   });
 });

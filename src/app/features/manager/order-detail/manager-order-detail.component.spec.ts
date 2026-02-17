@@ -6,6 +6,7 @@ import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
+import { vi } from 'vitest';
 
 describe('ManagerOrderDetailComponent', () => {
   let component: ManagerOrderDetailComponent;
@@ -14,14 +15,14 @@ describe('ManagerOrderDetailComponent', () => {
   const mockManagerService = {
     orders: signal<any[]>([]),
     isLoading: signal(false),
-    loadProjectOrders: async () => {},
+    loadGroupBuyOrders: async () => {},
     confirmPayment: async () => {},
   };
 
   const mockGroupBuyService = {
     currentGroupBuy: signal(null),
     currentProducts: signal([]),
-    loadProject: async () => {},
+    loadGroupBuy: () => {},
     updateOrder: async () => {},
   };
 
@@ -109,6 +110,76 @@ describe('ManagerOrderDetailComponent', () => {
     it('should detect not fully shipped', () => {
       setOrder([{ status: 6 }, { status: 2 }]);
       expect(component.isFullyShipped()).toBe(false);
+    });
+  });
+
+  describe('edit flows', () => {
+    beforeEach(() => {
+      mockManagerService.orders.set([
+        {
+          id: 'o1',
+          groupBuyId: 'g1',
+          items: [
+            { productId: 'p1', specId: '', quantity: 1, status: 1, price: BigInt(10) },
+            { productId: 'p2', specId: 's2', quantity: 2, status: 2, price: BigInt(20) },
+          ],
+        },
+      ] as any);
+      mockGroupBuyService.currentProducts.set([
+        { id: 'p1', name: 'Prod-1', specs: [] },
+        { id: 'p2', name: 'Prod-2', specs: [{ id: 's2', name: 'Spec-2' }] },
+      ] as any);
+      component.orderId.set('o1');
+      component.groupBuyId.set('g1');
+    });
+
+    it('should add and remove editable items', () => {
+      component.newItem = { productId: 'p1', specId: '', quantity: 1 };
+      component.addItem();
+      expect(component.editableItems().length).toBe(1);
+      expect(component.isDirty()).toBe(true);
+
+      component.removeItem(0);
+      expect(component.editableItems().length).toBe(0);
+    });
+
+    it('should resolve product and spec names', () => {
+      expect(component.getProductName('p1')).toBe('Prod-1');
+      expect(component.getProductName('unknown')).toBe('Unknown Product');
+      expect(component.getSpecName('p2', 's2')).toBe('Spec-2');
+      expect(component.getSpecName('p2', '')).toBe('Default');
+      expect(component.getSpecName('p2', 'none')).toBe('Unknown Spec');
+      expect(component.getSpecs('p2').length).toBe(1);
+    });
+
+    it('should save changes and reload orders', async () => {
+      const updateSpy = vi.spyOn(mockGroupBuyService, 'updateOrder').mockResolvedValue(undefined);
+      const reloadSpy = vi
+        .spyOn(mockManagerService, 'loadGroupBuyOrders')
+        .mockResolvedValue(undefined);
+      const toastSpy = vi.spyOn(mockToastService, 'show');
+      component.editableItems.set([{ productId: 'p1', specId: '', quantity: 2 } as any]);
+      component.isDirty.set(true);
+
+      await component.saveChanges();
+
+      expect(updateSpy).toHaveBeenCalled();
+      expect(reloadSpy).toHaveBeenCalledWith('g1');
+      expect(component.isDirty()).toBe(false);
+      expect(toastSpy).toHaveBeenCalledWith('Order updated successfully', 'success');
+      expect(component.isSaving).toBe(false);
+    });
+
+    it('should show error toast when save changes fails', async () => {
+      vi.spyOn(mockGroupBuyService, 'updateOrder').mockRejectedValue(new Error('save failed'));
+      const toastSpy = vi.spyOn(mockToastService, 'show');
+      component.editableItems.set([{ productId: 'p1', specId: '', quantity: 2 } as any]);
+      component.isDirty.set(true);
+
+      await component.saveChanges();
+
+      expect(toastSpy).toHaveBeenCalledWith('save failed', 'error');
+      expect(component.isSaving).toBe(false);
     });
   });
 });

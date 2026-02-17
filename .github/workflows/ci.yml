@@ -29,6 +29,9 @@ jobs:
       - name: Run tests
         run: npm test -- --no-watch --coverage
 
+      - name: Coverage gate (app-only)
+        run: node scripts/check-coverage.mjs --scope=app-only --min-statements=48 --min-lines=50
+
       - name: Build
         run: npm run build
 

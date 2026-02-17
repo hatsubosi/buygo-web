@@ -80,6 +80,19 @@ describe('ManagerService', () => {
       expect(updated).toBeTruthy();
     });
 
+    it('should keep non-target orders unchanged', async () => {
+      const orders = [
+        { id: 'o1', paymentStatus: 1 },
+        { id: 'o2', paymentStatus: 1 },
+      ];
+      service.orders.set(orders as any);
+      vi.spyOn((service as any).client, 'confirmPayment').mockResolvedValue({});
+
+      await service.confirmPayment('o1');
+
+      expect(service.orders().find((o: any) => o.id === 'o2')).toEqual(orders[1]);
+    });
+
     it('should handle error gracefully', async () => {
       vi.spyOn((service as any).client, 'confirmPayment').mockRejectedValue(new Error('Failed'));
       // Should not throw (uses alert internally)
@@ -111,6 +124,14 @@ describe('ManagerService', () => {
       );
 
       await expect(service.batchUpdateStatus('p1', 's1', 2, 5)).rejects.toThrow('Server error');
+    });
+
+    it('should use fallback error message when client error message is empty', async () => {
+      vi.spyOn((service as any).client, 'batchUpdateStatus').mockRejectedValue({ message: '' });
+
+      await expect(service.batchUpdateStatus('p1', 's1', 2, 5)).rejects.toThrow(
+        'Failed to update status',
+      );
     });
   });
 });
