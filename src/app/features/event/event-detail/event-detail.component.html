@@ -1,239 +1,298 @@
 <div class="relative min-h-screen pb-24">
-    <!-- Loading State -->
-    @if (eventService.isLoading()) {
+  <!-- Loading State -->
+  @if (eventService.isLoading()) {
     <div class="flex h-screen items-center justify-center">
-        <span class="h-10 w-10 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></span>
+      <span
+        class="h-10 w-10 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+      ></span>
     </div>
-    }
+  }
 
-    @if (eventService.currentEvent(); as event) {
+  @if (eventService.currentEvent(); as event) {
     <ng-container>
-        <!-- Hero Section -->
-        <div class="relative h-[40vh] w-full overflow-hidden mb-8">
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0a] z-10"></div>
-            <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 to-pink-900/40 opacity-70"></div>
-            <!-- Placeholder for Event Image -->
-            @if (!event.coverImageUrl) {
-            <div class="absolute inset-0 bg-gray-900"></div>
-            }
-            @if (event.coverImageUrl) {
-            <img [src]="event.coverImageUrl" class="absolute inset-0 h-full w-full object-cover opacity-60">
-            }
+      <!-- Hero Section -->
+      <div class="relative h-[40vh] w-full overflow-hidden mb-8">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0a] z-10"></div>
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 to-pink-900/40 opacity-70"
+        ></div>
+        <!-- Placeholder for Event Image -->
+        @if (!event.coverImageUrl) {
+          <div class="absolute inset-0 bg-gray-900"></div>
+        }
+        @if (event.coverImageUrl) {
+          <img
+            [src]="event.coverImageUrl"
+            class="absolute inset-0 h-full w-full object-cover opacity-60"
+          />
+        }
 
-            <div class="relative z-20 flex h-full flex-col justify-end px-4 pb-12 sm:px-8">
-                <div class="flex items-center gap-4 mb-4">
-                    <span
-                        class="px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-sm border border-green-500/30 backdrop-blur-md">
-                        Active
-                    </span>
-                    <span class="text-gray-300 text-sm flex items-center gap-1">
-                        <span class="material-icons text-sm">place</span> {{ event.location || 'Online' }}
-                    </span>
-                </div>
-                <h1 class="text-4xl font-bold text-white md:text-6xl mb-2">{{ event.title }}</h1>
-                <p class="text-xl text-gray-300 flex items-center gap-2">
-                    {{ toDate(event.startTime) | date:'medium' }} - {{ toDate(event.endTime) | date:'shortTime' }}
-                </p>
-            </div>
-
-            <!-- Manager Actions -->
-            @if (canManage()) {
-            <div class="absolute top-24 right-4 sm:right-8 z-30">
-                <a routerLink="/manager">
-                    <app-ui-btn variant="outline"
-                        customClass="!bg-black/50 backdrop-blur-md !border-white/20 hover:!bg-white/10">
-                        <span class="material-icons text-sm mr-2">settings</span>
-                        Manage Event
-                    </app-ui-btn>
-                </a>
-            </div>
-            }
+        <div class="relative z-20 flex h-full flex-col justify-end px-4 pb-12 sm:px-8">
+          <div class="flex items-center gap-4 mb-4">
+            <span
+              class="px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-sm border border-green-500/30 backdrop-blur-md"
+            >
+              Active
+            </span>
+            <span class="text-gray-300 text-sm flex items-center gap-1">
+              <span class="material-icons text-sm">place</span> {{ event.location || 'Online' }}
+            </span>
+          </div>
+          <h1 class="text-4xl font-bold text-white md:text-6xl mb-2">{{ event.title }}</h1>
+          <p class="text-xl text-gray-300 flex items-center gap-2">
+            {{ toDate(event.startTime) | date: 'medium' }} -
+            {{ toDate(event.endTime) | date: 'shortTime' }}
+          </p>
         </div>
 
-        <!-- Content -->
-        <div class="px-4 sm:px-8">
-            <app-ui-container>
-                <div class="p-8">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                        <!-- Main Info -->
-                        <div class="lg:col-span-2">
-                            <h2 class="text-2xl font-bold text-white mb-6">About Event</h2>
-                            <div class="prose prose-invert max-w-none text-gray-300">
-                                {{ event.description }}
-                            </div>
+        <!-- Manager Actions -->
+        @if (canManage()) {
+          <div class="absolute top-24 right-4 sm:right-8 z-30">
+            <a routerLink="/manager">
+              <app-ui-btn
+                variant="outline"
+                customClass="!bg-black/50 backdrop-blur-md !border-white/20 hover:!bg-white/10"
+              >
+                <span class="material-icons text-sm mr-2">settings</span>
+                Manage Event
+              </app-ui-btn>
+            </a>
+          </div>
+        }
+      </div>
 
-                            <!-- Items List (Visual/Selection) -->
-                            <div class="mt-8 space-y-4">
-                                <h3 class="text-xl font-bold text-white">Select Items</h3>
-                                @for (item of event.items; track item.id) {
-                                <div class="p-4 bg-white/5 rounded-lg border border-white/10 flex flex-col md:flex-row justify-between items-center gap-4"
-                                    [class.border-blue-500]="(itemQuantities()[item.id] || 0) > 0">
-                                    <div class="flex-1">
-                                        <div class="flex items-center gap-3">
-                                            <p class="font-bold text-white text-lg">{{ item.name }}</p>
-                                            <span
-                                                class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-xs font-mono">
-                                                {{ formatPrice(item.price) }}
-                                            </span>
-                                            @if (item.maxParticipants > 0) {
-                                                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-xs font-mono">
-                                                    Limit: {{ item.maxParticipants }}
-                                                </span>
-                                            }
-                                        </div>
-                                        @if (shouldShowTime(item)) {
-                                        <p class="text-sm text-gray-400 mt-1">
-                                            {{ toDate(item.startTime) | date:'shortTime' }} - {{ toDate(item.endTime) |
-                                            date:'shortTime' }}
-                                        </p>
-                                        }
-                                    </div>
+      <!-- Content -->
+      <div class="px-4 sm:px-8">
+        <app-ui-container>
+          <div class="p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              <!-- Main Info -->
+              <div class="lg:col-span-2">
+                <h2 class="text-2xl font-bold text-white mb-6">About Event</h2>
+                <div class="prose prose-invert max-w-none text-gray-300">
+                  {{ event.description }}
+                </div>
 
-                                    <div class="flex items-center gap-3">
-                                        <!-- Multiple Quantity Control -->
-                                        @if (item.allowMultiple) {
-                                        <button
-                                            class="h-8 w-8 rounded bg-white/10 text-white hover:bg-white/20 disabled:opacity-50"
-                                            (click)="updateQuantity(item.id, -1)"
-                                            [disabled]="!getItemQuantity(item.id)">
-                                            -
-                                        </button>
-                                        <span class="w-8 text-center text-white font-mono">{{
-                                            getItemQuantity(item.id) }}</span>
-                                        <button class="h-8 w-8 rounded bg-white/10 text-white hover:bg-white/20"
-                                            (click)="updateQuantity(item.id, 1)">
-                                            +
-                                        </button>
-                                        } @else {
-                                        <!-- Single Select (Checkbox) -->
-                                        <label
-                                            class="relative flex items-center gap-3 cursor-pointer group p-2 rounded-lg hover:bg-white/5 transition-all">
-                                            <div class="relative flex items-center justify-center">
-                                                <input type="checkbox" [checked]="getItemQuantity(item.id) > 0"
-                                                    (change)="toggleItem(item.id)"
-                                                    class="peer appearance-none h-5 w-5 border-2 border-gray-500 rounded bg-transparent checked:bg-blue-600 checked:border-blue-600 transition-colors">
-                                                <svg class="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                    stroke-width="3">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M5 13l4 4L19 7" />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors select-none">Select</span>
-                                        </label>
-                                        }
-                                    </div>
-                                </div>
-                                }
-                            </div>
+                <!-- Items List (Visual/Selection) -->
+                <div class="mt-8 space-y-4">
+                  <h3 class="text-xl font-bold text-white">Select Items</h3>
+                  @for (item of event.items; track item.id) {
+                    <div
+                      class="p-4 bg-white/5 rounded-lg border border-white/10 flex flex-col md:flex-row justify-between items-center gap-4"
+                      [class.border-blue-500]="(itemQuantities()[item.id] || 0) > 0"
+                    >
+                      <div class="flex-1">
+                        <div class="flex items-center gap-3">
+                          <p class="font-bold text-white text-lg">{{ item.name }}</p>
+                          <span
+                            class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-xs font-mono"
+                          >
+                            {{ formatPrice(item.price) }}
+                          </span>
+                          @if (item.maxParticipants > 0) {
+                            <span
+                              class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-xs font-mono"
+                            >
+                              Limit: {{ item.maxParticipants }}
+                            </span>
+                          }
                         </div>
+                        @if (shouldShowTime(item)) {
+                          <p class="text-sm text-gray-400 mt-1">
+                            {{ toDate(item.startTime) | date: 'shortTime' }} -
+                            {{ toDate(item.endTime) | date: 'shortTime' }}
+                          </p>
+                        }
+                      </div>
 
-                        <!-- Registration Card -->
-                        <div class="space-y-6">
-                            <div class="rounded-xl bg-white/5 border border-white/10 p-6 sticky top-8">
-                                <div class="flex justify-between items-start mb-4">
-                                    <h3 class="text-lg font-bold text-white">
-                                        {{ myRegistration() ? 'Update Registration' : 'Registration' }}
-                                    </h3>
-
-                                    <!-- Status Badge -->
-                                    @if (myRegistration()) {
-                                    <div class="px-3 py-1 rounded-full text-xs font-medium border backdrop-blur-sm flex items-center gap-2"
-                                        [class.bg-green-500/10]="myRegistration()?.status === 2"
-                                        [class.text-green-400]="myRegistration()?.status === 2"
-                                        [class.border-green-500/20]="myRegistration()?.status === 2"
-                                        [class.bg-yellow-500/10]="myRegistration()?.status === 1"
-                                        [class.text-yellow-400]="myRegistration()?.status === 1"
-                                        [class.border-yellow-500/20]="myRegistration()?.status === 1"
-                                        [class.bg-red-500/10]="myRegistration()?.status === 3"
-                                        [class.text-red-400]="myRegistration()?.status === 3"
-                                        [class.border-red-500/20]="myRegistration()?.status === 3">
-                                        <span class="material-icons text-[14px]">
-                                            {{ myRegistration()?.status === 2 ? 'check_circle' :
-                                            (myRegistration()?.status === 3 ? 'cancel' : 'schedule') }}
-                                        </span>
-                                        {{ getStatusLabel(myRegistration()!.status) }}
-                                    </div>
-                                    }
-                                </div>
-
-                                <!-- Registration Form -->
-                                <div class="space-y-6">
-                                    <!-- Selected Summary -->
-                                    @if (totalQuantity() > 0) {
-                                    <div class="rounded bg-black/30 p-4 border border-white/5">
-                                        <p class="text-sm text-gray-400 mb-2">Summary</p>
-                                        <div class="space-y-1">
-                                            @for (entry of getSelectedItemsList(); track entry.name) {
-                                            <div class="flex justify-between text-sm text-white">
-                                                <span>{{ entry.name }} (x{{ entry.quantity }})</span>
-                                                <span>{{ formatPrice(entry.total) }}</span>
-                                            </div>
-                                            }
-                                        </div>
-                                        <div class="border-t border-white/10 mt-3 pt-2 space-y-1">
-                                            @if (discountAmount() > 0) {
-                                            <div class="flex justify-between text-sm text-gray-400">
-                                                <span>Subtotal</span>
-                                                <span>{{ formatPrice(subtotalPrice()) }}</span>
-                                            </div>
-                                            <div class="flex justify-between text-sm text-green-400">
-                                                <span>Discount Applied</span>
-                                                <span>-{{ formatPrice(discountAmount()) }}</span>
-                                            </div>
-                                            }
-                                            <div class="flex justify-between font-bold text-white pt-1">
-                                                <span>Total</span>
-                                                <span>{{ formatPrice(totalPrice()) }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    }
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Notes / Special
-                                            Requests</label>
-                                        <textarea [(ngModel)]="notes" rows="3"
-                                            class="w-full bg-black/20 border border-white/10 rounded p-3 text-white focus:border-blue-500 focus:outline-none placeholder-gray-500 transition-colors"
-                                            placeholder="Any dietary restrictions or requests?"></textarea>
-                                    </div>
-
-                                    <app-ui-btn class="block w-full" variant="primary"
-                                        customClass="w-full justify-center" (click)="submitRegistration()"
-                                        [disabled]="eventService.isLoading() || totalQuantity() === 0">
-                                        {{ eventService.isLoading() ? 'Processing...' : (myRegistration() ? 'Update
-                                        Registration' : 'Register Now') }}
-                                    </app-ui-btn>
-
-                                    <!-- Cancel Button for Processed/Confirmed Registrations (if allowed logic permits, or just any Active registration) -->
-                                    <!-- User asked for cancellation within modification period -->
-                                    @if (myRegistration() && myRegistration()?.status !== 3) {
-                                    <app-ui-btn class="block w-full" variant="outline"
-                                        customClass="w-full justify-center !border-red-500/50 !text-red-400 hover:!bg-red-500/10"
-                                        (click)="cancelRegistration()">
-                                        Cancel Registration
-                                    </app-ui-btn>
-                                    }
-
-                                    @if (eventService.error()) {
-                                    <p class="mt-4 text-red-400 text-sm text-center">{{ eventService.error() }}</p>
-                                    }
-                                </div>
+                      <div class="flex items-center gap-3">
+                        <!-- Multiple Quantity Control -->
+                        @if (item.allowMultiple) {
+                          <button
+                            class="h-8 w-8 rounded bg-white/10 text-white hover:bg-white/20 disabled:opacity-50"
+                            (click)="updateQuantity(item.id, -1)"
+                            [disabled]="!getItemQuantity(item.id)"
+                          >
+                            -
+                          </button>
+                          <span class="w-8 text-center text-white font-mono">{{
+                            getItemQuantity(item.id)
+                          }}</span>
+                          <button
+                            class="h-8 w-8 rounded bg-white/10 text-white hover:bg-white/20"
+                            (click)="updateQuantity(item.id, 1)"
+                          >
+                            +
+                          </button>
+                        } @else {
+                          <!-- Single Select (Checkbox) -->
+                          <label
+                            class="relative flex items-center gap-3 cursor-pointer group p-2 rounded-lg hover:bg-white/5 transition-all"
+                          >
+                            <div class="relative flex items-center justify-center">
+                              <input
+                                type="checkbox"
+                                [checked]="getItemQuantity(item.id) > 0"
+                                (change)="toggleItem(item.id)"
+                                class="peer appearance-none h-5 w-5 border-2 border-gray-500 rounded bg-transparent checked:bg-blue-600 checked:border-blue-600 transition-colors"
+                              />
+                              <svg
+                                class="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="3"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
                             </div>
-                        </div>
+                            <span
+                              class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors select-none"
+                              >Select</span
+                            >
+                          </label>
+                        }
+                      </div>
                     </div>
+                  }
                 </div>
-            </app-ui-container>
-        </div>
+              </div>
+
+              <!-- Registration Card -->
+              <div class="space-y-6">
+                <div class="rounded-xl bg-white/5 border border-white/10 p-6 sticky top-8">
+                  <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg font-bold text-white">
+                      {{ myRegistration() ? 'Update Registration' : 'Registration' }}
+                    </h3>
+
+                    <!-- Status Badge -->
+                    @if (myRegistration()) {
+                      <div
+                        class="px-3 py-1 rounded-full text-xs font-medium border backdrop-blur-sm flex items-center gap-2"
+                        [class.bg-green-500/10]="myRegistration()?.status === 2"
+                        [class.text-green-400]="myRegistration()?.status === 2"
+                        [class.border-green-500/20]="myRegistration()?.status === 2"
+                        [class.bg-yellow-500/10]="myRegistration()?.status === 1"
+                        [class.text-yellow-400]="myRegistration()?.status === 1"
+                        [class.border-yellow-500/20]="myRegistration()?.status === 1"
+                        [class.bg-red-500/10]="myRegistration()?.status === 3"
+                        [class.text-red-400]="myRegistration()?.status === 3"
+                        [class.border-red-500/20]="myRegistration()?.status === 3"
+                      >
+                        <span class="material-icons text-[14px]">
+                          {{
+                            myRegistration()?.status === 2
+                              ? 'check_circle'
+                              : myRegistration()?.status === 3
+                                ? 'cancel'
+                                : 'schedule'
+                          }}
+                        </span>
+                        {{ getStatusLabel(myRegistration()!.status) }}
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Registration Form -->
+                  <div class="space-y-6">
+                    <!-- Selected Summary -->
+                    @if (totalQuantity() > 0) {
+                      <div class="rounded bg-black/30 p-4 border border-white/5">
+                        <p class="text-sm text-gray-400 mb-2">Summary</p>
+                        <div class="space-y-1">
+                          @for (entry of getSelectedItemsList(); track entry.name) {
+                            <div class="flex justify-between text-sm text-white">
+                              <span>{{ entry.name }} (x{{ entry.quantity }})</span>
+                              <span>{{ formatPrice(entry.total) }}</span>
+                            </div>
+                          }
+                        </div>
+                        <div class="border-t border-white/10 mt-3 pt-2 space-y-1">
+                          @if (discountAmount() > 0) {
+                            <div class="flex justify-between text-sm text-gray-400">
+                              <span>Subtotal</span>
+                              <span>{{ formatPrice(subtotalPrice()) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-green-400">
+                              <span>Discount Applied</span>
+                              <span>-{{ formatPrice(discountAmount()) }}</span>
+                            </div>
+                          }
+                          <div class="flex justify-between font-bold text-white pt-1">
+                            <span>Total</span>
+                            <span>{{ formatPrice(totalPrice()) }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    }
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-300 mb-1"
+                        >Notes / Special Requests</label
+                      >
+                      <textarea
+                        [(ngModel)]="notes"
+                        rows="3"
+                        class="w-full bg-black/20 border border-white/10 rounded p-3 text-white focus:border-blue-500 focus:outline-none placeholder-gray-500 transition-colors"
+                        placeholder="Any dietary restrictions or requests?"
+                      ></textarea>
+                    </div>
+
+                    <app-ui-btn
+                      class="block w-full"
+                      variant="primary"
+                      customClass="w-full justify-center"
+                      (click)="submitRegistration()"
+                      [disabled]="eventService.isLoading() || totalQuantity() === 0"
+                    >
+                      {{
+                        eventService.isLoading()
+                          ? 'Processing...'
+                          : myRegistration()
+                            ? 'Update
+                                        Registration'
+                            : 'Register Now'
+                      }}
+                    </app-ui-btn>
+
+                    <!-- Cancel Button for Processed/Confirmed Registrations (if allowed logic permits, or just any Active registration) -->
+                    <!-- User asked for cancellation within modification period -->
+                    @if (myRegistration() && myRegistration()?.status !== 3) {
+                      <app-ui-btn
+                        class="block w-full"
+                        variant="outline"
+                        customClass="w-full justify-center !border-red-500/50 !text-red-400 hover:!bg-red-500/10"
+                        (click)="cancelRegistration()"
+                      >
+                        Cancel Registration
+                      </app-ui-btn>
+                    }
+
+                    @if (eventService.error()) {
+                      <p class="mt-4 text-red-400 text-sm text-center">
+                        {{ eventService.error() }}
+                      </p>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </app-ui-container>
+      </div>
     </ng-container>
-    }
+  }
 
-    @if (!eventService.currentEvent() && !eventService.isLoading()) {
+  @if (!eventService.currentEvent() && !eventService.isLoading()) {
     <div class="flex h-screen items-center justify-center">
-        <p class="text-gray-500">Event not found.</p>
+      <p class="text-gray-500">Event not found.</p>
     </div>
-    }
+  }
 
-    <app-ui-dialog></app-ui-dialog>
+  <app-ui-dialog></app-ui-dialog>
 </div>

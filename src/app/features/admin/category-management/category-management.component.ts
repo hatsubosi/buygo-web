@@ -12,7 +12,7 @@ import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
   imports: [ReactiveFormsModule, UiContainerComponent, UiBtnComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './category-management.component.html',
-  styleUrl: './category-management.component.css'
+  styleUrl: './category-management.component.css',
 })
 export class CategoryManagementComponent {
   private groupBuyService = inject(GroupBuyService);
@@ -24,7 +24,7 @@ export class CategoryManagementComponent {
 
   form = this.fb.group({
     name: ['', Validators.required],
-    specs: this.fb.array([])
+    specs: this.fb.array([]),
   });
 
   get specs() {
@@ -62,7 +62,7 @@ export class CategoryManagementComponent {
     if (!name) return;
 
     // Filter empty specs
-    const validSpecs = (specs as string[] || []).filter(s => s.trim() !== '');
+    const validSpecs = ((specs as string[]) || []).filter((s) => s.trim() !== '');
 
     this.isLoading.set(true);
     try {
@@ -79,4 +79,3 @@ export class CategoryManagementComponent {
     }
   }
 }
-

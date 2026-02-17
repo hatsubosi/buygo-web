@@ -1,22 +1,32 @@
-
-import { Component, computed, inject, signal, Renderer2 , ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  Renderer2,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { UiBtnComponent } from '../ui-btn/ui-btn.component';
 
 @Component({
   selector: 'app-ui-dialog',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [UiBtnComponent],
   template: `
     @if (isOpen()) {
       <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" (click)="close()"></div>
+        <div
+          class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+          (click)="close()"
+        ></div>
 
         <!-- Dialog Panel -->
-        <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-[#0F0F13] border border-white/10 p-6 shadow-2xl transition-all">
-          
+        <div
+          class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-[#0F0F13] border border-white/10 p-6 shadow-2xl transition-all"
+        >
           <h3 class="text-xl font-bold text-white mb-2">{{ title() }}</h3>
-          
+
           <div class="mt-2">
             <p class="text-sm text-gray-300">
               {{ message() }}
@@ -24,15 +34,19 @@ import { UiBtnComponent } from '../ui-btn/ui-btn.component';
           </div>
 
           <div class="mt-8 flex justify-end gap-3">
-             @if (showCancel()) {
-                <app-ui-btn variant="ghost" (click)="onCancel()">{{ cancelText() }}</app-ui-btn>
-             }
-             <app-ui-btn [variant]="type() === 'destructive' ? 'danger' : 'primary'" (click)="onConfirm()">{{ confirmText() }}</app-ui-btn>
+            @if (showCancel()) {
+              <app-ui-btn variant="ghost" (click)="onCancel()">{{ cancelText() }}</app-ui-btn>
+            }
+            <app-ui-btn
+              [variant]="type() === 'destructive' ? 'danger' : 'primary'"
+              (click)="onConfirm()"
+              >{{ confirmText() }}</app-ui-btn
+            >
           </div>
         </div>
       </div>
     }
-  `
+  `,
 })
 export class UiDialogComponent {
   isOpen = signal(false);

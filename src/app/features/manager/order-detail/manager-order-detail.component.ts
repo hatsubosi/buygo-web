@@ -1,4 +1,12 @@
-import { Component, inject, computed, signal, effect, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  computed,
+  signal,
+  effect,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,14 +16,25 @@ import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-contain
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
-import { PaymentStatus, CreateOrderItem, OrderItemStatus } from '../../../core/api/api/v1/groupbuy_pb';
+import { CreateOrderItem } from '../../../core/api/api/v1/groupbuy_pb';
+import {
+  getPaymentStatusLabel as sharedGetPaymentStatusLabel,
+  getShippingStatusLabelFromItems,
+} from '../../../shared/utils/status-label.util';
 
 @Component({
   selector: 'app-manager-order-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, UiContainerComponent, UiBtnComponent, UiDialogComponent, DecimalPipe],
+  imports: [
+    FormsModule,
+    RouterLink,
+    UiContainerComponent,
+    UiBtnComponent,
+    UiDialogComponent,
+    DecimalPipe,
+  ],
   templateUrl: './manager-order-detail.component.html',
-  styleUrl: './manager-order-detail.component.css'
+  styleUrl: './manager-order-detail.component.css',
 })
 export class ManagerOrderDetailComponent {
   route = inject(ActivatedRoute);
@@ -34,7 +53,7 @@ export class ManagerOrderDetailComponent {
   // Find order in managerService list
   order = computed(() => {
     const oid = this.orderId();
-    return this.managerService.orders().find(o => o.id === oid);
+    return this.managerService.orders().find((o) => o.id === oid);
   });
 
   editableItems = signal<CreateOrderItem[]>([]);
@@ -48,7 +67,7 @@ export class ManagerOrderDetailComponent {
     // Use editableItems if dirty? Or always original order for summary?
     // Summary should probably reflect SAVED state unless we want live preview.
     // Let's use order() for now (saved state).
-    return o.items.reduce((acc, item) => acc + (Number(item.price) * item.quantity), 0);
+    return o.items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0);
   });
 
   shippingFee = computed(() => {
@@ -64,7 +83,7 @@ export class ManagerOrderDetailComponent {
   newItem = {
     productId: '',
     specId: '',
-    quantity: 1
+    quantity: 1,
   };
 
   constructor() {
@@ -84,29 +103,35 @@ export class ManagerOrderDetailComponent {
     }
 
     // Sync Order Items to Edit State
-    effect(() => {
-      const o = this.order();
-      if (o) {
-        // Initial load of items
-        // Only if we haven't touched it? 
-        // Actually if we just loaded, we should replace.
-        // But careful not to overwrite user edits if effect runs again?
-        // Logic: Only set if editableItems is empty OR if we re-loaded fresh data explicitly?
-        // For simplicity, we set it initially. 
-        // Ideally we track "loaded" state.
-        // Here "untracked" might be needed if we modify signals inside effect, but we set editableItems.
-        // Simple check: if length 0, load.
-        if (this.editableItems().length === 0 && o.items.length > 0) {
-          const mapped = o.items.map(i => new CreateOrderItem({
-            productId: i.productId,
-            specId: i.specId,
-            quantity: i.quantity,
-            status: i.status
-          }));
-          this.editableItems.set(mapped);
+    effect(
+      () => {
+        const o = this.order();
+        if (o) {
+          // Initial load of items
+          // Only if we haven't touched it?
+          // Actually if we just loaded, we should replace.
+          // But careful not to overwrite user edits if effect runs again?
+          // Logic: Only set if editableItems is empty OR if we re-loaded fresh data explicitly?
+          // For simplicity, we set it initially.
+          // Ideally we track "loaded" state.
+          // Here "untracked" might be needed if we modify signals inside effect, but we set editableItems.
+          // Simple check: if length 0, load.
+          if (this.editableItems().length === 0 && o.items.length > 0) {
+            const mapped = o.items.map(
+              (i) =>
+                new CreateOrderItem({
+                  productId: i.productId,
+                  specId: i.specId,
+                  quantity: i.quantity,
+                  status: i.status,
+                }),
+            );
+            this.editableItems.set(mapped);
+          }
         }
-      }
-    }, { allowSignalWrites: true });
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   markDirty() {
@@ -114,7 +139,7 @@ export class ManagerOrderDetailComponent {
   }
 
   removeItem(index: number) {
-    this.editableItems.update(items => items.filter((_, i) => i !== index));
+    this.editableItems.update((items) => items.filter((_, i) => i !== index));
     this.markDirty();
   }
 
@@ -122,9 +147,9 @@ export class ManagerOrderDetailComponent {
     const { productId, specId, quantity } = this.newItem;
     if (!productId || quantity < 1) return;
 
-    this.editableItems.update(items => [
+    this.editableItems.update((items) => [
       ...items,
-      new CreateOrderItem({ productId, specId, quantity })
+      new CreateOrderItem({ productId, specId, quantity }),
     ]);
 
     // Reset form
@@ -152,7 +177,7 @@ export class ManagerOrderDetailComponent {
     const confirmed = await this.dialog.open({
       title: 'Confirm Payment',
       message: 'Confirm payment? This will lock the order from further edits.',
-      confirmText: 'Confirm'
+      confirmText: 'Confirm',
     });
     if (!confirmed) return;
 
@@ -168,52 +193,33 @@ export class ManagerOrderDetailComponent {
 
   // Helpers
   getProductName(pid: string): string {
-    return this.products().find(p => p.id === pid)?.name || 'Unknown Product';
+    return this.products().find((p) => p.id === pid)?.name || 'Unknown Product';
   }
 
   getSpecName(pid: string, sid: string): string {
     if (!sid) return 'Default';
-    const p = this.products().find(p => p.id === pid);
-    return p?.specs.find(s => s.id === sid)?.name || 'Unknown Spec';
+    const p = this.products().find((p) => p.id === pid);
+    return p?.specs.find((s) => s.id === sid)?.name || 'Unknown Spec';
   }
 
   getSpecs(pid: string) {
-    return this.products().find(p => p.id === pid)?.specs || [];
+    return this.products().find((p) => p.id === pid)?.specs || [];
   }
 
   getPaymentLabel(status: number) {
-    switch (status) {
-      case PaymentStatus.CONFIRMED: return 'Paid';
-      case PaymentStatus.SUBMITTED: return 'Submitted';
-      case PaymentStatus.UNSET: return 'Unpaid';
-      case PaymentStatus.REJECTED: return 'Rejected';
-      default: return 'Unknown';
-    }
+    return sharedGetPaymentStatusLabel(status);
   }
 
   // Shipping Helpers
   getShippingStatusLabel(): string {
-    const o = this.order();
-    if (!o || !o.items.length) return 'Empty';
-
-    const allSent = o.items.every(i => i.status === 6);
-    if (allSent) return 'Shipped';
-
-    // Priority checks
-    if (o.items.some(i => i.status === 5)) return 'Ready to Ship';
-    if (o.items.some(i => i.status === 4)) return 'Arrived Domestic';
-    if (o.items.some(i => i.status === 3)) return 'Arrived Overseas';
-    if (o.items.some(i => i.status === 2)) return 'Ordered';
-    if (o.items.some(i => i.status === 1)) return 'Unordered';
-
-    return 'Processing';
+    return getShippingStatusLabelFromItems(this.order()?.items);
   }
 
   getShippingProgress(): number {
     const o = this.order();
     if (!o || !o.items.length) return 0;
 
-    const sentCount = o.items.filter(i => i.status === 6).length;
+    const sentCount = o.items.filter((i) => i.status === 6).length;
     return (sentCount / o.items.length) * 100;
   }
 
@@ -221,20 +227,20 @@ export class ManagerOrderDetailComponent {
     const o = this.order();
     if (!o) return false;
     // valid if NOT all are already sent
-    return o.items.some(i => i.status !== 6);
+    return o.items.some((i) => i.status !== 6);
   }
 
   isFullyShipped(): boolean {
     const o = this.order();
     if (!o || !o.items.length) return false;
-    return o.items.every(i => i.status === 6);
+    return o.items.every((i) => i.status === 6);
   }
 
   async markAsShipped() {
     const confirmed = await this.dialog.open({
       title: 'Mark as Shipped',
       message: 'Mark all items in this order as SENT?',
-      confirmText: 'Mark Sent'
+      confirmText: 'Mark Sent',
     });
     if (!confirmed) return;
 
@@ -242,12 +248,15 @@ export class ManagerOrderDetailComponent {
     try {
       const o = this.order()!;
       // Map existing items to new state with Status=6
-      const updatedItems = o.items.map(i => new CreateOrderItem({
-        productId: i.productId,
-        specId: i.specId,
-        quantity: i.quantity,
-        status: 6 // SENT
-      }));
+      const updatedItems = o.items.map(
+        (i) =>
+          new CreateOrderItem({
+            productId: i.productId,
+            specId: i.specId,
+            quantity: i.quantity,
+            status: 6, // SENT
+          }),
+      );
 
       await this.groupBuyService.updateOrder(this.orderId(), updatedItems);
 

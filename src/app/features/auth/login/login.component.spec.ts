@@ -9,21 +9,21 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
 
   const mockAuthService = {
-    login: async () => { },
-    loginWithGoogle: async () => { },
-    loginWithLine: async () => { },
+    login: async () => {},
+    loginWithGoogle: async () => {},
+    loginWithLine: async () => {},
     isLoading: signal(false),
-    error: signal(null)
+    error: signal(null),
   };
 
   const mockRouter = {
-    navigate: () => { }
+    navigate: () => {},
   };
 
   const mockActivatedRoute = {
     snapshot: {
-      queryParams: {}
-    }
+      queryParams: {},
+    },
   };
 
   beforeEach(async () => {
@@ -32,10 +32,9 @@ describe('LoginComponent', () => {
       providers: [
         { provide: AuthService, useValue: mockAuthService },
         { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute }
-      ]
-    })
-      .compileComponents();
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;

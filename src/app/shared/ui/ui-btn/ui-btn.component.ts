@@ -15,7 +15,9 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dan
     >
       <!-- Loading Spinner -->
       @if (loading()) {
-        <span class="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+        <span
+          class="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent"
+        ></span>
       }
 
       <!-- Icon Input -->
@@ -25,16 +27,18 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dan
 
       <!-- Icon Slot -->
       <ng-content select="[icon]"></ng-content>
-      
+
       <!-- Content -->
       <ng-content></ng-content>
     </button>
   `,
-  styles: [`
-    :host {
-      display: inline-block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: inline-block;
+      }
+    `,
+  ],
 })
 export class UiBtnComponent {
   type = input<'button' | 'submit' | 'reset'>('button');

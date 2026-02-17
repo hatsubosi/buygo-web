@@ -13,7 +13,7 @@ import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
   imports: [UiContainerComponent, UiBtnComponent, RouterLink, CurrencySymbolPipe],
   templateUrl: './groupbuy-detail.component.html',
   styleUrl: './groupbuy-detail.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupBuyDetailComponent implements OnInit {
   groupBuyService = inject(GroupBuyService);
@@ -30,7 +30,7 @@ export class GroupBuyDetailComponent implements OnInit {
     const user = this.authService.user();
     const project = this.groupBuyService.currentGroupBuy();
     if (!user || !project) return false;
-    return project.creator?.id === user.id || project.managers.some(m => m.id === user.id);
+    return project.creator?.id === user.id || project.managers.some((m) => m.id === user.id);
   });
 
   existingOrder = this.groupBuyService.myGroupBuyOrder;
@@ -52,20 +52,22 @@ export class GroupBuyDetailComponent implements OnInit {
     if (!o) return false;
     // Locked if Payment is Confirmed (3) or Items are processed (> Unordered/1)
     if (o.paymentStatus === PaymentStatus.CONFIRMED) return true;
-    if (o.items && o.items.some(i => (i.status || 0) > 1)) return true;
+    if (o.items && o.items.some((i) => (i.status || 0) > 1)) return true;
     return false;
   });
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.groupBuyService.loadGroupBuy(id);
-        this.groupBuyService.loadExistingOrderIntoCart(id).then(order => {
+        this.groupBuyService.loadExistingOrderIntoCart(id).then((order) => {
           // Check for edit mode query param
           const editMode = this.route.snapshot.queryParamMap.get('edit') === 'true';
           if (order) {
-            const isLocked = (order.paymentStatus === PaymentStatus.CONFIRMED) || (order.items && order.items.some((i: OrderItem) => (i.status || 0) > 1));
+            const isLocked =
+              order.paymentStatus === PaymentStatus.CONFIRMED ||
+              (order.items && order.items.some((i: OrderItem) => (i.status || 0) > 1));
 
             if (editMode && order.paymentStatus >= PaymentStatus.SUBMITTED && !isLocked) {
               this.isEditing = true;
@@ -73,8 +75,15 @@ export class GroupBuyDetailComponent implements OnInit {
             } else {
               this.isEditing = false;
               if (editMode && isLocked) {
-                this.router.navigate([], { queryParams: { edit: null }, queryParamsHandling: 'merge', replaceUrl: true });
-                this.toastService.show('Order cannot be modified as it is being processed.', 'error');
+                this.router.navigate([], {
+                  queryParams: { edit: null },
+                  queryParamsHandling: 'merge',
+                  replaceUrl: true,
+                });
+                this.toastService.show(
+                  'Order cannot be modified as it is being processed.',
+                  'error',
+                );
               }
             }
           } else {
@@ -96,7 +105,7 @@ export class GroupBuyDetailComponent implements OnInit {
 
     // Redirect to login with return url
     this.router.navigate(['/login'], {
-      queryParams: { returnUrl: this.router.url }
+      queryParams: { returnUrl: this.router.url },
     });
     return false;
   }
@@ -110,7 +119,7 @@ export class GroupBuyDetailComponent implements OnInit {
     if (product.specs.length > 0) {
       // Use selected spec or default to the first one
       specId = this.selectedSpecs[product.id] || product.specs[0].id;
-      spec = product.specs.find(s => s.id === specId);
+      spec = product.specs.find((s) => s.id === specId);
     }
 
     this.groupBuyService.addToCart(product, spec, 1);
@@ -119,8 +128,11 @@ export class GroupBuyDetailComponent implements OnInit {
 
   // Helper: Get Qty for current selected spec
   getQuantity(product: Product): number {
-    const specId = this.selectedSpecs[product.id] || (product.specs.length > 0 ? product.specs[0].id : '');
-    const item = this.groupBuyService.cart().find(i => i.productId === product.id && i.specId === specId);
+    const specId =
+      this.selectedSpecs[product.id] || (product.specs.length > 0 ? product.specs[0].id : '');
+    const item = this.groupBuyService
+      .cart()
+      .find((i) => i.productId === product.id && i.specId === specId);
     return item ? item.quantity : 0;
   }
 
@@ -128,13 +140,14 @@ export class GroupBuyDetailComponent implements OnInit {
   updateProductQuantity(product: Product, delta: number) {
     if (!this.checkAuth()) return;
 
-    const specId = this.selectedSpecs[product.id] || (product.specs.length > 0 ? product.specs[0].id : '');
+    const specId =
+      this.selectedSpecs[product.id] || (product.specs.length > 0 ? product.specs[0].id : '');
     const currentQty = this.getQuantity(product);
     const newQty = currentQty + delta;
 
     if (currentQty === 0 && delta > 0) {
       // Add new item
-      let spec = product.specs.find(s => s.id === specId);
+      let spec = product.specs.find((s) => s.id === specId);
       this.groupBuyService.addToCart(product, spec, 1);
       this.toastService.show('Added to order', 'success');
     } else if (newQty <= 0) {
@@ -164,7 +177,7 @@ export class GroupBuyDetailComponent implements OnInit {
     // Remove query param
     this.router.navigate([], {
       queryParams: { edit: null },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
   }
 

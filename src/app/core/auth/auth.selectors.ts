@@ -9,7 +9,7 @@ export const selectIsAuthenticated = createSelector(selectAuthState, (state) => 
 export const selectIsLoading = createSelector(selectAuthState, (state) => state.loading);
 
 export const selectIsManager = createSelector(selectUser, (user) => {
-    return user?.role === UserRole.CREATOR || user?.role === UserRole.SYS_ADMIN;
+  return user?.role === UserRole.CREATOR || user?.role === UserRole.SYS_ADMIN;
 });
 
 export const selectToken = createSelector(selectAuthState, (state) => state.token);

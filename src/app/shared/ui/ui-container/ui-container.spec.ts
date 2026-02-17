@@ -8,9 +8,8 @@ describe('UiContainerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UiContainerComponent]
-    })
-      .compileComponents();
+      imports: [UiContainerComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(UiContainerComponent);
     component = fixture.componentInstance;

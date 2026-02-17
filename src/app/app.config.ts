@@ -15,13 +15,17 @@ import { groupBuyReducer } from './core/groupbuy/groupbuy.reducer';
 import { GroupBuyEffects } from './core/groupbuy/groupbuy.effects';
 
 function initAuth(store: Store) {
-  return () => new Promise<void>((resolve) => {
-    store.dispatch(AuthActions.checkSession());
-    store.select(selectIsLoading).pipe(
-      filter(loading => !loading),
-      take(1)
-    ).subscribe(() => resolve());
-  });
+  return () =>
+    new Promise<void>((resolve) => {
+      store.dispatch(AuthActions.checkSession());
+      store
+        .select(selectIsLoading)
+        .pipe(
+          filter((loading) => !loading),
+          take(1),
+        )
+        .subscribe(() => resolve());
+    });
 }
 
 export const appConfig: ApplicationConfig = {
@@ -31,17 +35,14 @@ export const appConfig: ApplicationConfig = {
     provideTransport(),
     provideStore({
       auth: authReducer,
-      groupbuy: groupBuyReducer
+      groupbuy: groupBuyReducer,
     }),
-    provideEffects([
-      AuthEffects,
-      GroupBuyEffects
-    ]),
+    provideEffects([AuthEffects, GroupBuyEffects]),
     {
       provide: APP_INITIALIZER,
       useFactory: (store: Store) => initAuth(store),
       deps: [Store],
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 };

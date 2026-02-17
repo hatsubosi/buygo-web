@@ -3,20 +3,45 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CancelRegistrationRequest, CancelRegistrationResponse, CreateEventRequest, CreateEventResponse, GetEventRequest, GetEventResponse, GetMyRegistrationsRequest, GetMyRegistrationsResponse, ListEventRegistrationsRequest, ListEventRegistrationsResponse, ListEventsRequest, ListEventsResponse, ListManagerEventsRequest, ListManagerEventsResponse, RegisterEventRequest, RegisterEventResponse, UpdateEventRequest, UpdateEventResponse, UpdateEventStatusRequest, UpdateEventStatusResponse, UpdateRegistrationRequest, UpdateRegistrationResponse, UpdateRegistrationStatusRequest, UpdateRegistrationStatusResponse } from "./event_pb.js";
-import { MethodKind } from "@bufbuild/protobuf";
+import {
+  CancelRegistrationRequest,
+  CancelRegistrationResponse,
+  CreateEventRequest,
+  CreateEventResponse,
+  GetEventRequest,
+  GetEventResponse,
+  GetMyRegistrationsRequest,
+  GetMyRegistrationsResponse,
+  ListEventRegistrationsRequest,
+  ListEventRegistrationsResponse,
+  ListEventsRequest,
+  ListEventsResponse,
+  ListManagerEventsRequest,
+  ListManagerEventsResponse,
+  RegisterEventRequest,
+  RegisterEventResponse,
+  UpdateEventRequest,
+  UpdateEventResponse,
+  UpdateEventStatusRequest,
+  UpdateEventStatusResponse,
+  UpdateRegistrationRequest,
+  UpdateRegistrationResponse,
+  UpdateRegistrationStatusRequest,
+  UpdateRegistrationStatusResponse,
+} from './event_pb.js';
+import { MethodKind } from '@bufbuild/protobuf';
 
 /**
  * @generated from service buygo.v1.EventService
  */
 export const EventService = {
-  typeName: "buygo.v1.EventService",
+  typeName: 'buygo.v1.EventService',
   methods: {
     /**
      * @generated from rpc buygo.v1.EventService.CreateEvent
      */
     createEvent: {
-      name: "CreateEvent",
+      name: 'CreateEvent',
       I: CreateEventRequest,
       O: CreateEventResponse,
       kind: MethodKind.Unary,
@@ -25,7 +50,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.ListEvents
      */
     listEvents: {
-      name: "ListEvents",
+      name: 'ListEvents',
       I: ListEventsRequest,
       O: ListEventsResponse,
       kind: MethodKind.Unary,
@@ -34,7 +59,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.ListManagerEvents
      */
     listManagerEvents: {
-      name: "ListManagerEvents",
+      name: 'ListManagerEvents',
       I: ListManagerEventsRequest,
       O: ListManagerEventsResponse,
       kind: MethodKind.Unary,
@@ -43,7 +68,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.GetEvent
      */
     getEvent: {
-      name: "GetEvent",
+      name: 'GetEvent',
       I: GetEventRequest,
       O: GetEventResponse,
       kind: MethodKind.Unary,
@@ -54,7 +79,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.RegisterEvent
      */
     registerEvent: {
-      name: "RegisterEvent",
+      name: 'RegisterEvent',
       I: RegisterEventRequest,
       O: RegisterEventResponse,
       kind: MethodKind.Unary,
@@ -63,7 +88,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.UpdateRegistration
      */
     updateRegistration: {
-      name: "UpdateRegistration",
+      name: 'UpdateRegistration',
       I: UpdateRegistrationRequest,
       O: UpdateRegistrationResponse,
       kind: MethodKind.Unary,
@@ -72,7 +97,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.UpdateRegistrationStatus
      */
     updateRegistrationStatus: {
-      name: "UpdateRegistrationStatus",
+      name: 'UpdateRegistrationStatus',
       I: UpdateRegistrationStatusRequest,
       O: UpdateRegistrationStatusResponse,
       kind: MethodKind.Unary,
@@ -81,7 +106,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.CancelRegistration
      */
     cancelRegistration: {
-      name: "CancelRegistration",
+      name: 'CancelRegistration',
       I: CancelRegistrationRequest,
       O: CancelRegistrationResponse,
       kind: MethodKind.Unary,
@@ -90,7 +115,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.GetMyRegistrations
      */
     getMyRegistrations: {
-      name: "GetMyRegistrations",
+      name: 'GetMyRegistrations',
       I: GetMyRegistrationsRequest,
       O: GetMyRegistrationsResponse,
       kind: MethodKind.Unary,
@@ -99,7 +124,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.ListEventRegistrations
      */
     listEventRegistrations: {
-      name: "ListEventRegistrations",
+      name: 'ListEventRegistrations',
       I: ListEventRegistrationsRequest,
       O: ListEventRegistrationsResponse,
       kind: MethodKind.Unary,
@@ -110,7 +135,7 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.UpdateEvent
      */
     updateEvent: {
-      name: "UpdateEvent",
+      name: 'UpdateEvent',
       I: UpdateEventRequest,
       O: UpdateEventResponse,
       kind: MethodKind.Unary,
@@ -119,11 +144,10 @@ export const EventService = {
      * @generated from rpc buygo.v1.EventService.UpdateEventStatus
      */
     updateEventStatus: {
-      name: "UpdateEventStatus",
+      name: 'UpdateEventStatus',
       I: UpdateEventStatusRequest,
       O: UpdateEventStatusResponse,
       kind: MethodKind.Unary,
     },
-  }
+  },
 } as const;
-

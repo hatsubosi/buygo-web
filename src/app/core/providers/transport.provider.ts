@@ -9,21 +9,18 @@ import { errorInterceptor } from '../auth/error.interceptor';
 import { environment } from '../../../environments/environment';
 
 export function provideTransport(): EnvironmentProviders {
-    return makeEnvironmentProviders([
-        {
-            provide: TransportToken,
-            useFactory: (): Transport => {
-                const store = inject(Store);
-                const router = inject(Router);
-                return createConnectTransport({
-                    baseUrl: environment.apiUrl,
-                    useBinaryFormat: true,
-                    interceptors: [
-                        authInterceptor(store),
-                        errorInterceptor(store, router),
-                    ],
-                });
-            },
-        },
-    ]);
+  return makeEnvironmentProviders([
+    {
+      provide: TransportToken,
+      useFactory: (): Transport => {
+        const store = inject(Store);
+        const router = inject(Router);
+        return createConnectTransport({
+          baseUrl: environment.apiUrl,
+          useBinaryFormat: true,
+          interceptors: [authInterceptor(store), errorInterceptor(store, router)],
+        });
+      },
+    },
+  ]);
 }

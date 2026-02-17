@@ -3,14 +3,25 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GetMeRequest, GetMeResponse, ListAssignableManagersRequest, ListAssignableManagersResponse, ListUsersRequest, ListUsersResponse, LoginRequest, LoginResponse, UpdateUserRoleRequest, UpdateUserRoleResponse } from "./auth_pb.js";
-import { MethodKind } from "@bufbuild/protobuf";
+import {
+  GetMeRequest,
+  GetMeResponse,
+  ListAssignableManagersRequest,
+  ListAssignableManagersResponse,
+  ListUsersRequest,
+  ListUsersResponse,
+  LoginRequest,
+  LoginResponse,
+  UpdateUserRoleRequest,
+  UpdateUserRoleResponse,
+} from './auth_pb.js';
+import { MethodKind } from '@bufbuild/protobuf';
 
 /**
  * @generated from service buygo.v1.AuthService
  */
 export const AuthService = {
-  typeName: "buygo.v1.AuthService",
+  typeName: 'buygo.v1.AuthService',
   methods: {
     /**
      * Login with 3rd Party Token (Firebase)
@@ -18,7 +29,7 @@ export const AuthService = {
      * @generated from rpc buygo.v1.AuthService.Login
      */
     login: {
-      name: "Login",
+      name: 'Login',
       I: LoginRequest,
       O: LoginResponse,
       kind: MethodKind.Unary,
@@ -29,7 +40,7 @@ export const AuthService = {
      * @generated from rpc buygo.v1.AuthService.ListUsers
      */
     listUsers: {
-      name: "ListUsers",
+      name: 'ListUsers',
       I: ListUsersRequest,
       O: ListUsersResponse,
       kind: MethodKind.Unary,
@@ -40,7 +51,7 @@ export const AuthService = {
      * @generated from rpc buygo.v1.AuthService.UpdateUserRole
      */
     updateUserRole: {
-      name: "UpdateUserRole",
+      name: 'UpdateUserRole',
       I: UpdateUserRoleRequest,
       O: UpdateUserRoleResponse,
       kind: MethodKind.Unary,
@@ -51,7 +62,7 @@ export const AuthService = {
      * @generated from rpc buygo.v1.AuthService.GetMe
      */
     getMe: {
-      name: "GetMe",
+      name: 'GetMe',
       I: GetMeRequest,
       O: GetMeResponse,
       kind: MethodKind.Unary,
@@ -62,11 +73,10 @@ export const AuthService = {
      * @generated from rpc buygo.v1.AuthService.ListAssignableManagers
      */
     listAssignableManagers: {
-      name: "ListAssignableManagers",
+      name: 'ListAssignableManagers',
       I: ListAssignableManagersRequest,
       O: ListAssignableManagersResponse,
       kind: MethodKind.Unary,
     },
-  }
+  },
 } as const;
-

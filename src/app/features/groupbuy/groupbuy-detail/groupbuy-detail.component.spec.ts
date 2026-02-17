@@ -16,22 +16,22 @@ describe('GroupBuyDetailComponent', () => {
     isLoadingDetail: signal(false),
     myGroupBuyOrder: signal(null),
     cart: signal([]),
-    loadGroupBuy: () => { },
-    loadExistingOrderIntoCart: async () => { },
-    addToCart: () => { },
-    removeFromCart: () => { },
-    updateCartQuantity: () => { },
-    clearCart: () => { },
-    editSubmittedOrder: () => { }
+    loadGroupBuy: () => {},
+    loadExistingOrderIntoCart: async () => {},
+    addToCart: () => {},
+    removeFromCart: () => {},
+    updateCartQuantity: () => {},
+    clearCart: () => {},
+    editSubmittedOrder: () => {},
   };
 
   const mockAuthService = {
     user: signal(null),
-    isAuthenticated: () => false
+    isAuthenticated: () => false,
   };
 
   const mockToastService = {
-    show: () => { }
+    show: () => {},
   };
 
   beforeEach(async () => {
@@ -46,12 +46,11 @@ describe('GroupBuyDetailComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             paramMap: of({ get: () => '123' }),
-            snapshot: { paramMap: { get: () => '123' }, queryParamMap: { get: () => null } }
-          }
-        }
-      ]
-    })
-      .compileComponents();
+            snapshot: { paramMap: { get: () => '123' }, queryParamMap: { get: () => null } },
+          },
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(GroupBuyDetailComponent);
     component = fixture.componentInstance;

@@ -3,10 +3,17 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3, protoInt64, Timestamp } from "@bufbuild/protobuf";
-import { PaymentStatus } from "./groupbuy_pb.js";
-import { User } from "./auth_pb.js";
+import type {
+  BinaryReadOptions,
+  FieldList,
+  JsonReadOptions,
+  JsonValue,
+  PartialMessage,
+  PlainMessage,
+} from '@bufbuild/protobuf';
+import { Message, proto3, protoInt64, Timestamp } from '@bufbuild/protobuf';
+import { PaymentStatus } from './groupbuy_pb.js';
+import { User } from './auth_pb.js';
 
 /**
  * @generated from enum buygo.v1.EventStatus
@@ -38,12 +45,12 @@ export enum EventStatus {
   ARCHIVED = 4,
 }
 // Retrieve enum metadata with: proto3.getEnumType(EventStatus)
-proto3.util.setEnumType(EventStatus, "buygo.v1.EventStatus", [
-  { no: 0, name: "EVENT_STATUS_UNSPECIFIED" },
-  { no: 1, name: "EVENT_STATUS_DRAFT" },
-  { no: 2, name: "EVENT_STATUS_ACTIVE" },
-  { no: 3, name: "EVENT_STATUS_ENDED" },
-  { no: 4, name: "EVENT_STATUS_ARCHIVED" },
+proto3.util.setEnumType(EventStatus, 'buygo.v1.EventStatus', [
+  { no: 0, name: 'EVENT_STATUS_UNSPECIFIED' },
+  { no: 1, name: 'EVENT_STATUS_DRAFT' },
+  { no: 2, name: 'EVENT_STATUS_ACTIVE' },
+  { no: 3, name: 'EVENT_STATUS_ENDED' },
+  { no: 4, name: 'EVENT_STATUS_ARCHIVED' },
 ]);
 
 /**
@@ -71,11 +78,11 @@ export enum RegistrationStatus {
   CANCELLED = 3,
 }
 // Retrieve enum metadata with: proto3.getEnumType(RegistrationStatus)
-proto3.util.setEnumType(RegistrationStatus, "buygo.v1.RegistrationStatus", [
-  { no: 0, name: "REGISTRATION_STATUS_UNSPECIFIED" },
-  { no: 1, name: "REGISTRATION_STATUS_PENDING" },
-  { no: 2, name: "REGISTRATION_STATUS_CONFIRMED" },
-  { no: 3, name: "REGISTRATION_STATUS_CANCELLED" },
+proto3.util.setEnumType(RegistrationStatus, 'buygo.v1.RegistrationStatus', [
+  { no: 0, name: 'REGISTRATION_STATUS_UNSPECIFIED' },
+  { no: 1, name: 'REGISTRATION_STATUS_PENDING' },
+  { no: 2, name: 'REGISTRATION_STATUS_CONFIRMED' },
+  { no: 3, name: 'REGISTRATION_STATUS_CANCELLED' },
 ]);
 
 /**
@@ -87,7 +94,7 @@ export class UpdateRegistrationRequest extends Message<UpdateRegistrationRequest
   /**
    * @generated from field: string registration_id = 1;
    */
-  registrationId = "";
+  registrationId = '';
 
   /**
    * @generated from field: repeated buygo.v1.RegisterItem items = 2;
@@ -97,12 +104,12 @@ export class UpdateRegistrationRequest extends Message<UpdateRegistrationRequest
   /**
    * @generated from field: string contact_info = 3;
    */
-  contactInfo = "";
+  contactInfo = '';
 
   /**
    * @generated from field: string notes = 4;
    */
-  notes = "";
+  notes = '';
 
   constructor(data?: PartialMessage<UpdateRegistrationRequest>) {
     super();
@@ -110,27 +117,39 @@ export class UpdateRegistrationRequest extends Message<UpdateRegistrationRequest
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.UpdateRegistrationRequest";
+  static readonly typeName = 'buygo.v1.UpdateRegistrationRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registration_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "items", kind: "message", T: RegisterItem, repeated: true },
-    { no: 3, name: "contact_info", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "notes", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'registration_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'items', kind: 'message', T: RegisterItem, repeated: true },
+    { no: 3, name: 'contact_info', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: 'notes', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateRegistrationRequest {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): UpdateRegistrationRequest {
     return new UpdateRegistrationRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateRegistrationRequest {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateRegistrationRequest {
     return new UpdateRegistrationRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateRegistrationRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateRegistrationRequest {
     return new UpdateRegistrationRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateRegistrationRequest | PlainMessage<UpdateRegistrationRequest> | undefined, b: UpdateRegistrationRequest | PlainMessage<UpdateRegistrationRequest> | undefined): boolean {
+  static equals(
+    a: UpdateRegistrationRequest | PlainMessage<UpdateRegistrationRequest> | undefined,
+    b: UpdateRegistrationRequest | PlainMessage<UpdateRegistrationRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(UpdateRegistrationRequest, a, b);
   }
 }
@@ -142,7 +161,7 @@ export class UpdateRegistrationResponse extends Message<UpdateRegistrationRespon
   /**
    * @generated from field: string registration_id = 1;
    */
-  registrationId = "";
+  registrationId = '';
 
   /**
    * @generated from field: buygo.v1.RegistrationStatus status = 2;
@@ -155,25 +174,37 @@ export class UpdateRegistrationResponse extends Message<UpdateRegistrationRespon
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.UpdateRegistrationResponse";
+  static readonly typeName = 'buygo.v1.UpdateRegistrationResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registration_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "status", kind: "enum", T: proto3.getEnumType(RegistrationStatus) },
+    { no: 1, name: 'registration_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'status', kind: 'enum', T: proto3.getEnumType(RegistrationStatus) },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateRegistrationResponse {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): UpdateRegistrationResponse {
     return new UpdateRegistrationResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateRegistrationResponse {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateRegistrationResponse {
     return new UpdateRegistrationResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateRegistrationResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateRegistrationResponse {
     return new UpdateRegistrationResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateRegistrationResponse | PlainMessage<UpdateRegistrationResponse> | undefined, b: UpdateRegistrationResponse | PlainMessage<UpdateRegistrationResponse> | undefined): boolean {
+  static equals(
+    a: UpdateRegistrationResponse | PlainMessage<UpdateRegistrationResponse> | undefined,
+    b: UpdateRegistrationResponse | PlainMessage<UpdateRegistrationResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(UpdateRegistrationResponse, a, b);
   }
 }
@@ -185,7 +216,7 @@ export class UpdateRegistrationStatusRequest extends Message<UpdateRegistrationS
   /**
    * @generated from field: string registration_id = 1;
    */
-  registrationId = "";
+  registrationId = '';
 
   /**
    * @generated from field: buygo.v1.RegistrationStatus status = 2;
@@ -203,26 +234,38 @@ export class UpdateRegistrationStatusRequest extends Message<UpdateRegistrationS
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.UpdateRegistrationStatusRequest";
+  static readonly typeName = 'buygo.v1.UpdateRegistrationStatusRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registration_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "status", kind: "enum", T: proto3.getEnumType(RegistrationStatus) },
-    { no: 3, name: "payment_status", kind: "enum", T: proto3.getEnumType(PaymentStatus) },
+    { no: 1, name: 'registration_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'status', kind: 'enum', T: proto3.getEnumType(RegistrationStatus) },
+    { no: 3, name: 'payment_status', kind: 'enum', T: proto3.getEnumType(PaymentStatus) },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateRegistrationStatusRequest {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): UpdateRegistrationStatusRequest {
     return new UpdateRegistrationStatusRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateRegistrationStatusRequest {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateRegistrationStatusRequest {
     return new UpdateRegistrationStatusRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateRegistrationStatusRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateRegistrationStatusRequest {
     return new UpdateRegistrationStatusRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateRegistrationStatusRequest | PlainMessage<UpdateRegistrationStatusRequest> | undefined, b: UpdateRegistrationStatusRequest | PlainMessage<UpdateRegistrationStatusRequest> | undefined): boolean {
+  static equals(
+    a: UpdateRegistrationStatusRequest | PlainMessage<UpdateRegistrationStatusRequest> | undefined,
+    b: UpdateRegistrationStatusRequest | PlainMessage<UpdateRegistrationStatusRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(UpdateRegistrationStatusRequest, a, b);
   }
 }
@@ -234,7 +277,7 @@ export class UpdateRegistrationStatusResponse extends Message<UpdateRegistration
   /**
    * @generated from field: string registration_id = 1;
    */
-  registrationId = "";
+  registrationId = '';
 
   /**
    * @generated from field: buygo.v1.RegistrationStatus status = 2;
@@ -252,26 +295,44 @@ export class UpdateRegistrationStatusResponse extends Message<UpdateRegistration
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.UpdateRegistrationStatusResponse";
+  static readonly typeName = 'buygo.v1.UpdateRegistrationStatusResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registration_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "status", kind: "enum", T: proto3.getEnumType(RegistrationStatus) },
-    { no: 3, name: "payment_status", kind: "enum", T: proto3.getEnumType(PaymentStatus) },
+    { no: 1, name: 'registration_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'status', kind: 'enum', T: proto3.getEnumType(RegistrationStatus) },
+    { no: 3, name: 'payment_status', kind: 'enum', T: proto3.getEnumType(PaymentStatus) },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateRegistrationStatusResponse {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): UpdateRegistrationStatusResponse {
     return new UpdateRegistrationStatusResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateRegistrationStatusResponse {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateRegistrationStatusResponse {
     return new UpdateRegistrationStatusResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateRegistrationStatusResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateRegistrationStatusResponse {
     return new UpdateRegistrationStatusResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateRegistrationStatusResponse | PlainMessage<UpdateRegistrationStatusResponse> | undefined, b: UpdateRegistrationStatusResponse | PlainMessage<UpdateRegistrationStatusResponse> | undefined): boolean {
+  static equals(
+    a:
+      | UpdateRegistrationStatusResponse
+      | PlainMessage<UpdateRegistrationStatusResponse>
+      | undefined,
+    b:
+      | UpdateRegistrationStatusResponse
+      | PlainMessage<UpdateRegistrationStatusResponse>
+      | undefined,
+  ): boolean {
     return proto3.util.equals(UpdateRegistrationStatusResponse, a, b);
   }
 }
@@ -283,22 +344,22 @@ export class Event extends Message<Event> {
   /**
    * @generated from field: string id = 1;
    */
-  id = "";
+  id = '';
 
   /**
    * @generated from field: string title = 2;
    */
-  title = "";
+  title = '';
 
   /**
    * @generated from field: string description = 3;
    */
-  description = "";
+  description = '';
 
   /**
    * @generated from field: string cover_image_url = 4;
    */
-  coverImageUrl = "";
+  coverImageUrl = '';
 
   /**
    * @generated from field: buygo.v1.EventStatus status = 5;
@@ -323,7 +384,7 @@ export class Event extends Message<Event> {
   /**
    * @generated from field: string location = 9;
    */
-  location = "";
+  location = '';
 
   /**
    * @generated from field: buygo.v1.User creator = 10;
@@ -361,23 +422,29 @@ export class Event extends Message<Event> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.Event";
+  static readonly typeName = 'buygo.v1.Event';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "cover_image_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "status", kind: "enum", T: proto3.getEnumType(EventStatus) },
-    { no: 6, name: "start_time", kind: "message", T: Timestamp },
-    { no: 7, name: "end_time", kind: "message", T: Timestamp },
-    { no: 8, name: "registration_deadline", kind: "message", T: Timestamp },
-    { no: 9, name: "location", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "creator", kind: "message", T: User },
-    { no: 11, name: "managers", kind: "message", T: User, repeated: true },
-    { no: 12, name: "payment_methods", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 13, name: "items", kind: "message", T: EventItem, repeated: true },
-    { no: 14, name: "allow_modification", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 15, name: "discounts", kind: "message", T: DiscountRule, repeated: true },
+    { no: 1, name: 'id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'title', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: 'description', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: 'cover_image_url', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: 'status', kind: 'enum', T: proto3.getEnumType(EventStatus) },
+    { no: 6, name: 'start_time', kind: 'message', T: Timestamp },
+    { no: 7, name: 'end_time', kind: 'message', T: Timestamp },
+    { no: 8, name: 'registration_deadline', kind: 'message', T: Timestamp },
+    { no: 9, name: 'location', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: 'creator', kind: 'message', T: User },
+    { no: 11, name: 'managers', kind: 'message', T: User, repeated: true },
+    {
+      no: 12,
+      name: 'payment_methods',
+      kind: 'scalar',
+      T: 9 /* ScalarType.STRING */,
+      repeated: true,
+    },
+    { no: 13, name: 'items', kind: 'message', T: EventItem, repeated: true },
+    { no: 14, name: 'allow_modification', kind: 'scalar', T: 8 /* ScalarType.BOOL */ },
+    { no: 15, name: 'discounts', kind: 'message', T: DiscountRule, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Event {
@@ -392,7 +459,10 @@ export class Event extends Message<Event> {
     return new Event().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Event | PlainMessage<Event> | undefined, b: Event | PlainMessage<Event> | undefined): boolean {
+  static equals(
+    a: Event | PlainMessage<Event> | undefined,
+    b: Event | PlainMessage<Event> | undefined,
+  ): boolean {
     return proto3.util.equals(Event, a, b);
   }
 }
@@ -404,12 +474,12 @@ export class EventItem extends Message<EventItem> {
   /**
    * @generated from field: string id = 1;
    */
-  id = "";
+  id = '';
 
   /**
    * @generated from field: string name = 2;
    */
-  name = "";
+  name = '';
 
   /**
    * @generated from field: int64 price = 3;
@@ -447,16 +517,16 @@ export class EventItem extends Message<EventItem> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.EventItem";
+  static readonly typeName = 'buygo.v1.EventItem';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "price", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 4, name: "min_participants", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 5, name: "max_participants", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 6, name: "start_time", kind: "message", T: Timestamp },
-    { no: 7, name: "end_time", kind: "message", T: Timestamp },
-    { no: 8, name: "allow_multiple", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 1, name: 'id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'name', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: 'price', kind: 'scalar', T: 3 /* ScalarType.INT64 */ },
+    { no: 4, name: 'min_participants', kind: 'scalar', T: 5 /* ScalarType.INT32 */ },
+    { no: 5, name: 'max_participants', kind: 'scalar', T: 5 /* ScalarType.INT32 */ },
+    { no: 6, name: 'start_time', kind: 'message', T: Timestamp },
+    { no: 7, name: 'end_time', kind: 'message', T: Timestamp },
+    { no: 8, name: 'allow_multiple', kind: 'scalar', T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EventItem {
@@ -471,7 +541,10 @@ export class EventItem extends Message<EventItem> {
     return new EventItem().fromJsonString(jsonString, options);
   }
 
-  static equals(a: EventItem | PlainMessage<EventItem> | undefined, b: EventItem | PlainMessage<EventItem> | undefined): boolean {
+  static equals(
+    a: EventItem | PlainMessage<EventItem> | undefined,
+    b: EventItem | PlainMessage<EventItem> | undefined,
+  ): boolean {
     return proto3.util.equals(EventItem, a, b);
   }
 }
@@ -507,11 +580,11 @@ export class DiscountRule extends Message<DiscountRule> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.DiscountRule";
+  static readonly typeName = 'buygo.v1.DiscountRule';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "min_quantity", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 2, name: "discount_amount", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 3, name: "min_distinct_items", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 1, name: 'min_quantity', kind: 'scalar', T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: 'discount_amount', kind: 'scalar', T: 3 /* ScalarType.INT64 */ },
+    { no: 3, name: 'min_distinct_items', kind: 'scalar', T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DiscountRule {
@@ -526,7 +599,10 @@ export class DiscountRule extends Message<DiscountRule> {
     return new DiscountRule().fromJsonString(jsonString, options);
   }
 
-  static equals(a: DiscountRule | PlainMessage<DiscountRule> | undefined, b: DiscountRule | PlainMessage<DiscountRule> | undefined): boolean {
+  static equals(
+    a: DiscountRule | PlainMessage<DiscountRule> | undefined,
+    b: DiscountRule | PlainMessage<DiscountRule> | undefined,
+  ): boolean {
     return proto3.util.equals(DiscountRule, a, b);
   }
 }
@@ -538,7 +614,7 @@ export class GetEventRequest extends Message<GetEventRequest> {
   /**
    * @generated from field: string event_id = 1;
    */
-  eventId = "";
+  eventId = '';
 
   constructor(data?: PartialMessage<GetEventRequest>) {
     super();
@@ -546,9 +622,9 @@ export class GetEventRequest extends Message<GetEventRequest> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.GetEventRequest";
+  static readonly typeName = 'buygo.v1.GetEventRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'event_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEventRequest {
@@ -563,7 +639,10 @@ export class GetEventRequest extends Message<GetEventRequest> {
     return new GetEventRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetEventRequest | PlainMessage<GetEventRequest> | undefined, b: GetEventRequest | PlainMessage<GetEventRequest> | undefined): boolean {
+  static equals(
+    a: GetEventRequest | PlainMessage<GetEventRequest> | undefined,
+    b: GetEventRequest | PlainMessage<GetEventRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(GetEventRequest, a, b);
   }
 }
@@ -583,9 +662,9 @@ export class GetEventResponse extends Message<GetEventResponse> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.GetEventResponse";
+  static readonly typeName = 'buygo.v1.GetEventResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event", kind: "message", T: Event },
+    { no: 1, name: 'event', kind: 'message', T: Event },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEventResponse {
@@ -600,7 +679,10 @@ export class GetEventResponse extends Message<GetEventResponse> {
     return new GetEventResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetEventResponse | PlainMessage<GetEventResponse> | undefined, b: GetEventResponse | PlainMessage<GetEventResponse> | undefined): boolean {
+  static equals(
+    a: GetEventResponse | PlainMessage<GetEventResponse> | undefined,
+    b: GetEventResponse | PlainMessage<GetEventResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(GetEventResponse, a, b);
   }
 }
@@ -612,12 +694,12 @@ export class CreateEventRequest extends Message<CreateEventRequest> {
   /**
    * @generated from field: string title = 1;
    */
-  title = "";
+  title = '';
 
   /**
    * @generated from field: string description = 2;
    */
-  description = "";
+  description = '';
 
   /**
    * @generated from field: google.protobuf.Timestamp start_time = 3;
@@ -642,12 +724,12 @@ export class CreateEventRequest extends Message<CreateEventRequest> {
   /**
    * @generated from field: string location = 7;
    */
-  location = "";
+  location = '';
 
   /**
    * @generated from field: string cover_image_url = 8;
    */
-  coverImageUrl = "";
+  coverImageUrl = '';
 
   /**
    * @generated from field: google.protobuf.Timestamp registration_deadline = 9;
@@ -675,20 +757,26 @@ export class CreateEventRequest extends Message<CreateEventRequest> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.CreateEventRequest";
+  static readonly typeName = 'buygo.v1.CreateEventRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "start_time", kind: "message", T: Timestamp },
-    { no: 4, name: "end_time", kind: "message", T: Timestamp },
-    { no: 5, name: "discounts", kind: "message", T: DiscountRule, repeated: true },
-    { no: 6, name: "items", kind: "message", T: EventItem, repeated: true },
-    { no: 7, name: "location", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "cover_image_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "registration_deadline", kind: "message", T: Timestamp },
-    { no: 10, name: "payment_methods", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 11, name: "allow_modification", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 12, name: "manager_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 1, name: 'title', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'description', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: 'start_time', kind: 'message', T: Timestamp },
+    { no: 4, name: 'end_time', kind: 'message', T: Timestamp },
+    { no: 5, name: 'discounts', kind: 'message', T: DiscountRule, repeated: true },
+    { no: 6, name: 'items', kind: 'message', T: EventItem, repeated: true },
+    { no: 7, name: 'location', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: 'cover_image_url', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: 'registration_deadline', kind: 'message', T: Timestamp },
+    {
+      no: 10,
+      name: 'payment_methods',
+      kind: 'scalar',
+      T: 9 /* ScalarType.STRING */,
+      repeated: true,
+    },
+    { no: 11, name: 'allow_modification', kind: 'scalar', T: 8 /* ScalarType.BOOL */ },
+    { no: 12, name: 'manager_ids', kind: 'scalar', T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateEventRequest {
@@ -699,11 +787,17 @@ export class CreateEventRequest extends Message<CreateEventRequest> {
     return new CreateEventRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateEventRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): CreateEventRequest {
     return new CreateEventRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CreateEventRequest | PlainMessage<CreateEventRequest> | undefined, b: CreateEventRequest | PlainMessage<CreateEventRequest> | undefined): boolean {
+  static equals(
+    a: CreateEventRequest | PlainMessage<CreateEventRequest> | undefined,
+    b: CreateEventRequest | PlainMessage<CreateEventRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(CreateEventRequest, a, b);
   }
 }
@@ -723,9 +817,9 @@ export class CreateEventResponse extends Message<CreateEventResponse> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.CreateEventResponse";
+  static readonly typeName = 'buygo.v1.CreateEventResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event", kind: "message", T: Event },
+    { no: 1, name: 'event', kind: 'message', T: Event },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateEventResponse {
@@ -736,11 +830,17 @@ export class CreateEventResponse extends Message<CreateEventResponse> {
     return new CreateEventResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateEventResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): CreateEventResponse {
     return new CreateEventResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CreateEventResponse | PlainMessage<CreateEventResponse> | undefined, b: CreateEventResponse | PlainMessage<CreateEventResponse> | undefined): boolean {
+  static equals(
+    a: CreateEventResponse | PlainMessage<CreateEventResponse> | undefined,
+    b: CreateEventResponse | PlainMessage<CreateEventResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(CreateEventResponse, a, b);
   }
 }
@@ -752,17 +852,17 @@ export class UpdateEventRequest extends Message<UpdateEventRequest> {
   /**
    * @generated from field: string event_id = 1;
    */
-  eventId = "";
+  eventId = '';
 
   /**
    * @generated from field: string title = 2;
    */
-  title = "";
+  title = '';
 
   /**
    * @generated from field: string description = 3;
    */
-  description = "";
+  description = '';
 
   /**
    * @generated from field: google.protobuf.Timestamp start_time = 4;
@@ -777,12 +877,12 @@ export class UpdateEventRequest extends Message<UpdateEventRequest> {
   /**
    * @generated from field: string location = 6;
    */
-  location = "";
+  location = '';
 
   /**
    * @generated from field: string cover_image_url = 7;
    */
-  coverImageUrl = "";
+  coverImageUrl = '';
 
   /**
    * @generated from field: bool allow_modification = 8;
@@ -812,19 +912,19 @@ export class UpdateEventRequest extends Message<UpdateEventRequest> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.UpdateEventRequest";
+  static readonly typeName = 'buygo.v1.UpdateEventRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "start_time", kind: "message", T: Timestamp },
-    { no: 5, name: "end_time", kind: "message", T: Timestamp },
-    { no: 6, name: "location", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "cover_image_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "allow_modification", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 9, name: "items", kind: "message", T: EventItem, repeated: true },
-    { no: 10, name: "manager_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 11, name: "discounts", kind: "message", T: DiscountRule, repeated: true },
+    { no: 1, name: 'event_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'title', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: 'description', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: 'start_time', kind: 'message', T: Timestamp },
+    { no: 5, name: 'end_time', kind: 'message', T: Timestamp },
+    { no: 6, name: 'location', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: 'cover_image_url', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: 'allow_modification', kind: 'scalar', T: 8 /* ScalarType.BOOL */ },
+    { no: 9, name: 'items', kind: 'message', T: EventItem, repeated: true },
+    { no: 10, name: 'manager_ids', kind: 'scalar', T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 11, name: 'discounts', kind: 'message', T: DiscountRule, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEventRequest {
@@ -835,11 +935,17 @@ export class UpdateEventRequest extends Message<UpdateEventRequest> {
     return new UpdateEventRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateEventRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateEventRequest {
     return new UpdateEventRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateEventRequest | PlainMessage<UpdateEventRequest> | undefined, b: UpdateEventRequest | PlainMessage<UpdateEventRequest> | undefined): boolean {
+  static equals(
+    a: UpdateEventRequest | PlainMessage<UpdateEventRequest> | undefined,
+    b: UpdateEventRequest | PlainMessage<UpdateEventRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(UpdateEventRequest, a, b);
   }
 }
@@ -859,9 +965,9 @@ export class UpdateEventResponse extends Message<UpdateEventResponse> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.UpdateEventResponse";
+  static readonly typeName = 'buygo.v1.UpdateEventResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event", kind: "message", T: Event },
+    { no: 1, name: 'event', kind: 'message', T: Event },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEventResponse {
@@ -872,11 +978,17 @@ export class UpdateEventResponse extends Message<UpdateEventResponse> {
     return new UpdateEventResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateEventResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateEventResponse {
     return new UpdateEventResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateEventResponse | PlainMessage<UpdateEventResponse> | undefined, b: UpdateEventResponse | PlainMessage<UpdateEventResponse> | undefined): boolean {
+  static equals(
+    a: UpdateEventResponse | PlainMessage<UpdateEventResponse> | undefined,
+    b: UpdateEventResponse | PlainMessage<UpdateEventResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(UpdateEventResponse, a, b);
   }
 }
@@ -888,7 +1000,7 @@ export class UpdateEventStatusRequest extends Message<UpdateEventStatusRequest> 
   /**
    * @generated from field: string event_id = 1;
    */
-  eventId = "";
+  eventId = '';
 
   /**
    * @generated from field: buygo.v1.EventStatus status = 2;
@@ -901,25 +1013,37 @@ export class UpdateEventStatusRequest extends Message<UpdateEventStatusRequest> 
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.UpdateEventStatusRequest";
+  static readonly typeName = 'buygo.v1.UpdateEventStatusRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "status", kind: "enum", T: proto3.getEnumType(EventStatus) },
+    { no: 1, name: 'event_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'status', kind: 'enum', T: proto3.getEnumType(EventStatus) },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEventStatusRequest {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): UpdateEventStatusRequest {
     return new UpdateEventStatusRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateEventStatusRequest {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateEventStatusRequest {
     return new UpdateEventStatusRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateEventStatusRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateEventStatusRequest {
     return new UpdateEventStatusRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateEventStatusRequest | PlainMessage<UpdateEventStatusRequest> | undefined, b: UpdateEventStatusRequest | PlainMessage<UpdateEventStatusRequest> | undefined): boolean {
+  static equals(
+    a: UpdateEventStatusRequest | PlainMessage<UpdateEventStatusRequest> | undefined,
+    b: UpdateEventStatusRequest | PlainMessage<UpdateEventStatusRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(UpdateEventStatusRequest, a, b);
   }
 }
@@ -939,24 +1063,36 @@ export class UpdateEventStatusResponse extends Message<UpdateEventStatusResponse
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.UpdateEventStatusResponse";
+  static readonly typeName = 'buygo.v1.UpdateEventStatusResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event", kind: "message", T: Event },
+    { no: 1, name: 'event', kind: 'message', T: Event },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateEventStatusResponse {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): UpdateEventStatusResponse {
     return new UpdateEventStatusResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateEventStatusResponse {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateEventStatusResponse {
     return new UpdateEventStatusResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateEventStatusResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): UpdateEventStatusResponse {
     return new UpdateEventStatusResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateEventStatusResponse | PlainMessage<UpdateEventStatusResponse> | undefined, b: UpdateEventStatusResponse | PlainMessage<UpdateEventStatusResponse> | undefined): boolean {
+  static equals(
+    a: UpdateEventStatusResponse | PlainMessage<UpdateEventStatusResponse> | undefined,
+    b: UpdateEventStatusResponse | PlainMessage<UpdateEventStatusResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(UpdateEventStatusResponse, a, b);
   }
 }
@@ -973,7 +1109,7 @@ export class ListEventsRequest extends Message<ListEventsRequest> {
   /**
    * @generated from field: string page_token = 2;
    */
-  pageToken = "";
+  pageToken = '';
 
   constructor(data?: PartialMessage<ListEventsRequest>) {
     super();
@@ -981,10 +1117,10 @@ export class ListEventsRequest extends Message<ListEventsRequest> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.ListEventsRequest";
+  static readonly typeName = 'buygo.v1.ListEventsRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'page_size', kind: 'scalar', T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: 'page_token', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEventsRequest {
@@ -999,7 +1135,10 @@ export class ListEventsRequest extends Message<ListEventsRequest> {
     return new ListEventsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListEventsRequest | PlainMessage<ListEventsRequest> | undefined, b: ListEventsRequest | PlainMessage<ListEventsRequest> | undefined): boolean {
+  static equals(
+    a: ListEventsRequest | PlainMessage<ListEventsRequest> | undefined,
+    b: ListEventsRequest | PlainMessage<ListEventsRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(ListEventsRequest, a, b);
   }
 }
@@ -1016,7 +1155,7 @@ export class ListEventsResponse extends Message<ListEventsResponse> {
   /**
    * @generated from field: string next_page_token = 2;
    */
-  nextPageToken = "";
+  nextPageToken = '';
 
   constructor(data?: PartialMessage<ListEventsResponse>) {
     super();
@@ -1024,10 +1163,10 @@ export class ListEventsResponse extends Message<ListEventsResponse> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.ListEventsResponse";
+  static readonly typeName = 'buygo.v1.ListEventsResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "events", kind: "message", T: Event, repeated: true },
-    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'events', kind: 'message', T: Event, repeated: true },
+    { no: 2, name: 'next_page_token', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEventsResponse {
@@ -1038,11 +1177,17 @@ export class ListEventsResponse extends Message<ListEventsResponse> {
     return new ListEventsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEventsResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): ListEventsResponse {
     return new ListEventsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListEventsResponse | PlainMessage<ListEventsResponse> | undefined, b: ListEventsResponse | PlainMessage<ListEventsResponse> | undefined): boolean {
+  static equals(
+    a: ListEventsResponse | PlainMessage<ListEventsResponse> | undefined,
+    b: ListEventsResponse | PlainMessage<ListEventsResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(ListEventsResponse, a, b);
   }
 }
@@ -1059,7 +1204,7 @@ export class ListManagerEventsRequest extends Message<ListManagerEventsRequest> 
   /**
    * @generated from field: string page_token = 2;
    */
-  pageToken = "";
+  pageToken = '';
 
   constructor(data?: PartialMessage<ListManagerEventsRequest>) {
     super();
@@ -1067,25 +1212,37 @@ export class ListManagerEventsRequest extends Message<ListManagerEventsRequest> 
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.ListManagerEventsRequest";
+  static readonly typeName = 'buygo.v1.ListManagerEventsRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 2, name: "page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'page_size', kind: 'scalar', T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: 'page_token', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListManagerEventsRequest {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): ListManagerEventsRequest {
     return new ListManagerEventsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListManagerEventsRequest {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): ListManagerEventsRequest {
     return new ListManagerEventsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListManagerEventsRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): ListManagerEventsRequest {
     return new ListManagerEventsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListManagerEventsRequest | PlainMessage<ListManagerEventsRequest> | undefined, b: ListManagerEventsRequest | PlainMessage<ListManagerEventsRequest> | undefined): boolean {
+  static equals(
+    a: ListManagerEventsRequest | PlainMessage<ListManagerEventsRequest> | undefined,
+    b: ListManagerEventsRequest | PlainMessage<ListManagerEventsRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(ListManagerEventsRequest, a, b);
   }
 }
@@ -1102,7 +1259,7 @@ export class ListManagerEventsResponse extends Message<ListManagerEventsResponse
   /**
    * @generated from field: string next_page_token = 2;
    */
-  nextPageToken = "";
+  nextPageToken = '';
 
   constructor(data?: PartialMessage<ListManagerEventsResponse>) {
     super();
@@ -1110,25 +1267,37 @@ export class ListManagerEventsResponse extends Message<ListManagerEventsResponse
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.ListManagerEventsResponse";
+  static readonly typeName = 'buygo.v1.ListManagerEventsResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "events", kind: "message", T: Event, repeated: true },
-    { no: 2, name: "next_page_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'events', kind: 'message', T: Event, repeated: true },
+    { no: 2, name: 'next_page_token', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListManagerEventsResponse {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): ListManagerEventsResponse {
     return new ListManagerEventsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListManagerEventsResponse {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): ListManagerEventsResponse {
     return new ListManagerEventsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListManagerEventsResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): ListManagerEventsResponse {
     return new ListManagerEventsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListManagerEventsResponse | PlainMessage<ListManagerEventsResponse> | undefined, b: ListManagerEventsResponse | PlainMessage<ListManagerEventsResponse> | undefined): boolean {
+  static equals(
+    a: ListManagerEventsResponse | PlainMessage<ListManagerEventsResponse> | undefined,
+    b: ListManagerEventsResponse | PlainMessage<ListManagerEventsResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(ListManagerEventsResponse, a, b);
   }
 }
@@ -1140,7 +1309,7 @@ export class RegisterEventRequest extends Message<RegisterEventRequest> {
   /**
    * @generated from field: string event_id = 1;
    */
-  eventId = "";
+  eventId = '';
 
   /**
    * @generated from field: repeated buygo.v1.RegisterItem items = 2;
@@ -1152,12 +1321,12 @@ export class RegisterEventRequest extends Message<RegisterEventRequest> {
    *
    * @generated from field: string contact_info = 3;
    */
-  contactInfo = "";
+  contactInfo = '';
 
   /**
    * @generated from field: string notes = 4;
    */
-  notes = "";
+  notes = '';
 
   constructor(data?: PartialMessage<RegisterEventRequest>) {
     super();
@@ -1165,12 +1334,12 @@ export class RegisterEventRequest extends Message<RegisterEventRequest> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.RegisterEventRequest";
+  static readonly typeName = 'buygo.v1.RegisterEventRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "items", kind: "message", T: RegisterItem, repeated: true },
-    { no: 3, name: "contact_info", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "notes", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'event_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'items', kind: 'message', T: RegisterItem, repeated: true },
+    { no: 3, name: 'contact_info', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: 'notes', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RegisterEventRequest {
@@ -1181,11 +1350,17 @@ export class RegisterEventRequest extends Message<RegisterEventRequest> {
     return new RegisterEventRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RegisterEventRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): RegisterEventRequest {
     return new RegisterEventRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: RegisterEventRequest | PlainMessage<RegisterEventRequest> | undefined, b: RegisterEventRequest | PlainMessage<RegisterEventRequest> | undefined): boolean {
+  static equals(
+    a: RegisterEventRequest | PlainMessage<RegisterEventRequest> | undefined,
+    b: RegisterEventRequest | PlainMessage<RegisterEventRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(RegisterEventRequest, a, b);
   }
 }
@@ -1197,7 +1372,7 @@ export class RegisterItem extends Message<RegisterItem> {
   /**
    * @generated from field: string event_item_id = 1;
    */
-  eventItemId = "";
+  eventItemId = '';
 
   /**
    * Usually 1 for events, but maybe guest tickets
@@ -1212,10 +1387,10 @@ export class RegisterItem extends Message<RegisterItem> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.RegisterItem";
+  static readonly typeName = 'buygo.v1.RegisterItem';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event_item_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "quantity", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 1, name: 'event_item_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'quantity', kind: 'scalar', T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RegisterItem {
@@ -1230,7 +1405,10 @@ export class RegisterItem extends Message<RegisterItem> {
     return new RegisterItem().fromJsonString(jsonString, options);
   }
 
-  static equals(a: RegisterItem | PlainMessage<RegisterItem> | undefined, b: RegisterItem | PlainMessage<RegisterItem> | undefined): boolean {
+  static equals(
+    a: RegisterItem | PlainMessage<RegisterItem> | undefined,
+    b: RegisterItem | PlainMessage<RegisterItem> | undefined,
+  ): boolean {
     return proto3.util.equals(RegisterItem, a, b);
   }
 }
@@ -1242,7 +1420,7 @@ export class RegisterEventResponse extends Message<RegisterEventResponse> {
   /**
    * @generated from field: string registration_id = 1;
    */
-  registrationId = "";
+  registrationId = '';
 
   /**
    * @generated from field: buygo.v1.RegistrationStatus status = 2;
@@ -1255,13 +1433,16 @@ export class RegisterEventResponse extends Message<RegisterEventResponse> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.RegisterEventResponse";
+  static readonly typeName = 'buygo.v1.RegisterEventResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registration_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "status", kind: "enum", T: proto3.getEnumType(RegistrationStatus) },
+    { no: 1, name: 'registration_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'status', kind: 'enum', T: proto3.getEnumType(RegistrationStatus) },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RegisterEventResponse {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): RegisterEventResponse {
     return new RegisterEventResponse().fromBinary(bytes, options);
   }
 
@@ -1269,11 +1450,17 @@ export class RegisterEventResponse extends Message<RegisterEventResponse> {
     return new RegisterEventResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RegisterEventResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): RegisterEventResponse {
     return new RegisterEventResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: RegisterEventResponse | PlainMessage<RegisterEventResponse> | undefined, b: RegisterEventResponse | PlainMessage<RegisterEventResponse> | undefined): boolean {
+  static equals(
+    a: RegisterEventResponse | PlainMessage<RegisterEventResponse> | undefined,
+    b: RegisterEventResponse | PlainMessage<RegisterEventResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(RegisterEventResponse, a, b);
   }
 }
@@ -1285,7 +1472,7 @@ export class CancelRegistrationRequest extends Message<CancelRegistrationRequest
   /**
    * @generated from field: string registration_id = 1;
    */
-  registrationId = "";
+  registrationId = '';
 
   constructor(data?: PartialMessage<CancelRegistrationRequest>) {
     super();
@@ -1293,24 +1480,36 @@ export class CancelRegistrationRequest extends Message<CancelRegistrationRequest
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.CancelRegistrationRequest";
+  static readonly typeName = 'buygo.v1.CancelRegistrationRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registration_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'registration_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CancelRegistrationRequest {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): CancelRegistrationRequest {
     return new CancelRegistrationRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CancelRegistrationRequest {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): CancelRegistrationRequest {
     return new CancelRegistrationRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CancelRegistrationRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): CancelRegistrationRequest {
     return new CancelRegistrationRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CancelRegistrationRequest | PlainMessage<CancelRegistrationRequest> | undefined, b: CancelRegistrationRequest | PlainMessage<CancelRegistrationRequest> | undefined): boolean {
+  static equals(
+    a: CancelRegistrationRequest | PlainMessage<CancelRegistrationRequest> | undefined,
+    b: CancelRegistrationRequest | PlainMessage<CancelRegistrationRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(CancelRegistrationRequest, a, b);
   }
 }
@@ -1322,7 +1521,7 @@ export class CancelRegistrationResponse extends Message<CancelRegistrationRespon
   /**
    * @generated from field: string registration_id = 1;
    */
-  registrationId = "";
+  registrationId = '';
 
   /**
    * @generated from field: buygo.v1.RegistrationStatus status = 2;
@@ -1335,25 +1534,37 @@ export class CancelRegistrationResponse extends Message<CancelRegistrationRespon
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.CancelRegistrationResponse";
+  static readonly typeName = 'buygo.v1.CancelRegistrationResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registration_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "status", kind: "enum", T: proto3.getEnumType(RegistrationStatus) },
+    { no: 1, name: 'registration_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'status', kind: 'enum', T: proto3.getEnumType(RegistrationStatus) },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CancelRegistrationResponse {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): CancelRegistrationResponse {
     return new CancelRegistrationResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CancelRegistrationResponse {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): CancelRegistrationResponse {
     return new CancelRegistrationResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CancelRegistrationResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): CancelRegistrationResponse {
     return new CancelRegistrationResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CancelRegistrationResponse | PlainMessage<CancelRegistrationResponse> | undefined, b: CancelRegistrationResponse | PlainMessage<CancelRegistrationResponse> | undefined): boolean {
+  static equals(
+    a: CancelRegistrationResponse | PlainMessage<CancelRegistrationResponse> | undefined,
+    b: CancelRegistrationResponse | PlainMessage<CancelRegistrationResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(CancelRegistrationResponse, a, b);
   }
 }
@@ -1365,17 +1576,17 @@ export class Registration extends Message<Registration> {
   /**
    * @generated from field: string id = 1;
    */
-  id = "";
+  id = '';
 
   /**
    * @generated from field: string event_id = 2;
    */
-  eventId = "";
+  eventId = '';
 
   /**
    * @generated from field: string user_id = 3;
    */
-  userId = "";
+  userId = '';
 
   /**
    * @generated from field: buygo.v1.RegistrationStatus status = 4;
@@ -1390,12 +1601,12 @@ export class Registration extends Message<Registration> {
   /**
    * @generated from field: string contact_info = 6;
    */
-  contactInfo = "";
+  contactInfo = '';
 
   /**
    * @generated from field: string notes = 7;
    */
-  notes = "";
+  notes = '';
 
   /**
    * @generated from field: repeated buygo.v1.RegisterItem selected_items = 8;
@@ -1425,19 +1636,19 @@ export class Registration extends Message<Registration> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.Registration";
+  static readonly typeName = 'buygo.v1.Registration';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "status", kind: "enum", T: proto3.getEnumType(RegistrationStatus) },
-    { no: 5, name: "payment_status", kind: "enum", T: proto3.getEnumType(PaymentStatus) },
-    { no: 6, name: "contact_info", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "notes", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "selected_items", kind: "message", T: RegisterItem, repeated: true },
-    { no: 9, name: "user", kind: "message", T: User },
-    { no: 10, name: "total_amount", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 11, name: "discount_applied", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 1, name: 'id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'event_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: 'user_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: 'status', kind: 'enum', T: proto3.getEnumType(RegistrationStatus) },
+    { no: 5, name: 'payment_status', kind: 'enum', T: proto3.getEnumType(PaymentStatus) },
+    { no: 6, name: 'contact_info', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: 'notes', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: 'selected_items', kind: 'message', T: RegisterItem, repeated: true },
+    { no: 9, name: 'user', kind: 'message', T: User },
+    { no: 10, name: 'total_amount', kind: 'scalar', T: 3 /* ScalarType.INT64 */ },
+    { no: 11, name: 'discount_applied', kind: 'scalar', T: 3 /* ScalarType.INT64 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Registration {
@@ -1452,7 +1663,10 @@ export class Registration extends Message<Registration> {
     return new Registration().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Registration | PlainMessage<Registration> | undefined, b: Registration | PlainMessage<Registration> | undefined): boolean {
+  static equals(
+    a: Registration | PlainMessage<Registration> | undefined,
+    b: Registration | PlainMessage<Registration> | undefined,
+  ): boolean {
     return proto3.util.equals(Registration, a, b);
   }
 }
@@ -1467,23 +1681,34 @@ export class GetMyRegistrationsRequest extends Message<GetMyRegistrationsRequest
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.GetMyRegistrationsRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-  ]);
+  static readonly typeName = 'buygo.v1.GetMyRegistrationsRequest';
+  static readonly fields: FieldList = proto3.util.newFieldList(() => []);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetMyRegistrationsRequest {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): GetMyRegistrationsRequest {
     return new GetMyRegistrationsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetMyRegistrationsRequest {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): GetMyRegistrationsRequest {
     return new GetMyRegistrationsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetMyRegistrationsRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): GetMyRegistrationsRequest {
     return new GetMyRegistrationsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetMyRegistrationsRequest | PlainMessage<GetMyRegistrationsRequest> | undefined, b: GetMyRegistrationsRequest | PlainMessage<GetMyRegistrationsRequest> | undefined): boolean {
+  static equals(
+    a: GetMyRegistrationsRequest | PlainMessage<GetMyRegistrationsRequest> | undefined,
+    b: GetMyRegistrationsRequest | PlainMessage<GetMyRegistrationsRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(GetMyRegistrationsRequest, a, b);
   }
 }
@@ -1503,24 +1728,36 @@ export class GetMyRegistrationsResponse extends Message<GetMyRegistrationsRespon
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.GetMyRegistrationsResponse";
+  static readonly typeName = 'buygo.v1.GetMyRegistrationsResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registrations", kind: "message", T: Registration, repeated: true },
+    { no: 1, name: 'registrations', kind: 'message', T: Registration, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetMyRegistrationsResponse {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): GetMyRegistrationsResponse {
     return new GetMyRegistrationsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetMyRegistrationsResponse {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): GetMyRegistrationsResponse {
     return new GetMyRegistrationsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetMyRegistrationsResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): GetMyRegistrationsResponse {
     return new GetMyRegistrationsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetMyRegistrationsResponse | PlainMessage<GetMyRegistrationsResponse> | undefined, b: GetMyRegistrationsResponse | PlainMessage<GetMyRegistrationsResponse> | undefined): boolean {
+  static equals(
+    a: GetMyRegistrationsResponse | PlainMessage<GetMyRegistrationsResponse> | undefined,
+    b: GetMyRegistrationsResponse | PlainMessage<GetMyRegistrationsResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(GetMyRegistrationsResponse, a, b);
   }
 }
@@ -1532,7 +1769,7 @@ export class ListEventRegistrationsRequest extends Message<ListEventRegistration
   /**
    * @generated from field: string event_id = 1;
    */
-  eventId = "";
+  eventId = '';
 
   constructor(data?: PartialMessage<ListEventRegistrationsRequest>) {
     super();
@@ -1540,24 +1777,36 @@ export class ListEventRegistrationsRequest extends Message<ListEventRegistration
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.ListEventRegistrationsRequest";
+  static readonly typeName = 'buygo.v1.ListEventRegistrationsRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "event_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'event_id', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEventRegistrationsRequest {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): ListEventRegistrationsRequest {
     return new ListEventRegistrationsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListEventRegistrationsRequest {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): ListEventRegistrationsRequest {
     return new ListEventRegistrationsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEventRegistrationsRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): ListEventRegistrationsRequest {
     return new ListEventRegistrationsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListEventRegistrationsRequest | PlainMessage<ListEventRegistrationsRequest> | undefined, b: ListEventRegistrationsRequest | PlainMessage<ListEventRegistrationsRequest> | undefined): boolean {
+  static equals(
+    a: ListEventRegistrationsRequest | PlainMessage<ListEventRegistrationsRequest> | undefined,
+    b: ListEventRegistrationsRequest | PlainMessage<ListEventRegistrationsRequest> | undefined,
+  ): boolean {
     return proto3.util.equals(ListEventRegistrationsRequest, a, b);
   }
 }
@@ -1577,25 +1826,36 @@ export class ListEventRegistrationsResponse extends Message<ListEventRegistratio
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "buygo.v1.ListEventRegistrationsResponse";
+  static readonly typeName = 'buygo.v1.ListEventRegistrationsResponse';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "registrations", kind: "message", T: Registration, repeated: true },
+    { no: 1, name: 'registrations', kind: 'message', T: Registration, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEventRegistrationsResponse {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>,
+  ): ListEventRegistrationsResponse {
     return new ListEventRegistrationsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListEventRegistrationsResponse {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>,
+  ): ListEventRegistrationsResponse {
     return new ListEventRegistrationsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEventRegistrationsResponse {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>,
+  ): ListEventRegistrationsResponse {
     return new ListEventRegistrationsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ListEventRegistrationsResponse | PlainMessage<ListEventRegistrationsResponse> | undefined, b: ListEventRegistrationsResponse | PlainMessage<ListEventRegistrationsResponse> | undefined): boolean {
+  static equals(
+    a: ListEventRegistrationsResponse | PlainMessage<ListEventRegistrationsResponse> | undefined,
+    b: ListEventRegistrationsResponse | PlainMessage<ListEventRegistrationsResponse> | undefined,
+  ): boolean {
     return proto3.util.equals(ListEventRegistrationsResponse, a, b);
   }
 }
-

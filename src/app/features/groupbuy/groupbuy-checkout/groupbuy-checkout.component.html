@@ -1,140 +1,173 @@
 <div class="min-h-screen pb-20 pt-8 px-4 sm:px-8">
-    <app-ui-container>
-        <div class="p-6">
-            <!-- Header -->
-            <div class="mb-6 flex items-center justify-between">
-                <h2 class="text-2xl font-bold text-white">Review Order</h2>
-                <app-ui-btn variant="ghost" (onClick)="goBack()">Cancel</app-ui-btn>
+  <app-ui-container>
+    <div class="p-6">
+      <!-- Header -->
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-white">Review Order</h2>
+        <app-ui-btn variant="ghost" (onClick)="goBack()">Cancel</app-ui-btn>
+      </div>
+
+      @if (groupBuyService.cartCount() === 0) {
+        <div class="text-center py-12 text-gray-500">
+          <!-- Loading State or Empty -->
+          @if (groupBuyService.isLoadingDetail()) {
+            <div class="mb-4">
+              <span
+                class="block h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mx-auto"
+              ></span>
             </div>
-
-            @if (groupBuyService.cartCount() === 0) {
-            <div class="text-center py-12 text-gray-500">
-                <!-- Loading State or Empty -->
-                @if (groupBuyService.isLoadingDetail()) {
-                <div class="mb-4">
-                    <span
-                        class="block h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mx-auto"></span>
-                </div>
-                } @else {
-                <span>Your cart is empty.</span>
-                <div class="mt-4">
-                    <app-ui-btn variant="outline" (onClick)="goBack()">Go Back</app-ui-btn>
-                </div>
-                }
+          } @else {
+            <span>Your cart is empty.</span>
+            <div class="mt-4">
+              <app-ui-btn variant="outline" (onClick)="goBack()">Go Back</app-ui-btn>
             </div>
-            } @else {
-            <!-- Items -->
-            <div class="space-y-4 mb-8">
-                @for (item of groupBuyService.cart(); track item.productId + item.specId) {
-                <div class="flex items-center justify-between rounded-lg bg-white/5 p-4 border border-white/10">
-                    <div class="flex flex-col">
-                        <span class="text-white font-medium">{{ item.productName }}</span>
-                        @if (item.specName) {
-                        <span class="text-sm text-gray-500">{{ item.specName }}</span>
-                        }
-                        <span class="text-sm text-blue-400">${{ item.price }} x {{ item.quantity }}</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button
-                            class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
-                            (click)="updateQuantity(item, -1)">-</button>
-                        <span class="text-white w-4 text-center">{{ item.quantity }}</span>
-                        <button
-                            class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
-                            (click)="updateQuantity(item, 1)">+</button>
-                    </div>
-                </div>
-                }
-            </div>
-
-            <!-- Form -->
-            <div class="space-y-4 mb-8">
-                <!-- Shipping Method Selection -->
-                @if (shippingConfigs.length > 0) {
-                <div class="group">
-                    <label class="block text-xs font-medium text-gray-400 mb-2">Shipping Method</label>
-                    <div class="space-y-2">
-                        @for (config of shippingConfigs; track config.id) {
-                        <div class="flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors"
-                            [class.border-blue-500]="selectedShippingMethodId === config.id"
-                            [class.bg-blue-500/10]="selectedShippingMethodId === config.id"
-                            [class.border-white/10]="selectedShippingMethodId !== config.id"
-                            [class.bg-transparent]="selectedShippingMethodId !== config.id"
-                            [class.hover:bg-white/5]="selectedShippingMethodId !== config.id"
-                            (click)="selectedShippingMethodId = config.id">
-                            <div class="flex items-center gap-3">
-                                <div class="w-4 h-4 rounded-full border border-gray-400 flex items-center justify-center"
-                                    [class.border-blue-400]="selectedShippingMethodId === config.id">
-                                    @if (selectedShippingMethodId === config.id) {
-                                    <div class="w-2 h-2 rounded-full bg-blue-400"></div>
-                                    }
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="text-white font-medium">{{ config.name }}</span>
-                                    <span class="text-xs text-gray-500">{{ getShippingTypeLabel(config.type)
-                                        }}</span>
-                                </div>
-                            </div>
-                            <span class="text-white font-medium">${{ config.price }}</span>
-                        </div>
-                        }
-                    </div>
-                </div>
-                }
-
-                <div class="group">
-                    <label class="block text-xs font-medium text-gray-400 mb-1">Contact Info (Line ID /
-                        Phone)</label>
-                    <input type="text" [(ngModel)]="contactInfo"
-                        class="w-full rounded-lg bg-black/40 border border-white/10 p-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
-                        placeholder="e.g. 0912345678">
-                </div>
-
-                <!-- Address Field (Dynamic) -->
-                @if (shouldShowAddress()) {
-                <div class="group">
-                    <label class="block text-xs font-medium text-gray-400 mb-1">{{ addressLabel() }}</label>
-                    <input type="text" [(ngModel)]="shippingAddress"
-                        class="w-full rounded-lg bg-black/40 border border-white/10 p-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
-                        [placeholder]="addressPlaceholder()">
-                    @if (isMeetup()) {
-                    <p class="text-xs text-gray-500 mt-1">For meetup, you can leave this blank or
-                        add notes in the field below.</p>
-                    }
-                </div>
-                }
-
-                <!-- Note Field -->
-                <div class="group">
-                    <label class="block text-xs font-medium text-gray-400 mb-1">Optional Note</label>
-                    <textarea [(ngModel)]="note" rows="3"
-                        class="w-full rounded-lg bg-black/40 border border-white/10 p-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
-                        placeholder="Any special requests or details..."></textarea>
-                </div>
-            </div>
-
-            <!-- Summary -->
-            <div class="border-t border-white/10 pt-4 mb-6">
-                <div class="flex justify-between items-center text-lg font-bold text-white">
-                    <span>Total</span>
-                    <span>${{ totalAmount }}</span>
-                </div>
-            </div>
-
-            <!-- Submit -->
-            <div class="flex justify-end mt-6">
-                <app-ui-btn variant="primary" customClass="w-full sm:w-auto px-8"
-                    [loading]="groupBuyService.isSubmittingOrder()" (onClick)="submitOrder()">
-                    Confirm Order
-                </app-ui-btn>
-            </div>
-
-            @if (groupBuyService.submitOrderError()) {
-            <div class="mt-4 p-3 bg-red-900/40 border border-red-500/50 rounded-lg text-red-200 text-sm">
-                {{ groupBuyService.submitOrderError() }}
-            </div>
-            }
-            }
+          }
         </div>
-    </app-ui-container>
+      } @else {
+        <!-- Items -->
+        <div class="space-y-4 mb-8">
+          @for (item of groupBuyService.cart(); track item.productId + item.specId) {
+            <div
+              class="flex items-center justify-between rounded-lg bg-white/5 p-4 border border-white/10"
+            >
+              <div class="flex flex-col">
+                <span class="text-white font-medium">{{ item.productName }}</span>
+                @if (item.specName) {
+                  <span class="text-sm text-gray-500">{{ item.specName }}</span>
+                }
+                <span class="text-sm text-blue-400">${{ item.price }} x {{ item.quantity }}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <button
+                  class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                  (click)="updateQuantity(item, -1)"
+                >
+                  -
+                </button>
+                <span class="text-white w-4 text-center">{{ item.quantity }}</span>
+                <button
+                  class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                  (click)="updateQuantity(item, 1)"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Form -->
+        <div class="space-y-4 mb-8">
+          <!-- Shipping Method Selection -->
+          @if (shippingConfigs.length > 0) {
+            <div class="group">
+              <label class="block text-xs font-medium text-gray-400 mb-2">Shipping Method</label>
+              <div class="space-y-2">
+                @for (config of shippingConfigs; track config.id) {
+                  <div
+                    class="flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors"
+                    [class.border-blue-500]="selectedShippingMethodId === config.id"
+                    [class.bg-blue-500/10]="selectedShippingMethodId === config.id"
+                    [class.border-white/10]="selectedShippingMethodId !== config.id"
+                    [class.bg-transparent]="selectedShippingMethodId !== config.id"
+                    [class.hover:bg-white/5]="selectedShippingMethodId !== config.id"
+                    (click)="selectedShippingMethodId = config.id"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-4 h-4 rounded-full border border-gray-400 flex items-center justify-center"
+                        [class.border-blue-400]="selectedShippingMethodId === config.id"
+                      >
+                        @if (selectedShippingMethodId === config.id) {
+                          <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+                        }
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="text-white font-medium">{{ config.name }}</span>
+                        <span class="text-xs text-gray-500">{{
+                          getShippingTypeLabel(config.type)
+                        }}</span>
+                      </div>
+                    </div>
+                    <span class="text-white font-medium">${{ config.price }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <div class="group">
+            <label class="block text-xs font-medium text-gray-400 mb-1"
+              >Contact Info (Line ID / Phone)</label
+            >
+            <input
+              type="text"
+              [(ngModel)]="contactInfo"
+              class="w-full rounded-lg bg-black/40 border border-white/10 p-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+              placeholder="e.g. 0912345678"
+            />
+          </div>
+
+          <!-- Address Field (Dynamic) -->
+          @if (shouldShowAddress()) {
+            <div class="group">
+              <label class="block text-xs font-medium text-gray-400 mb-1">{{
+                addressLabel()
+              }}</label>
+              <input
+                type="text"
+                [(ngModel)]="shippingAddress"
+                class="w-full rounded-lg bg-black/40 border border-white/10 p-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+                [placeholder]="addressPlaceholder()"
+              />
+              @if (isMeetup()) {
+                <p class="text-xs text-gray-500 mt-1">
+                  For meetup, you can leave this blank or add notes in the field below.
+                </p>
+              }
+            </div>
+          }
+
+          <!-- Note Field -->
+          <div class="group">
+            <label class="block text-xs font-medium text-gray-400 mb-1">Optional Note</label>
+            <textarea
+              [(ngModel)]="note"
+              rows="3"
+              class="w-full rounded-lg bg-black/40 border border-white/10 p-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+              placeholder="Any special requests or details..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="border-t border-white/10 pt-4 mb-6">
+          <div class="flex justify-between items-center text-lg font-bold text-white">
+            <span>Total</span>
+            <span>${{ totalAmount }}</span>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex justify-end mt-6">
+          <app-ui-btn
+            variant="primary"
+            customClass="w-full sm:w-auto px-8"
+            [loading]="groupBuyService.isSubmittingOrder()"
+            (onClick)="submitOrder()"
+          >
+            Confirm Order
+          </app-ui-btn>
+        </div>
+
+        @if (groupBuyService.submitOrderError()) {
+          <div
+            class="mt-4 p-3 bg-red-900/40 border border-red-500/50 rounded-lg text-red-200 text-sm"
+          >
+            {{ groupBuyService.submitOrderError() }}
+          </div>
+        }
+      }
+    </div>
+  </app-ui-container>
 </div>

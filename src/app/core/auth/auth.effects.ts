@@ -11,106 +11,110 @@ import { LoginResponse, User } from '../api/api/v1/auth_pb';
 
 @Injectable()
 export class AuthEffects {
-    private actions$ = inject(Actions);
-    private transport = inject(TransportToken);
-    private router = inject(Router);
+  private actions$ = inject(Actions);
+  private transport = inject(TransportToken);
+  private router = inject(Router);
 
-    // Create client using the generated Service definition
-    private client = createPromiseClient(AuthService, this.transport);
+  // Create client using the generated Service definition
+  private client = createPromiseClient(AuthService, this.transport);
 
-    login$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(AuthActions.login),
-            switchMap(({ provider, token }) =>
-                // Using PromiseClient directly
-                this.client.login({ idToken: token }).then(
-                    (res: LoginResponse) => {
-                        if (!res.user) {
-                            throw new Error('No user returned');
-                        }
-                        // Checking Proto definition: message LoginResponse { string access_token = 1; User user = 2; }
-                        return AuthActions.loginSuccess({ user: res.user, token: res.accessToken, redirect: true });
-                    }
-                ).catch((err: any) => AuthActions.loginFailure({ error: err.message }))
-            )
-        )
-    );
+  login$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.login),
+      switchMap(({ provider, token }) =>
+        // Using PromiseClient directly
+        this.client
+          .login({ idToken: token })
+          .then((res: LoginResponse) => {
+            if (!res.user) {
+              throw new Error('No user returned');
+            }
+            // Checking Proto definition: message LoginResponse { string access_token = 1; User user = 2; }
+            return AuthActions.loginSuccess({
+              user: res.user,
+              token: res.accessToken,
+              redirect: true,
+            });
+          })
+          .catch((err: any) => AuthActions.loginFailure({ error: err.message })),
+      ),
+    ),
+  );
 
-    init$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(AuthActions.checkSession),
-            map(() => {
-                const token = localStorage.getItem('auth_token');
-                const userJson = localStorage.getItem('auth_user');
+  init$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.checkSession),
+      map(() => {
+        const token = localStorage.getItem('auth_token');
+        const userJson = localStorage.getItem('auth_user');
 
-                if (token && userJson) {
-                    try {
-                        // Check JWT expiry before restoring session
-                        const payload = JSON.parse(atob(token.split('.')[1]));
-                        if (payload.exp && payload.exp * 1000 < Date.now()) {
-                            localStorage.removeItem('auth_token');
-                            localStorage.removeItem('auth_user');
-                            return AuthActions.sessionCheckDone();
-                        }
+        if (token && userJson) {
+          try {
+            // Check JWT expiry before restoring session
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.exp && payload.exp * 1000 < Date.now()) {
+              localStorage.removeItem('auth_token');
+              localStorage.removeItem('auth_user');
+              return AuthActions.sessionCheckDone();
+            }
 
-                        const userObj = JSON.parse(userJson);
-                        // Restore Proto instance
-                        const user = User.fromJson(userObj);
-                        return AuthActions.loginSuccess({ user, token, redirect: false });
-                    } catch {
-                        localStorage.removeItem('auth_user'); // Clean up bad data
-                        return AuthActions.sessionCheckDone();
-                    }
-                }
-                return AuthActions.sessionCheckDone();
-            })
-        )
-    );
+            const userObj = JSON.parse(userJson);
+            // Restore Proto instance
+            const user = User.fromJson(userObj);
+            return AuthActions.loginSuccess({ user, token, redirect: false });
+          } catch {
+            localStorage.removeItem('auth_user'); // Clean up bad data
+            return AuthActions.sessionCheckDone();
+          }
+        }
+        return AuthActions.sessionCheckDone();
+      }),
+    ),
+  );
 
-    loginSuccess$ = createEffect(
-        () =>
-            this.actions$.pipe(
-                ofType(AuthActions.loginSuccess),
-                tap(({ user, token, redirect }) => {
+  loginSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.loginSuccess),
+        tap(({ user, token, redirect }) => {
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('auth_user', JSON.stringify(user.toJson()));
 
-                    localStorage.setItem('auth_token', token);
-                    localStorage.setItem('auth_user', JSON.stringify(user.toJson()));
+          if (redirect !== false) {
+            // Check for returnUrl
+            const urlTree = this.router.parseUrl(this.router.url);
+            const returnUrl = urlTree.queryParams['returnUrl'] || '/groupbuy';
+            this.router.navigateByUrl(returnUrl);
+          }
+        }),
+      ),
+    { dispatch: false },
+  );
 
-                    if (redirect !== false) {
-                        // Check for returnUrl
-                        const urlTree = this.router.parseUrl(this.router.url);
-                        const returnUrl = urlTree.queryParams['returnUrl'] || '/groupbuy';
-                        this.router.navigateByUrl(returnUrl);
-                    }
-                })
-            ),
-        { dispatch: false }
-    );
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(() => {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_user');
 
-    logout$ = createEffect(
-        () =>
-            this.actions$.pipe(
-                ofType(AuthActions.logout),
-                tap(() => {
+          // Redirect to home only if on a protected page
+          const currentUrl = this.router.url;
+          const isProtected =
+            currentUrl.startsWith('/user') ||
+            currentUrl.startsWith('/manager') ||
+            currentUrl.includes('/checkout') ||
+            currentUrl.includes('/order-confirmation');
 
-                    localStorage.removeItem('auth_token');
-                    localStorage.removeItem('auth_user');
-
-                    // Redirect to home only if on a protected page
-                    const currentUrl = this.router.url;
-                    const isProtected = currentUrl.startsWith('/user') ||
-                        currentUrl.startsWith('/manager') ||
-                        currentUrl.startsWith('/checkout') ||
-                        currentUrl.startsWith('/order-confirmation');
-
-                    if (isProtected) {
-                        this.router.navigate(['/']);
-                    } else {
-                        // Stay on current page (force reload to ensure clean state)
-                        window.location.reload();
-                    }
-                })
-            ),
-        { dispatch: false }
-    );
+          if (isProtected) {
+            this.router.navigate(['/']);
+          } else {
+            // Stay on current page (force reload to ensure clean state)
+            window.location.reload();
+          }
+        }),
+      ),
+    { dispatch: false },
+  );
 }

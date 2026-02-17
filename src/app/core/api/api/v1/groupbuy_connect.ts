@@ -3,14 +3,59 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddProductRequest, AddProductResponse, BatchUpdateStatusRequest, BatchUpdateStatusResponse, CancelOrderRequest, CancelOrderResponse, ConfirmPaymentRequest, ConfirmPaymentResponse, CreateCategoryRequest, CreateCategoryResponse, CreateGroupBuyRequest, CreateGroupBuyResponse, CreateOrderRequest, CreateOrderResponse, CreatePriceTemplateRequest, CreatePriceTemplateResponse, DeletePriceTemplateRequest, DeletePriceTemplateResponse, GetGroupBuyRequest, GetGroupBuyResponse, GetMyGroupBuyOrderRequest, GetMyGroupBuyOrderResponse, GetMyOrdersRequest, GetMyOrdersResponse, GetPriceTemplateRequest, GetPriceTemplateResponse, ListCategoriesRequest, ListCategoriesResponse, ListGroupBuyOrdersRequest, ListGroupBuyOrdersResponse, ListGroupBuysRequest, ListGroupBuysResponse, ListManagerGroupBuysRequest, ListManagerGroupBuysResponse, ListPriceTemplatesRequest, ListPriceTemplatesResponse, UpdateGroupBuyRequest, UpdateGroupBuyResponse, UpdateOrderRequest, UpdateOrderResponse, UpdatePaymentInfoRequest, UpdatePaymentInfoResponse, UpdatePriceTemplateRequest, UpdatePriceTemplateResponse } from "./groupbuy_pb.js";
-import { MethodKind } from "@bufbuild/protobuf";
+import {
+  AddProductRequest,
+  AddProductResponse,
+  BatchUpdateStatusRequest,
+  BatchUpdateStatusResponse,
+  CancelOrderRequest,
+  CancelOrderResponse,
+  ConfirmPaymentRequest,
+  ConfirmPaymentResponse,
+  CreateCategoryRequest,
+  CreateCategoryResponse,
+  CreateGroupBuyRequest,
+  CreateGroupBuyResponse,
+  CreateOrderRequest,
+  CreateOrderResponse,
+  CreatePriceTemplateRequest,
+  CreatePriceTemplateResponse,
+  DeletePriceTemplateRequest,
+  DeletePriceTemplateResponse,
+  GetGroupBuyRequest,
+  GetGroupBuyResponse,
+  GetMyGroupBuyOrderRequest,
+  GetMyGroupBuyOrderResponse,
+  GetMyOrdersRequest,
+  GetMyOrdersResponse,
+  GetPriceTemplateRequest,
+  GetPriceTemplateResponse,
+  ListCategoriesRequest,
+  ListCategoriesResponse,
+  ListGroupBuyOrdersRequest,
+  ListGroupBuyOrdersResponse,
+  ListGroupBuysRequest,
+  ListGroupBuysResponse,
+  ListManagerGroupBuysRequest,
+  ListManagerGroupBuysResponse,
+  ListPriceTemplatesRequest,
+  ListPriceTemplatesResponse,
+  UpdateGroupBuyRequest,
+  UpdateGroupBuyResponse,
+  UpdateOrderRequest,
+  UpdateOrderResponse,
+  UpdatePaymentInfoRequest,
+  UpdatePaymentInfoResponse,
+  UpdatePriceTemplateRequest,
+  UpdatePriceTemplateResponse,
+} from './groupbuy_pb.js';
+import { MethodKind } from '@bufbuild/protobuf';
 
 /**
  * @generated from service buygo.v1.GroupBuyService
  */
 export const GroupBuyService = {
-  typeName: "buygo.v1.GroupBuyService",
+  typeName: 'buygo.v1.GroupBuyService',
   methods: {
     /**
      * GroupBuy Management (Creator/Admin)
@@ -18,7 +63,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.CreateGroupBuy
      */
     createGroupBuy: {
-      name: "CreateGroupBuy",
+      name: 'CreateGroupBuy',
       I: CreateGroupBuyRequest,
       O: CreateGroupBuyResponse,
       kind: MethodKind.Unary,
@@ -27,7 +72,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.ListGroupBuys
      */
     listGroupBuys: {
-      name: "ListGroupBuys",
+      name: 'ListGroupBuys',
       I: ListGroupBuysRequest,
       O: ListGroupBuysResponse,
       kind: MethodKind.Unary,
@@ -36,7 +81,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.ListManagerGroupBuys
      */
     listManagerGroupBuys: {
-      name: "ListManagerGroupBuys",
+      name: 'ListManagerGroupBuys',
       I: ListManagerGroupBuysRequest,
       O: ListManagerGroupBuysResponse,
       kind: MethodKind.Unary,
@@ -45,7 +90,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.GetGroupBuy
      */
     getGroupBuy: {
-      name: "GetGroupBuy",
+      name: 'GetGroupBuy',
       I: GetGroupBuyRequest,
       O: GetGroupBuyResponse,
       kind: MethodKind.Unary,
@@ -54,7 +99,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.UpdateGroupBuy
      */
     updateGroupBuy: {
-      name: "UpdateGroupBuy",
+      name: 'UpdateGroupBuy',
       I: UpdateGroupBuyRequest,
       O: UpdateGroupBuyResponse,
       kind: MethodKind.Unary,
@@ -65,7 +110,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.AddProduct
      */
     addProduct: {
-      name: "AddProduct",
+      name: 'AddProduct',
       I: AddProductRequest,
       O: AddProductResponse,
       kind: MethodKind.Unary,
@@ -76,7 +121,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.CreateCategory
      */
     createCategory: {
-      name: "CreateCategory",
+      name: 'CreateCategory',
       I: CreateCategoryRequest,
       O: CreateCategoryResponse,
       kind: MethodKind.Unary,
@@ -85,7 +130,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.ListCategories
      */
     listCategories: {
-      name: "ListCategories",
+      name: 'ListCategories',
       I: ListCategoriesRequest,
       O: ListCategoriesResponse,
       kind: MethodKind.Unary,
@@ -96,7 +141,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.CreateOrder
      */
     createOrder: {
-      name: "CreateOrder",
+      name: 'CreateOrder',
       I: CreateOrderRequest,
       O: CreateOrderResponse,
       kind: MethodKind.Unary,
@@ -105,7 +150,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.CancelOrder
      */
     cancelOrder: {
-      name: "CancelOrder",
+      name: 'CancelOrder',
       I: CancelOrderRequest,
       O: CancelOrderResponse,
       kind: MethodKind.Unary,
@@ -114,7 +159,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.GetMyGroupBuyOrder
      */
     getMyGroupBuyOrder: {
-      name: "GetMyGroupBuyOrder",
+      name: 'GetMyGroupBuyOrder',
       I: GetMyGroupBuyOrderRequest,
       O: GetMyGroupBuyOrderResponse,
       kind: MethodKind.Unary,
@@ -123,7 +168,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.UpdateOrder
      */
     updateOrder: {
-      name: "UpdateOrder",
+      name: 'UpdateOrder',
       I: UpdateOrderRequest,
       O: UpdateOrderResponse,
       kind: MethodKind.Unary,
@@ -132,7 +177,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.UpdatePaymentInfo
      */
     updatePaymentInfo: {
-      name: "UpdatePaymentInfo",
+      name: 'UpdatePaymentInfo',
       I: UpdatePaymentInfoRequest,
       O: UpdatePaymentInfoResponse,
       kind: MethodKind.Unary,
@@ -141,7 +186,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.GetMyOrders
      */
     getMyOrders: {
-      name: "GetMyOrders",
+      name: 'GetMyOrders',
       I: GetMyOrdersRequest,
       O: GetMyOrdersResponse,
       kind: MethodKind.Unary,
@@ -153,7 +198,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.BatchUpdateStatus
      */
     batchUpdateStatus: {
-      name: "BatchUpdateStatus",
+      name: 'BatchUpdateStatus',
       I: BatchUpdateStatusRequest,
       O: BatchUpdateStatusResponse,
       kind: MethodKind.Unary,
@@ -165,7 +210,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.ConfirmPayment
      */
     confirmPayment: {
-      name: "ConfirmPayment",
+      name: 'ConfirmPayment',
       I: ConfirmPaymentRequest,
       O: ConfirmPaymentResponse,
       kind: MethodKind.Unary,
@@ -176,7 +221,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.ListGroupBuyOrders
      */
     listGroupBuyOrders: {
-      name: "ListGroupBuyOrders",
+      name: 'ListGroupBuyOrders',
       I: ListGroupBuyOrdersRequest,
       O: ListGroupBuyOrdersResponse,
       kind: MethodKind.Unary,
@@ -187,7 +232,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.CreatePriceTemplate
      */
     createPriceTemplate: {
-      name: "CreatePriceTemplate",
+      name: 'CreatePriceTemplate',
       I: CreatePriceTemplateRequest,
       O: CreatePriceTemplateResponse,
       kind: MethodKind.Unary,
@@ -196,7 +241,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.ListPriceTemplates
      */
     listPriceTemplates: {
-      name: "ListPriceTemplates",
+      name: 'ListPriceTemplates',
       I: ListPriceTemplatesRequest,
       O: ListPriceTemplatesResponse,
       kind: MethodKind.Unary,
@@ -205,7 +250,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.GetPriceTemplate
      */
     getPriceTemplate: {
-      name: "GetPriceTemplate",
+      name: 'GetPriceTemplate',
       I: GetPriceTemplateRequest,
       O: GetPriceTemplateResponse,
       kind: MethodKind.Unary,
@@ -214,7 +259,7 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.UpdatePriceTemplate
      */
     updatePriceTemplate: {
-      name: "UpdatePriceTemplate",
+      name: 'UpdatePriceTemplate',
       I: UpdatePriceTemplateRequest,
       O: UpdatePriceTemplateResponse,
       kind: MethodKind.Unary,
@@ -223,11 +268,10 @@ export const GroupBuyService = {
      * @generated from rpc buygo.v1.GroupBuyService.DeletePriceTemplate
      */
     deletePriceTemplate: {
-      name: "DeletePriceTemplate",
+      name: 'DeletePriceTemplate',
       I: DeletePriceTemplateRequest,
       O: DeletePriceTemplateResponse,
       kind: MethodKind.Unary,
     },
-  }
+  },
 } as const;
-

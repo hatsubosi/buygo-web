@@ -1,430 +1,567 @@
 <div class="min-h-screen pt-8 pb-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <app-ui-container customClass="p-8">
-        <!-- Header -->
-        <div class="mb-8 flex items-center justify-between">
+  <app-ui-container customClass="p-8">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <div class="mb-2 flex items-center gap-2">
+          <a [routerLink]="backLink()" class="text-gray-400 hover:text-white">
+            <span class="material-icons text-sm">arrow_back</span> Cancel
+          </a>
+        </div>
+        <h1 class="text-3xl font-bold text-white">
+          {{ isEditMode() ? 'Edit Project' : 'Create New Project' }}
+        </h1>
+        <p class="mt-2 text-gray-400">
+          {{
+            isEditMode()
+              ? 'Update your project details'
+              : 'Fill in the details to
+                    start a new group buy'
+          }}
+        </p>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
+      <!-- Basic Info Section -->
+      <div class="space-y-6 border-b border-white/10 pb-8">
+        <h2 class="text-xl font-semibold text-white">Basic Information</h2>
+        <!-- Title -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Project Title</label>
+          <input
+            type="text"
+            formControlName="title"
+            class="block w-full rounded-lg border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            placeholder="e.g. Mechanical Keyboard Group Buy"
+          />
+          @if (form.get('title')?.touched && form.get('title')?.errors?.['required']) {
+            <p class="mt-1 text-sm text-red-500">Title is required</p>
+          }
+          @if (form.get('title')?.touched && form.get('title')?.errors?.['minlength']) {
+            <p class="mt-1 text-sm text-red-500">Title must be at least 3 characters</p>
+          }
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+          <textarea
+            formControlName="description"
+            rows="5"
+            class="block w-full rounded-lg border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            placeholder="Describe your project, timeline, and goals..."
+          ></textarea>
+          @if (form.get('description')?.touched && form.get('description')?.errors?.['required']) {
+            <p class="mt-1 text-sm text-red-500">Description is required</p>
+          }
+          @if (form.get('description')?.touched && form.get('description')?.errors?.['minlength']) {
+            <p class="mt-1 text-sm text-red-500">Description must be at least 10 characters</p>
+          }
+        </div>
+
+        <!-- Cover Image -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Cover Image URL</label>
+          <input
+            type="text"
+            formControlName="coverImage"
+            class="block w-full rounded-lg border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            placeholder="https://example.com/image.jpg"
+          />
+        </div>
+
+        <!-- Deadline -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Deadline</label>
+          <input
+            type="datetime-local"
+            formControlName="deadline"
+            class="block w-full rounded-lg border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 [color-scheme:dark]"
+          />
+        </div>
+
+        <!-- Price Configuration (New Section) -->
+        <div class="pt-4 border-t border-white/10">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-medium text-white">Price Configuration</h3>
+            <button
+              type="button"
+              (click)="openPriceTemplateModal()"
+              class="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors"
+            >
+              <span class="material-icons text-[14px]">auto_awesome</span> Load From Template
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <div class="mb-2 flex items-center gap-2">
-                    <a [routerLink]="backLink()" class="text-gray-400 hover:text-white">
-                        <span class="material-icons text-sm">arrow_back</span> Cancel
-                    </a>
-                </div>
-                <h1 class="text-3xl font-bold text-white">{{ isEditMode() ? 'Edit Project' : 'Create New Project' }}
-                </h1>
-                <p class="mt-2 text-gray-400">{{ isEditMode() ? 'Update your project details' : 'Fill in the details to
-                    start a new group buy' }}</p>
+              <label class="block text-xs text-gray-400 mb-1">Source Currency</label>
+              <input
+                type="text"
+                formControlName="sourceCurrency"
+                placeholder="e.g. JPY, USD"
+                class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500"
+              />
             </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1">Exchange Rate (Source to TWD)</label>
+              <input
+                type="number"
+                step="0.0001"
+                formControlName="exchangeRate"
+                class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1">Rounding Method</label>
+              <select
+                formControlName="roundingMethod"
+                class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 [color-scheme:dark]"
+              >
+                <option [ngValue]="1">Floor (Downgrade)</option>
+                <option [ngValue]="2">Ceil (Upgrade)</option>
+                <option [ngValue]="3">Round (Nearest)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 mb-1">Rounding Digit</label>
+              <select
+                formControlName="roundingDigit"
+                class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 [color-scheme:dark]"
+              >
+                <option [ngValue]="0">Ones</option>
+                <option [ngValue]="1">Tens</option>
+                <option [ngValue]="2">Hundreds</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
-            <!-- Basic Info Section -->
-            <div class="space-y-6 border-b border-white/10 pb-8">
-                <h2 class="text-xl font-semibold text-white">Basic Information</h2>
-                <!-- Title -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Project Title</label>
-                    <input type="text" formControlName="title"
-                        class="block w-full rounded-lg border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                        placeholder="e.g. Mechanical Keyboard Group Buy">
-                    @if (form.get('title')?.touched && form.get('title')?.errors?.['required']) {
-                    <p class="mt-1 text-sm text-red-500">Title is required</p>
-                    }
-                    @if (form.get('title')?.touched && form.get('title')?.errors?.['minlength']) {
-                    <p class="mt-1 text-sm text-red-500">Title must be at least 3 characters</p>
-                    }
-                </div>
-
-                <!-- Description -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                    <textarea formControlName="description" rows="5"
-                        class="block w-full rounded-lg border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                        placeholder="Describe your project, timeline, and goals..."></textarea>
-                    @if (form.get('description')?.touched && form.get('description')?.errors?.['required']) {
-                    <p class="mt-1 text-sm text-red-500">Description is required</p>
-                    }
-                    @if (form.get('description')?.touched && form.get('description')?.errors?.['minlength']) {
-                    <p class="mt-1 text-sm text-red-500">Description must be at least 10 characters</p>
-                    }
-                </div>
-
-                <!-- Cover Image -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Cover Image URL</label>
-                    <input type="text" formControlName="coverImage"
-                        class="block w-full rounded-lg border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                        placeholder="https://example.com/image.jpg">
-                </div>
-
-                <!-- Deadline -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Deadline</label>
-                    <input type="datetime-local" formControlName="deadline"
-                        class="block w-full rounded-lg border border-white/10 bg-white/5 py-3 px-4 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 [color-scheme:dark]">
-                </div>
-
-                <!-- Price Configuration (New Section) -->
-                <div class="pt-4 border-t border-white/10">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-medium text-white">Price Configuration</h3>
-                        <button type="button" (click)="openPriceTemplateModal()"
-                            class="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors">
-                            <span class="material-icons text-[14px]">auto_awesome</span> Load From Template
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Source Currency</label>
-                            <input type="text" formControlName="sourceCurrency" placeholder="e.g. JPY, USD"
-                                class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Exchange Rate (Source to TWD)</label>
-                            <input type="number" step="0.0001" formControlName="exchangeRate"
-                                class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Rounding Method</label>
-                            <select formControlName="roundingMethod"
-                                class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 [color-scheme:dark]">
-                                <option [ngValue]="1">Floor (Downgrade)</option>
-                                <option [ngValue]="2">Ceil (Upgrade)</option>
-                                <option [ngValue]="3">Round (Nearest)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Rounding Digit</label>
-                            <select formControlName="roundingDigit"
-                                class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 [color-scheme:dark]">
-                                <option [ngValue]="0">Ones</option>
-                                <option [ngValue]="1">Tens</option>
-                                <option [ngValue]="2">Hundreds</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Manager Assignment (Edit Mode Only due to API) -->
-                @if (isEditMode()) {
-                <div class="pt-4 border-t border-white/10">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-sm font-medium text-white">Co-Managers</h3>
-                            <p class="text-xs text-gray-400">Assign other users to help manage this project.</p>
-                        </div>
-                        <app-ui-btn variant="outline" size="sm" type="button" (click)="openManagerModal()">
-                            <span class="material-icons text-sm mr-1">group_add</span> Manage Managers
-                        </app-ui-btn>
-                    </div>
-
-                    <!-- Show counts or list? Maybe just count -->
-                    @if (managerIdsControl.value.length > 0) {
-                    <div class="mt-2 flex flex-wrap gap-2">
-                        <span class="text-xs text-gray-500">{{ managerIdsControl.value.length }} manager(s)
-                            assigned</span>
-                    </div>
-                    }
-                </div>
-                }
-
-                <!-- Payment Methods -->
-
-
-
-
-                <!-- Status (Edit Mode Only) -->
-
+        <!-- Manager Assignment (Edit Mode Only due to API) -->
+        @if (isEditMode()) {
+          <div class="pt-4 border-t border-white/10">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-medium text-white">Co-Managers</h3>
+                <p class="text-xs text-gray-400">Assign other users to help manage this project.</p>
+              </div>
+              <app-ui-btn variant="outline" size="sm" type="button" (click)="openManagerModal()">
+                <span class="material-icons text-sm mr-1">group_add</span> Manage Managers
+              </app-ui-btn>
             </div>
 
-            <!-- Shipping Configuration Section -->
-            <div class="space-y-6 border-b border-white/10 pb-8">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-semibold text-white">Shipping Configuration</h2>
-                    <app-ui-btn variant="secondary" size="sm" type="button" (click)="addShippingConfig()">
-                        <span class="material-icons text-sm mr-1">add</span> Add Method
-                    </app-ui-btn>
-                </div>
-
-                <div formArrayName="shippingConfigs" class="space-y-4">
-                    @for (config of shippingConfigs.controls; track $index) {
-                    <div [formGroupName]="$index"
-                        class="rounded-lg border border-white/10 bg-white/5 p-6 flex gap-4 items-start">
-                        <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Method Name</label>
-                                <input type="text" formControlName="name" placeholder="e.g. SF Express"
-                                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Type</label>
-                                <select formControlName="type"
-                                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 [color-scheme:dark]">
-                                    <option [ngValue]="3" class="bg-[#1a1a1a]">Meetup</option>
-                                    <option [ngValue]="1" class="bg-[#1a1a1a]">Delivery</option>
-                                    <option [ngValue]="2" class="bg-[#1a1a1a]">Store Pickup</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Price (Fee)</label>
-                                <input type="number" formControlName="price" placeholder="0"
-                                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500">
-                            </div>
-                        </div>
-                        <button type="button" (click)="removeShippingConfig($index)"
-                            class="mt-6 text-gray-500 hover:text-red-400">
-                            <span class="material-icons">delete</span>
-                        </button>
-                    </div>
-                    }
-                    @if (shippingConfigs.controls.length === 0) {
-                    <div class="text-sm text-gray-500 italic">No advanced shipping configuration added.</div>
-                    }
-                </div>
-            </div>
-
-            <!-- Products Section -->
-            <div class="space-y-6">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-semibold text-white">Products</h2>
-                    <app-ui-btn variant="secondary" size="sm" type="button" (click)="addProduct()">
-                        <span class="material-icons text-sm mr-1">add</span> Add Product
-                    </app-ui-btn>
-                </div>
-
-                <div formArrayName="products" class="space-y-4">
-                    @for (prod of products.controls; track $index) {
-                    <div [formGroupName]="$index"
-                        class="rounded-lg border border-white/10 bg-white/5 p-6 transition-colors hover:border-white/20">
-                        <!-- Product Header -->
-                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
-                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Product #{{
-                                $index + 1 }}</span>
-                            <button type="button" (click)="confirmRemoveProduct($index)"
-                                class="text-gray-500 hover:text-red-400 transition-colors" title="Remove Product">
-                                <span class="material-icons text-sm">close</span>
-                            </button>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <label class="block text-xs text-gray-400 mb-1">Product Name</label>
-                                <input type="text" formControlName="name" placeholder="e.g. Base Kit"
-                                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors">
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="block text-xs text-gray-400 mb-1">Description</label>
-                                <textarea formControlName="description" rows="2" placeholder="Product details..."
-                                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors"></textarea>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Image URL</label>
-                                <input type="text" formControlName="imageUrl" placeholder="https://..."
-                                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors">
-                            </div>
-
-                            <!-- Removed Old Dropdown -->
-                            <div class="hidden"></div>
-
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Max Quantity (0 = Unlimited)</label>
-                                <input type="number" formControlName="maxQuantity" placeholder="0"
-                                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Original Price ({{
-                                    form.get('sourceCurrency')?.value || 'Currency' }})</label>
-                                <input type="number" formControlName="priceOriginal" placeholder="0"
-                                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Exchange Rate</label>
-                                <div class="flex items-center gap-2">
-                                    <input type="number" step="0.0001" formControlName="exchangeRate"
-                                        [placeholder]="form.get('exchangeRate')?.value"
-                                        class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors">
-
-                                    @if (!prod.get('exchangeRate')?.value) {
-                                    <span class="text-xs text-blue-400 whitespace-nowrap"
-                                        title="Using Project Default Rate">(Default)</span>
-                                    }
-                                </div>
-                                <div class="mt-1">
-                                    <span class="text-xs font-bold text-blue-400">NT$ {{ calculateFinalPrice(prod) |
-                                        number:'1.0-0' }}</span>
-                                    @if (prod.get('priceOriginal')?.value > 0 && (prod.get('exchangeRate')?.value !== 1
-                                    && (prod.get('exchangeRate')?.value || form.get('exchangeRate')?.value) !== 1)) {
-                                    <span class="text-[10px] text-gray-500 ml-1">
-                                        (from {{ form.get('sourceCurrency')?.value }}{{ prod.get('priceOriginal')?.value
-                                        }})
-                                    </span>
-                                    }
-                                </div>
-                            </div>
-
-                            <!-- Specs -->
-                            <div class="md:col-span-2">
-                                <label class="block text-xs text-gray-400 mb-2">Specifications / Variants</label>
-                                <div formArrayName="specs" class="space-y-2">
-                                    @for (spec of getSpecs(prod).controls; track $index) {
-                                    <div [formGroupName]="$index" class="flex gap-2">
-                                        <input type="text" formControlName="name"
-                                            placeholder="Spec Name (e.g. Red Switch)"
-                                            class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500">
-                                        <button type="button" (click)="removeSpec(prod, $index)"
-                                            class="p-2 text-gray-500 hover:text-red-400">
-                                            <span class="material-icons text-sm">remove_circle_outline</span>
-                                        </button>
-                                    </div>
-                                    }
-                                    <div class="flex gap-2 mt-2">
-                                        <button type="button" (click)="addSpec(prod)"
-                                            class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                                            <span class="material-icons text-[14px]">add</span> Add Spec
-                                        </button>
-                                        <button type="button" (click)="openTemplateModal(prod)"
-                                            class="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1">
-                                            <span class="material-icons text-[14px]">auto_awesome</span> Load From
-                                            Template
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    }
-                    @if (products.controls.length === 0) {
-                    <div class="rounded-lg border border-dashed border-white/20 p-8 text-center text-gray-500">
-                        <p class="mb-2">No products added yet.</p>
-                        <p class="text-sm">Add items that users can purchase.</p>
-                    </div>
-                    }
-                </div>
-            </div>
-
-            <!-- Error Message -->
-            @if (groupBuyService.actionError()) {
-            <div class="rounded-lg bg-red-500/10 p-4 text-red-400 border border-red-500/20">
-                {{ groupBuyService.actionError() }}
-            </div>
+            <!-- Show counts or list? Maybe just count -->
+            @if (managerIdsControl.value.length > 0) {
+              <div class="mt-2 flex flex-wrap gap-2">
+                <span class="text-xs text-gray-500"
+                  >{{ managerIdsControl.value.length }} manager(s) assigned</span
+                >
+              </div>
             }
+          </div>
+        }
 
-            <!-- Actions -->
-            <div class="flex justify-end gap-3 pt-4 border-t border-white/10">
-                <a [routerLink]="backLink()">
-                    <app-ui-btn variant="ghost" type="button">Cancel</app-ui-btn>
-                </a>
-                <app-ui-btn variant="primary" type="submit" [loading]="groupBuyService.isActionLoading()"
-                    [disabled]="form.invalid">
-                    {{ isEditMode() ? 'Save Changes' : 'Create Project' }}
-                </app-ui-btn>
+        <!-- Payment Methods -->
+
+        <!-- Status (Edit Mode Only) -->
+      </div>
+
+      <!-- Shipping Configuration Section -->
+      <div class="space-y-6 border-b border-white/10 pb-8">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-white">Shipping Configuration</h2>
+          <app-ui-btn variant="secondary" size="sm" type="button" (click)="addShippingConfig()">
+            <span class="material-icons text-sm mr-1">add</span> Add Method
+          </app-ui-btn>
+        </div>
+
+        <div formArrayName="shippingConfigs" class="space-y-4">
+          @for (config of shippingConfigs.controls; track $index) {
+            <div
+              [formGroupName]="$index"
+              class="rounded-lg border border-white/10 bg-white/5 p-6 flex gap-4 items-start"
+            >
+              <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Method Name</label>
+                  <input
+                    type="text"
+                    formControlName="name"
+                    placeholder="e.g. SF Express"
+                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Type</label>
+                  <select
+                    formControlName="type"
+                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 [color-scheme:dark]"
+                  >
+                    <option [ngValue]="3" class="bg-[#1a1a1a]">Meetup</option>
+                    <option [ngValue]="1" class="bg-[#1a1a1a]">Delivery</option>
+                    <option [ngValue]="2" class="bg-[#1a1a1a]">Store Pickup</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Price (Fee)</label>
+                  <input
+                    type="number"
+                    formControlName="price"
+                    placeholder="0"
+                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                (click)="removeShippingConfig($index)"
+                class="mt-6 text-gray-500 hover:text-red-400"
+              >
+                <span class="material-icons">delete</span>
+              </button>
             </div>
-        </form>
+          }
+          @if (shippingConfigs.controls.length === 0) {
+            <div class="text-sm text-gray-500 italic">
+              No advanced shipping configuration added.
+            </div>
+          }
+        </div>
+      </div>
 
-    </app-ui-container>
-    <app-ui-dialog></app-ui-dialog>
+      <!-- Products Section -->
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-white">Products</h2>
+          <app-ui-btn variant="secondary" size="sm" type="button" (click)="addProduct()">
+            <span class="material-icons text-sm mr-1">add</span> Add Product
+          </app-ui-btn>
+        </div>
 
-    <!-- Template Selection Modal -->
-    @if (isTemplateModalOpen()) {
-    <div
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-        <div class="w-full max-w-md bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl p-6 relative">
-            <button (click)="closeTemplateModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white">
-                <span class="material-icons">close</span>
-            </button>
-
-            <h3 class="text-xl font-bold text-white mb-4">Select Template</h3>
-            <p class="text-sm text-gray-400 mb-6">Choose a category to automatically add its default specifications to
-                your product.</p>
-
-            <div class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
-                @for (cat of categories(); track cat.id) {
-                <button (click)="applyTemplate(cat.id)"
-                    class="w-full text-left p-4 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group">
-                    <div class="font-medium text-white group-hover:text-blue-400">{{ cat.name }}</div>
-                    <div class="text-xs text-gray-500 mt-1">
-                        Specs: {{ cat.specNames.join(', ') || 'None' }}
-                    </div>
+        <div formArrayName="products" class="space-y-4">
+          @for (prod of products.controls; track $index) {
+            <div
+              [formGroupName]="$index"
+              class="rounded-lg border border-white/10 bg-white/5 p-6 transition-colors hover:border-white/20"
+            >
+              <!-- Product Header -->
+              <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                  >Product #{{ $index + 1 }}</span
+                >
+                <button
+                  type="button"
+                  (click)="confirmRemoveProduct($index)"
+                  class="text-gray-500 hover:text-red-400 transition-colors"
+                  title="Remove Product"
+                >
+                  <span class="material-icons text-sm">close</span>
                 </button>
-                }
-                @if (categories().length === 0) {
-                <div class="text-center py-4 text-gray-500">No templates available.</div>
-                }
-            </div>
+              </div>
 
-            <div class="mt-6 flex justify-end">
-                <app-ui-btn variant="ghost" (click)="closeTemplateModal()">Cancel</app-ui-btn>
-            </div>
-        </div>
-    </div>
-    }
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                  <label class="block text-xs text-gray-400 mb-1">Product Name</label>
+                  <input
+                    type="text"
+                    formControlName="name"
+                    placeholder="e.g. Base Kit"
+                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors"
+                  />
+                </div>
 
-    <!-- Manager Selection Modal -->
-    @if (isManagerModalOpen()) {
-    <div
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-        <div
-            class="w-full max-w-lg bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl p-6 relative flex flex-col max-h-[90vh]">
-            <button (click)="closeManagerModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white">
-                <span class="material-icons">close</span>
-            </button>
+                <div class="md:col-span-2">
+                  <label class="block text-xs text-gray-400 mb-1">Description</label>
+                  <textarea
+                    formControlName="description"
+                    rows="2"
+                    placeholder="Product details..."
+                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors"
+                  ></textarea>
+                </div>
 
-            <h3 class="text-xl font-bold text-white mb-2">Manage Co-Managers</h3>
-            <p class="text-sm text-gray-400 mb-6">Select users who can edit this project.</p>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Image URL</label>
+                  <input
+                    type="text"
+                    formControlName="imageUrl"
+                    placeholder="https://..."
+                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors"
+                  />
+                </div>
 
-            <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0">
-                <app-manager-selector [selectedIds]="managerIdsControl.value"
-                    (selectedIdsChange)="managerIdsControl.setValue($event)"></app-manager-selector>
-            </div>
+                <!-- Removed Old Dropdown -->
+                <div class="hidden"></div>
 
-            <div class="mt-6 flex justify-end pt-4 border-t border-white/10">
-                <app-ui-btn variant="primary" (click)="closeManagerModal()">Done</app-ui-btn>
-            </div>
-        </div>
-    </div>
-    }
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1"
+                    >Max Quantity (0 = Unlimited)</label
+                  >
+                  <input
+                    type="number"
+                    formControlName="maxQuantity"
+                    placeholder="0"
+                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors"
+                  />
+                </div>
 
-    <!-- Price Template Selection Modal -->
-    @if (isPriceTemplateModalOpen()) {
-    <div
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-        <div class="w-full max-w-md bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl p-6 relative">
-            <button (click)="closePriceTemplateModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white">
-                <span class="material-icons">close</span>
-            </button>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1"
+                    >Original Price ({{ form.get('sourceCurrency')?.value || 'Currency' }})</label
+                  >
+                  <input
+                    type="number"
+                    formControlName="priceOriginal"
+                    placeholder="0"
+                    class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Exchange Rate</label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="number"
+                      step="0.0001"
+                      formControlName="exchangeRate"
+                      [placeholder]="form.get('exchangeRate')?.value"
+                      class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500 transition-colors"
+                    />
 
-            <h3 class="text-xl font-bold text-white mb-4">Select Price Template</h3>
-            <p class="text-sm text-gray-400 mb-6">Choose a template to apply currency, exchange rate, and rounding
-                settings.</p>
+                    @if (!prod.get('exchangeRate')?.value) {
+                      <span
+                        class="text-xs text-blue-400 whitespace-nowrap"
+                        title="Using Project Default Rate"
+                        >(Default)</span
+                      >
+                    }
+                  </div>
+                  <div class="mt-1">
+                    <span class="text-xs font-bold text-blue-400"
+                      >NT$ {{ calculateFinalPrice(prod) | number: '1.0-0' }}</span
+                    >
+                    @if (
+                      prod.get('priceOriginal')?.value > 0 &&
+                      prod.get('exchangeRate')?.value !== 1 &&
+                      (prod.get('exchangeRate')?.value || form.get('exchangeRate')?.value) !== 1
+                    ) {
+                      <span class="text-[10px] text-gray-500 ml-1">
+                        (from {{ form.get('sourceCurrency')?.value
+                        }}{{ prod.get('priceOriginal')?.value }})
+                      </span>
+                    }
+                  </div>
+                </div>
 
-            <div class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
-                @for (pt of priceTemplates(); track pt.id) {
-                <button (click)="applyPriceTemplateFromModal(pt.id)"
-                    class="w-full text-left p-4 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group">
-                    <div class="font-medium text-white group-hover:text-blue-400">{{ pt.name }}</div>
-                    <div class="text-xs text-gray-500 mt-1">
-                        {{ pt.sourceCurrency }} @ {{ pt.exchangeRate }}
-                        <span class="mx-1">•</span>
-                        @switch (pt.roundingConfig?.method) {
-                        @case (1) { Floor }
-                        @case (2) { Ceil }
-                        @case (3) { Round }
-                        }
-                        (10^{{ pt.roundingConfig?.digit }})
+                <!-- Specs -->
+                <div class="md:col-span-2">
+                  <label class="block text-xs text-gray-400 mb-2">Specifications / Variants</label>
+                  <div formArrayName="specs" class="space-y-2">
+                    @for (spec of getSpecs(prod).controls; track $index) {
+                      <div [formGroupName]="$index" class="flex gap-2">
+                        <input
+                          type="text"
+                          formControlName="name"
+                          placeholder="Spec Name (e.g. Red Switch)"
+                          class="block w-full rounded bg-black/20 border-white/10 text-sm text-white focus:border-blue-500"
+                        />
+                        <button
+                          type="button"
+                          (click)="removeSpec(prod, $index)"
+                          class="p-2 text-gray-500 hover:text-red-400"
+                        >
+                          <span class="material-icons text-sm">remove_circle_outline</span>
+                        </button>
+                      </div>
+                    }
+                    <div class="flex gap-2 mt-2">
+                      <button
+                        type="button"
+                        (click)="addSpec(prod)"
+                        class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                      >
+                        <span class="material-icons text-[14px]">add</span> Add Spec
+                      </button>
+                      <button
+                        type="button"
+                        (click)="openTemplateModal(prod)"
+                        class="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1"
+                      >
+                        <span class="material-icons text-[14px]">auto_awesome</span> Load From
+                        Template
+                      </button>
                     </div>
-                </button>
-                }
-                @if (priceTemplates().length === 0) {
-                <div class="text-center py-4 text-gray-500">No price templates available.</div>
-                }
+                  </div>
+                </div>
+              </div>
             </div>
-
-            <div class="mt-6 flex justify-end">
-                <app-ui-btn variant="ghost" (click)="closePriceTemplateModal()">Cancel</app-ui-btn>
+          }
+          @if (products.controls.length === 0) {
+            <div
+              class="rounded-lg border border-dashed border-white/20 p-8 text-center text-gray-500"
+            >
+              <p class="mb-2">No products added yet.</p>
+              <p class="text-sm">Add items that users can purchase.</p>
             </div>
+          }
         </div>
+      </div>
+
+      <!-- Error Message -->
+      @if (groupBuyService.actionError()) {
+        <div class="rounded-lg bg-red-500/10 p-4 text-red-400 border border-red-500/20">
+          {{ groupBuyService.actionError() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+        <a [routerLink]="backLink()">
+          <app-ui-btn variant="ghost" type="button">Cancel</app-ui-btn>
+        </a>
+        <app-ui-btn
+          variant="primary"
+          type="submit"
+          [loading]="groupBuyService.isActionLoading()"
+          [disabled]="form.invalid"
+        >
+          {{ isEditMode() ? 'Save Changes' : 'Create Project' }}
+        </app-ui-btn>
+      </div>
+    </form>
+  </app-ui-container>
+  <app-ui-dialog></app-ui-dialog>
+
+  <!-- Template Selection Modal -->
+  @if (isTemplateModalOpen()) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+    >
+      <div
+        class="w-full max-w-md bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl p-6 relative"
+      >
+        <button
+          (click)="closeTemplateModal()"
+          class="absolute top-4 right-4 text-gray-500 hover:text-white"
+        >
+          <span class="material-icons">close</span>
+        </button>
+
+        <h3 class="text-xl font-bold text-white mb-4">Select Template</h3>
+        <p class="text-sm text-gray-400 mb-6">
+          Choose a category to automatically add its default specifications to your product.
+        </p>
+
+        <div class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
+          @for (cat of categories(); track cat.id) {
+            <button
+              (click)="applyTemplate(cat.id)"
+              class="w-full text-left p-4 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
+            >
+              <div class="font-medium text-white group-hover:text-blue-400">{{ cat.name }}</div>
+              <div class="text-xs text-gray-500 mt-1">
+                Specs: {{ cat.specNames.join(', ') || 'None' }}
+              </div>
+            </button>
+          }
+          @if (categories().length === 0) {
+            <div class="text-center py-4 text-gray-500">No templates available.</div>
+          }
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <app-ui-btn variant="ghost" (click)="closeTemplateModal()">Cancel</app-ui-btn>
+        </div>
+      </div>
     </div>
-    }
+  }
+
+  <!-- Manager Selection Modal -->
+  @if (isManagerModalOpen()) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+    >
+      <div
+        class="w-full max-w-lg bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl p-6 relative flex flex-col max-h-[90vh]"
+      >
+        <button
+          (click)="closeManagerModal()"
+          class="absolute top-4 right-4 text-gray-500 hover:text-white"
+        >
+          <span class="material-icons">close</span>
+        </button>
+
+        <h3 class="text-xl font-bold text-white mb-2">Manage Co-Managers</h3>
+        <p class="text-sm text-gray-400 mb-6">Select users who can edit this project.</p>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0">
+          <app-manager-selector
+            [selectedIds]="managerIdsControl.value"
+            (selectedIdsChange)="managerIdsControl.setValue($event)"
+          ></app-manager-selector>
+        </div>
+
+        <div class="mt-6 flex justify-end pt-4 border-t border-white/10">
+          <app-ui-btn variant="primary" (click)="closeManagerModal()">Done</app-ui-btn>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Price Template Selection Modal -->
+  @if (isPriceTemplateModalOpen()) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+    >
+      <div
+        class="w-full max-w-md bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl p-6 relative"
+      >
+        <button
+          (click)="closePriceTemplateModal()"
+          class="absolute top-4 right-4 text-gray-500 hover:text-white"
+        >
+          <span class="material-icons">close</span>
+        </button>
+
+        <h3 class="text-xl font-bold text-white mb-4">Select Price Template</h3>
+        <p class="text-sm text-gray-400 mb-6">
+          Choose a template to apply currency, exchange rate, and rounding settings.
+        </p>
+
+        <div class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
+          @for (pt of priceTemplates(); track pt.id) {
+            <button
+              (click)="applyPriceTemplateFromModal(pt.id)"
+              class="w-full text-left p-4 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
+            >
+              <div class="font-medium text-white group-hover:text-blue-400">{{ pt.name }}</div>
+              <div class="text-xs text-gray-500 mt-1">
+                {{ pt.sourceCurrency }} @ {{ pt.exchangeRate }}
+                <span class="mx-1">•</span>
+                @switch (pt.roundingConfig?.method) {
+                  @case (1) {
+                    Floor
+                  }
+                  @case (2) {
+                    Ceil
+                  }
+                  @case (3) {
+                    Round
+                  }
+                }
+                (10^{{ pt.roundingConfig?.digit }})
+              </div>
+            </button>
+          }
+          @if (priceTemplates().length === 0) {
+            <div class="text-center py-4 text-gray-500">No price templates available.</div>
+          }
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <app-ui-btn variant="ghost" (click)="closePriceTemplateModal()">Cancel</app-ui-btn>
+        </div>
+      </div>
+    </div>
+  }
 </div>

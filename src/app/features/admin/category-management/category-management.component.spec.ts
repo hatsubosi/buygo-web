@@ -10,15 +10,15 @@ describe('CategoryManagementComponent', () => {
 
   const mockGroupBuyService = {
     listCategories: async () => [],
-    createCategory: async () => { },
+    createCategory: async () => {},
     listPriceTemplates: async () => [],
-    createPriceTemplate: async () => { },
-    updatePriceTemplate: async () => { },
-    deletePriceTemplate: async () => { }
+    createPriceTemplate: async () => {},
+    updatePriceTemplate: async () => {},
+    deletePriceTemplate: async () => {},
   };
 
   const mockToastService = {
-    show: () => { }
+    show: () => {},
   };
 
   beforeEach(async () => {
@@ -26,10 +26,9 @@ describe('CategoryManagementComponent', () => {
       imports: [CategoryManagementComponent],
       providers: [
         { provide: GroupBuyService, useValue: mockGroupBuyService },
-        { provide: ToastService, useValue: mockToastService }
-      ]
-    })
-      .compileComponents();
+        { provide: ToastService, useValue: mockToastService },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CategoryManagementComponent);
     component = fixture.componentInstance;

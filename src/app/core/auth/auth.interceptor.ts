@@ -5,11 +5,11 @@ import { firstValueFrom } from 'rxjs'; // For simple one-shot signal/observable 
 
 // Since ConnectRPC interceptors are functions, we can create a factory
 export const authInterceptor = (store: Store): Interceptor => {
-    return (next) => async (req) => {
-        const token = await firstValueFrom(store.select(selectToken));
-        if (token) {
-            req.header.set('Authorization', `Bearer ${token}`);
-        }
-        return next(req);
-    };
+  return (next) => async (req) => {
+    const token = await firstValueFrom(store.select(selectToken));
+    if (token) {
+      req.header.set('Authorization', `Bearer ${token}`);
+    }
+    return next(req);
+  };
 };

@@ -1,4 +1,4 @@
-import { Component, inject, computed, OnInit , ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
@@ -10,11 +10,11 @@ import { UserRole } from '../../../core/api/api/v1/auth_pb';
 
 @Component({
   selector: 'app-manager-dashboard',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, UiContainerComponent, UiBtnComponent, DatePipe],
 
-    templateUrl: "./manager-dashboard.component.html",
-    styleUrl: "./manager-dashboard.component.css"
+  templateUrl: './manager-dashboard.component.html',
+  styleUrl: './manager-dashboard.component.css',
 })
 export class ManagerDashboardComponent implements OnInit {
   auth = inject(AuthService);

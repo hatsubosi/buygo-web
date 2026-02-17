@@ -7,8 +7,6 @@ import { UiToastComponent } from './shared/ui/ui-toast/ui-toast.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, UiToastComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-
-}
+export class App {}
