@@ -54,6 +54,6 @@ describe('GroupBuyListComponent', () => {
   it('should navigate to project detail', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
     component.openProject('proj-123');
-    expect(navigateSpy).toHaveBeenCalledWith(['/project', 'proj-123']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/groupbuy', 'proj-123']);
   });
 });

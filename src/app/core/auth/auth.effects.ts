@@ -45,10 +45,17 @@ export class AuthEffects {
 
                 if (token && userJson) {
                     try {
+                        // Check JWT expiry before restoring session
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        if (payload.exp && payload.exp * 1000 < Date.now()) {
+                            localStorage.removeItem('auth_token');
+                            localStorage.removeItem('auth_user');
+                            return AuthActions.sessionCheckDone();
+                        }
+
                         const userObj = JSON.parse(userJson);
                         // Restore Proto instance
                         const user = User.fromJson(userObj);
-                        // TODO: Verify token validity via API if critical
                         return AuthActions.loginSuccess({ user, token, redirect: false });
                     } catch {
                         localStorage.removeItem('auth_user'); // Clean up bad data
@@ -72,7 +79,7 @@ export class AuthEffects {
                     if (redirect !== false) {
                         // Check for returnUrl
                         const urlTree = this.router.parseUrl(this.router.url);
-                        const returnUrl = urlTree.queryParams['returnUrl'] || '/project';
+                        const returnUrl = urlTree.queryParams['returnUrl'] || '/groupbuy';
                         this.router.navigateByUrl(returnUrl);
                     }
                 })

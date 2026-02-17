@@ -78,6 +78,6 @@ export class GroupBuyListComponent implements OnInit {
   }
 
   openProject(id: string) {
-    this.router.navigate(['/project', id]);
+    this.router.navigate(['/groupbuy', id]);
   }
 }

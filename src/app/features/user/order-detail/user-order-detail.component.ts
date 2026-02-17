@@ -130,7 +130,7 @@ export class UserOrderDetailComponent {
     navigateToProject() {
         const o = this.order();
         if (o) {
-            this.router.navigate(['/project', o.groupBuyId], { queryParams: { edit: 'true' } });
+            this.router.navigate(['/groupbuy', o.groupBuyId], { queryParams: { edit: 'true' } });
         }
     }
 

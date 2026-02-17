@@ -160,7 +160,7 @@ export class ManagerGroupBuyDetailComponent {
     copyPublicLink() {
         const p = this.project();
         if (!p) return;
-        const url = `${window.location.origin}/project/${p.id}`;
+        const url = `${window.location.origin}/groupbuy/${p.id}`;
         navigator.clipboard.writeText(url).then(() => {
             this.toastService.show('Public link copied to clipboard!', 'success');
         });

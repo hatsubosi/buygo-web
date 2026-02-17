@@ -33,7 +33,7 @@ import { UiContainerComponent } from '../../shared/ui/ui-container/ui-container.
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-300">
-                    <a routerLink="/project">
+                    <a routerLink="/groupbuy">
                         <app-ui-btn variant="primary" customClass="!text-lg !px-8 !py-4">
                             Start Exploring
                         </app-ui-btn>

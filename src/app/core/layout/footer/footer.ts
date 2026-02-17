@@ -25,7 +25,7 @@ import { RouterLink } from '@angular/router';
           <div>
             <h4 class="text-white font-bold mb-4">Platform</h4>
             <ul class="space-y-2 text-sm text-gray-400">
-              <li><a routerLink="/project" class="hover:text-blue-400 transition-colors">Group Buys</a></li>
+              <li><a routerLink="/groupbuy" class="hover:text-blue-400 transition-colors">Group Buys</a></li>
               <li><a routerLink="/event" class="hover:text-blue-400 transition-colors">Events</a></li>
               <li><a href="#" class="hover:text-blue-400 transition-colors">Creators</a></li>
             </ul>

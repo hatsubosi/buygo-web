@@ -24,6 +24,13 @@ describe('AuthEffects', () => {
         role: UserRole.USER,
     });
 
+    // Helper to create a fake JWT with a given exp (Unix seconds)
+    function fakeJwt(exp: number): string {
+        const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+        const payload = btoa(JSON.stringify({ sub: 'user-1', exp }));
+        return `${header}.${payload}.fake-signature`;
+    }
+
     beforeEach(() => {
         // Mock localStorage using a simple object store
         mockStorage = {};
@@ -108,7 +115,8 @@ describe('AuthEffects', () => {
     describe('init$ (checkSession)', () => {
         it('should dispatch loginSuccess when valid session exists in localStorage', async () => {
             const userJson = JSON.stringify(testUser.toJson());
-            mockStorage['auth_token'] = 'stored-token';
+            const validToken = fakeJwt(Math.floor(Date.now() / 1000) + 3600); // expires in 1 hour
+            mockStorage['auth_token'] = validToken;
             mockStorage['auth_user'] = userJson;
 
             actions$ = of(AuthActions.checkSession());
@@ -117,9 +125,23 @@ describe('AuthEffects', () => {
             expect(result.type).toBe(AuthActions.loginSuccess.type);
             if (result.type === AuthActions.loginSuccess.type) {
                 const payload = result as ReturnType<typeof AuthActions.loginSuccess>;
-                expect(payload.token).toBe('stored-token');
+                expect(payload.token).toBe(validToken);
                 expect(payload.redirect).toBe(false);
             }
+        });
+
+        it('should dispatch sessionCheckDone and clear storage when token is expired', async () => {
+            const userJson = JSON.stringify(testUser.toJson());
+            const expiredToken = fakeJwt(Math.floor(Date.now() / 1000) - 3600); // expired 1 hour ago
+            mockStorage['auth_token'] = expiredToken;
+            mockStorage['auth_user'] = userJson;
+
+            actions$ = of(AuthActions.checkSession());
+
+            const result = await firstValueFrom(effects.init$);
+            expect(result).toEqual(AuthActions.sessionCheckDone());
+            expect(localStorage.removeItem).toHaveBeenCalledWith('auth_token');
+            expect(localStorage.removeItem).toHaveBeenCalledWith('auth_user');
         });
 
         it('should dispatch sessionCheckDone when no token in localStorage', async () => {
@@ -176,14 +198,14 @@ describe('AuthEffects', () => {
             expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/dashboard');
         });
 
-        it('should navigate to /project when redirect is true and no returnUrl', async () => {
+        it('should navigate to /groupbuy when redirect is true and no returnUrl', async () => {
             // localStorage is already mocked via stubGlobal
             mockRouter.parseUrl.mockReturnValue({ queryParams: {} });
 
             actions$ = of(AuthActions.loginSuccess({ user: testUser, token: 'access-token', redirect: true }));
 
             await firstValueFrom(effects.loginSuccess$);
-            expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/project');
+            expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/groupbuy');
         });
 
         it('should not navigate when redirect is false', async () => {

@@ -25,7 +25,7 @@ import { Footer } from '../footer/footer';
                     <a routerLink="/" routerLinkActive="text-white" [routerLinkActiveOptions]="{exact: true}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
                         Home
                     </a>
-                    <a routerLink="/project" routerLinkActive="text-white" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <a routerLink="/groupbuy" routerLinkActive="text-white" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
                         Projects
                     </a>
                     <a routerLink="/event" routerLinkActive="text-white" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
@@ -86,7 +86,7 @@ import { Footer } from '../footer/footer';
                     <a routerLink="/" (click)="closeMobileMenu()" routerLinkActive="text-blue-400" [routerLinkActiveOptions]="{exact: true}" class="text-2xl font-bold text-gray-300 hover:text-white transition-colors">
                         Home
                     </a>
-                    <a routerLink="/project" (click)="closeMobileMenu()" routerLinkActive="text-blue-400" class="text-2xl font-bold text-gray-300 hover:text-white transition-colors">
+                    <a routerLink="/groupbuy" (click)="closeMobileMenu()" routerLinkActive="text-blue-400" class="text-2xl font-bold text-gray-300 hover:text-white transition-colors">
                         Projects
                     </a>
                     <a routerLink="/event" (click)="closeMobileMenu()" routerLinkActive="text-blue-400" class="text-2xl font-bold text-gray-300 hover:text-white transition-colors">
