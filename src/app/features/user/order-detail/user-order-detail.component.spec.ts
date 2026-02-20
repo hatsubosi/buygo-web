@@ -17,17 +17,17 @@ describe('UserOrderDetailComponent', () => {
     loadingMyOrders: signal(false),
     updatingOrder: signal(false),
     updateOrderError: signal(null),
-    loadProject: async () => {},
-    loadMyOrders: async () => {},
-    updatePaymentInfoAsync: async () => {},
-    updateOrder: async () => {},
-    updateUserOrder: async () => {},
-    setCart: () => {},
-    clearCart: () => {},
+    loadProject: async () => { },
+    loadMyOrders: async () => { },
+    updatePaymentInfoAsync: async () => { },
+    updateOrder: async () => { },
+    updateUserOrder: async () => { },
+    setCart: () => { },
+    clearCart: () => { },
   };
 
   const mockToastService = {
-    show: () => {},
+    show: () => { },
   };
 
   beforeEach(async () => {
@@ -161,6 +161,19 @@ describe('UserOrderDetailComponent', () => {
       await component.savePayment();
 
       expect(toastSpy).toHaveBeenCalledWith('Failed to update payment info', 'error');
+    });
+  });
+
+  describe('Routing Actions', () => {
+    it('should navigate to project with edit flag', () => {
+      fixture.componentRef.setInput('id', 'o1');
+      mockGroupBuyService.myOrders.set([{ id: 'o1', groupBuyId: 'g1', items: [] }] as any);
+      fixture.detectChanges();
+
+      const routerSpy = vi.spyOn(component.router, 'navigate');
+      component.navigateToProject();
+
+      expect(routerSpy).toHaveBeenCalledWith(['/groupbuy', 'g1'], { queryParams: { edit: 'true' } });
     });
   });
 });

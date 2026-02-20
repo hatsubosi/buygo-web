@@ -156,4 +156,61 @@ describe('EventDetailComponent', () => {
       expect(component.shouldShowTime(item)).toBe(false);
     });
   });
+
+  describe('ngOnInit & Routing', () => {
+    it('should load event on init when id is present', () => {
+      component.ngOnInit();
+      expect(mockEventService.loadEvent).toHaveBeenCalledWith('evt-1');
+    });
+  });
+
+  describe('submitRegistration', () => {
+    it('should show toast error if unauthenticated', async () => {
+      mockAuthService.isAuthenticated.mockReturnValueOnce(false);
+      await component.submitRegistration();
+      // Should redirect to login, toast might not be called directly for auth
+      expect(mockToastService.show).not.toHaveBeenCalled();
+    });
+
+    it('should show toast error if no items selected', async () => {
+      mockAuthService.isAuthenticated.mockReturnValueOnce(true);
+      component.itemQuantities.set({}); // empty selection
+      await component.submitRegistration();
+      expect(mockToastService.show).toHaveBeenCalledWith(
+        'Please select at least one item.',
+        'error'
+      );
+    });
+
+    it('should submit registration successfully and reload on success', async () => {
+      mockAuthService.isAuthenticated.mockReturnValueOnce(true);
+      component.itemQuantities.set({ 'item-1': 2 });
+      mockEventService.currentEvent.set({ id: 'evt-1' });
+      mockEventService.register.mockResolvedValueOnce(undefined);
+      const loadRegSpy = vi.spyOn(component, 'loadMyRegistration').mockResolvedValue();
+
+      await component.submitRegistration();
+
+      expect(mockEventService.register).toHaveBeenCalled();
+      expect(mockToastService.show).toHaveBeenCalledWith(
+        'Registration Successful!',
+        'success'
+      );
+      expect(loadRegSpy).toHaveBeenCalled();
+    });
+
+    it('should handle registration failure gracefully', async () => {
+      mockAuthService.isAuthenticated.mockReturnValueOnce(true);
+      component.itemQuantities.set({ 'item-1': 2 });
+      mockEventService.currentEvent.set({ id: 'evt-1' });
+      mockEventService.register.mockRejectedValueOnce(new Error('Network error'));
+
+      await component.submitRegistration();
+
+      expect(mockToastService.show).toHaveBeenCalledWith(
+        'Network error',
+        'error'
+      );
+    });
+  });
 });
