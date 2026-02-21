@@ -90,7 +90,7 @@ export class GroupBuyService {
     let pageToken = '';
     const all: GroupBuy[] = [];
 
-    for (; ;) {
+    for (;;) {
       const res = await this.client.listManagerGroupBuys({ pageSize: 100, pageToken });
       all.push(...res.groupBuys);
       if (!res.nextPageToken) break;

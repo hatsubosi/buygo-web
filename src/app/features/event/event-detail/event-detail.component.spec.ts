@@ -44,7 +44,16 @@ describe('EventDetailComponent', () => {
         { provide: AuthService, useValue: mockAuthService },
         { provide: ToastService, useValue: mockToastService },
         provideRouter([]),
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn().mockImplementation((key) => key === 'id' ? 'evt-1' : null) } } } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: vi.fn().mockImplementation((key) => (key === 'id' ? 'evt-1' : null)),
+              },
+            },
+          },
+        },
       ],
     }).compileComponents();
 
@@ -179,7 +188,7 @@ describe('EventDetailComponent', () => {
       await component.submitRegistration();
       expect(mockToastService.show).toHaveBeenCalledWith(
         'Please select at least one item.',
-        'error'
+        'error',
       );
     });
 
@@ -193,10 +202,7 @@ describe('EventDetailComponent', () => {
       await component.submitRegistration();
 
       expect(mockEventService.register).toHaveBeenCalled();
-      expect(mockToastService.show).toHaveBeenCalledWith(
-        'Registration Successful!',
-        'success'
-      );
+      expect(mockToastService.show).toHaveBeenCalledWith('Registration Successful!', 'success');
       expect(loadRegSpy).toHaveBeenCalled();
     });
 
@@ -208,10 +214,7 @@ describe('EventDetailComponent', () => {
 
       await component.submitRegistration();
 
-      expect(mockToastService.show).toHaveBeenCalledWith(
-        'Network error',
-        'error'
-      );
+      expect(mockToastService.show).toHaveBeenCalledWith('Network error', 'error');
     });
   });
 });

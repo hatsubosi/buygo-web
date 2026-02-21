@@ -17,17 +17,17 @@ describe('UserOrderDetailComponent', () => {
     loadingMyOrders: signal(false),
     updatingOrder: signal(false),
     updateOrderError: signal(null),
-    loadProject: async () => { },
-    loadMyOrders: async () => { },
-    updatePaymentInfoAsync: async () => { },
-    updateOrder: async () => { },
-    updateUserOrder: async () => { },
-    setCart: () => { },
-    clearCart: () => { },
+    loadProject: async () => {},
+    loadMyOrders: async () => {},
+    updatePaymentInfoAsync: async () => {},
+    updateOrder: async () => {},
+    updateUserOrder: async () => {},
+    setCart: () => {},
+    clearCart: () => {},
   };
 
   const mockToastService = {
-    show: () => { },
+    show: () => {},
   };
 
   beforeEach(async () => {
@@ -173,7 +173,9 @@ describe('UserOrderDetailComponent', () => {
       const routerSpy = vi.spyOn(component.router, 'navigate');
       component.navigateToProject();
 
-      expect(routerSpy).toHaveBeenCalledWith(['/groupbuy', 'g1'], { queryParams: { edit: 'true' } });
+      expect(routerSpy).toHaveBeenCalledWith(['/groupbuy', 'g1'], {
+        queryParams: { edit: 'true' },
+      });
     });
   });
 });

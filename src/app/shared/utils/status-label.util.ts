@@ -36,9 +36,7 @@ export function getOrderItemStatusLabel(status: number): string {
   }
 }
 
-export function getShippingStatusLabelFromItems(
-  items: { status: number }[] | undefined,
-): string {
+export function getShippingStatusLabelFromItems(items: { status: number }[] | undefined): string {
   if (!items || items.length === 0) return 'Empty';
   if (items.every((item) => item.status === 6)) return 'Shipped';
   if (items.some((item) => item.status === 5)) return 'Ready to Ship';

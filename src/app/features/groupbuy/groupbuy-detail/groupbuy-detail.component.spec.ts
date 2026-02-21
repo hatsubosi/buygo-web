@@ -16,13 +16,13 @@ describe('GroupBuyDetailComponent', () => {
     isLoadingDetail: signal(false),
     myGroupBuyOrder: signal(null),
     cart: signal([]),
-    loadGroupBuy: () => { },
-    loadExistingOrderIntoCart: async () => { },
-    addToCart: () => { },
-    removeFromCart: () => { },
-    updateCartQuantity: () => { },
-    clearCart: () => { },
-    editSubmittedOrder: () => { },
+    loadGroupBuy: () => {},
+    loadExistingOrderIntoCart: async () => {},
+    addToCart: () => {},
+    removeFromCart: () => {},
+    updateCartQuantity: () => {},
+    clearCart: () => {},
+    editSubmittedOrder: () => {},
   };
 
   const mockAuthService = {
@@ -31,7 +31,7 @@ describe('GroupBuyDetailComponent', () => {
   };
 
   const mockToastService = {
-    show: () => { },
+    show: () => {},
   };
 
   beforeEach(async () => {
@@ -77,7 +77,7 @@ describe('GroupBuyDetailComponent', () => {
       component.ngOnInit();
 
       expect(loadSpy).toHaveBeenCalledWith('123'); // From ActivatedRoute stub
-      // myGroupBuyOrder shouldn't be loaded automatically unless cart processing/editing starts, 
+      // myGroupBuyOrder shouldn't be loaded automatically unless cart processing/editing starts,
       // but loadGroupBuy definitely fires.
     });
   });

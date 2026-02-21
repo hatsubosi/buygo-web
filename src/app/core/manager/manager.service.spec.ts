@@ -103,10 +103,15 @@ describe('ManagerService', () => {
     });
 
     it('should handle error gracefully and show toast', async () => {
-      vi.spyOn((service as any).client, 'confirmPayment').mockRejectedValue(new Error('Failed chunk'));
+      vi.spyOn((service as any).client, 'confirmPayment').mockRejectedValue(
+        new Error('Failed chunk'),
+      );
 
       await expect(service.confirmPayment('o1')).resolves.toBeUndefined();
-      expect(mockToastService.show).toHaveBeenCalledWith('Failed to confirm payment: Failed chunk', 'error');
+      expect(mockToastService.show).toHaveBeenCalledWith(
+        'Failed to confirm payment: Failed chunk',
+        'error',
+      );
     });
   });
 

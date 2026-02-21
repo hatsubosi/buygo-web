@@ -1,10 +1,4 @@
-import {
-  Component,
-  inject,
-  signal,
-  Renderer2,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, inject, signal, Renderer2, ChangeDetectionStrategy } from '@angular/core';
 import { UiBtnComponent } from '../ui-btn/ui-btn.component';
 
 @Component({
