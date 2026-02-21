@@ -11,6 +11,8 @@ import {
   ShippingConfig,
   RoundingConfig,
 } from '../api/api/v1/groupbuy_pb';
+import { orderToCartItems } from './groupbuy.mapper';
+import { paginateAll } from '../utils/paginate-all';
 import { createPromiseClient, Transport } from '@connectrpc/connect';
 import { TransportToken } from '../providers/transport.token';
 import { GroupBuyService as ProjectServiceDef } from '../api/api/v1/groupbuy_connect';
@@ -87,16 +89,10 @@ export class GroupBuyService {
   managerGroupBuys = signal<GroupBuy[]>([]);
 
   async loadManagerProjects() {
-    let pageToken = '';
-    const all: GroupBuy[] = [];
-
-    for (;;) {
-      const res = await this.client.listManagerGroupBuys({ pageSize: 100, pageToken });
-      all.push(...res.groupBuys);
-      if (!res.nextPageToken) break;
-      pageToken = res.nextPageToken;
-    }
-
+    const all = await paginateAll(
+      (pageToken) => this.client.listManagerGroupBuys({ pageSize: 100, pageToken }),
+      (res) => res.groupBuys,
+    );
     this.managerGroupBuys.set(all);
   }
 
@@ -231,16 +227,7 @@ export class GroupBuyService {
 
     if (order && order.paymentStatus < 2) {
       // Map to Cart items
-      const cartItems: CartItem[] = order.items.map((i: OrderItem) => ({
-        groupBuyId: order.groupBuyId,
-        productId: i.productId,
-        specId: i.specId,
-        quantity: i.quantity,
-        productName: i.productName,
-        specName: i.specName,
-        price: Number(i.price),
-        maxQuantity: 100,
-      }));
+      const cartItems = orderToCartItems(order);
       this.setCart(cartItems);
       // Sync loaded ID
       this.loadedGroupBuyCartId.set(groupBuyId);
@@ -257,16 +244,7 @@ export class GroupBuyService {
   editSubmittedOrder() {
     const order = this.myGroupBuyOrder();
     if (order) {
-      const cartItems: CartItem[] = order.items.map((i: OrderItem) => ({
-        groupBuyId: order.groupBuyId,
-        productId: i.productId,
-        specId: i.specId,
-        quantity: i.quantity,
-        productName: i.productName,
-        specName: i.specName,
-        price: Number(i.price),
-        maxQuantity: 100,
-      }));
+      const cartItems = orderToCartItems(order);
       this.setCart(cartItems);
       // We don't need to change loadedGroupBuyCartId if it's already set or matches
     }

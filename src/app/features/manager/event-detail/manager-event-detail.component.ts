@@ -90,14 +90,14 @@ export class ManagerEventDetailComponent {
     try {
       const regs = await this.eventService.listEventRegistrations(e.id);
       // Sort by User Name, then by ID for stability
-      regs.sort((a, b) => {
+      const sorted = (regs ?? []).sort((a, b) => {
         const nameA = a.user?.name || 'Guest';
         const nameB = b.user?.name || 'Guest';
         const nameCompare = nameA.localeCompare(nameB);
         if (nameCompare !== 0) return nameCompare;
         return a.id.localeCompare(b.id);
       });
-      this.registrations.set(regs);
+      this.registrations.set(sorted);
     } catch (err) {
       console.error('Failed to load regs', err);
     }

@@ -7,6 +7,7 @@ import { Event, RegisterItem } from '../api/api/v1/event_pb';
 import { Transport } from '@connectrpc/connect';
 import { AuthService } from '../auth/auth.service';
 import { withLoading } from '../utils/with-loading';
+import { paginateAll } from '../utils/paginate-all';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
@@ -26,32 +27,20 @@ export class EventService {
 
   async loadEvents() {
     await withLoading(this.isLoading, this.error, async () => {
-      let pageToken = '';
-      const all: Event[] = [];
-
-      for (;;) {
-        const res = await this.client.listEvents({ pageSize: 100, pageToken });
-        all.push(...res.events);
-        if (!res.nextPageToken) break;
-        pageToken = res.nextPageToken;
-      }
-
+      const all = await paginateAll(
+        (pageToken) => this.client.listEvents({ pageSize: 100, pageToken }),
+        (res) => res.events,
+      );
       this.events.set(all);
     });
   }
 
   async loadManagerEvents() {
     await withLoading(this.isLoading, this.error, async () => {
-      let pageToken = '';
-      const all: Event[] = [];
-
-      for (;;) {
-        const res = await this.client.listManagerEvents({ pageSize: 100, pageToken });
-        all.push(...res.events);
-        if (!res.nextPageToken) break;
-        pageToken = res.nextPageToken;
-      }
-
+      const all = await paginateAll(
+        (pageToken) => this.client.listManagerEvents({ pageSize: 100, pageToken }),
+        (res) => res.events,
+      );
       this.managerEvents.set(all);
     });
   }
@@ -119,21 +108,9 @@ export class EventService {
       this.error.set(err.message);
       throw err;
     }
-    this.isLoading.set(true);
-    this.error.set(null);
-    try {
-      await this.client.registerEvent({
-        eventId,
-        items,
-        contactInfo,
-        notes,
-      });
-    } catch (err: any) {
-      this.error.set(err.message);
-      throw err;
-    } finally {
-      this.isLoading.set(false);
-    }
+    await withLoading(this.isLoading, this.error, async () => {
+      await this.client.registerEvent({ eventId, items, contactInfo, notes });
+    }, { rethrow: true });
   }
 
   async updateRegistration(
@@ -147,35 +124,16 @@ export class EventService {
       this.error.set(err.message);
       throw err;
     }
-    this.isLoading.set(true);
-    this.error.set(null);
-    try {
-      await this.client.updateRegistration({
-        registrationId,
-        items,
-        contactInfo,
-        notes,
-      });
-    } catch (err: any) {
-      this.error.set(err.message);
-      throw err;
-    } finally {
-      this.isLoading.set(false);
-    }
+    await withLoading(this.isLoading, this.error, async () => {
+      await this.client.updateRegistration({ registrationId, items, contactInfo, notes });
+    }, { rethrow: true });
   }
 
   async getMyRegistrations() {
-    this.isLoading.set(true);
-    this.error.set(null);
-    try {
+    return withLoading(this.isLoading, this.error, async () => {
       const res = await this.client.getMyRegistrations({});
       return res.registrations;
-    } catch (err: any) {
-      this.error.set(err.message);
-      throw err;
-    } finally {
-      this.isLoading.set(false);
-    }
+    }, { rethrow: true });
   }
 
   async cancelRegistration(registrationId: string) {
@@ -192,17 +150,10 @@ export class EventService {
   }
 
   async listEventRegistrations(eventId: string) {
-    this.isLoading.set(true);
-    this.error.set(null);
-    try {
+    return withLoading(this.isLoading, this.error, async () => {
       const res = await this.client.listEventRegistrations({ eventId });
       return res.registrations;
-    } catch (err: any) {
-      this.error.set(err.message);
-      throw err;
-    } finally {
-      this.isLoading.set(false);
-    }
+    }, { rethrow: true });
   }
 
   async updateRegistrationStatus(registrationId: string, status: number, paymentStatus: number) {

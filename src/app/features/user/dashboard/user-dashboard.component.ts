@@ -62,7 +62,7 @@ export class UserDashboardComponent {
   async loadRegistrations() {
     try {
       const regs = await this.eventService.getMyRegistrations();
-      this.registrations.set(regs);
+      this.registrations.set(regs ?? []);
     } catch (err) {
       console.error('Failed to load registrations', err);
     }

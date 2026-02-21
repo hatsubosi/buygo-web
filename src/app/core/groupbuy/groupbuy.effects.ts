@@ -10,7 +10,6 @@ import { GroupBuyService as ProjectRpcService } from '../api/api/v1/groupbuy_con
 import {
   GetGroupBuyResponse,
   CreateOrderResponse,
-  CreateOrderItem,
   CreateGroupBuyResponse,
   UpdateGroupBuyResponse,
   AddProductResponse,
@@ -20,6 +19,8 @@ import {
   UpdateOrderResponse,
   UpdatePaymentInfoResponse,
 } from '../api/api/v1/groupbuy_pb';
+import { cartItemsToOrderItems } from './groupbuy.mapper';
+import { paginateAll } from '../utils/paginate-all';
 
 @Injectable()
 export class GroupBuyEffects {
@@ -29,17 +30,10 @@ export class GroupBuyEffects {
   private readonly pageSize = 100;
 
   private async listAllGroupBuys() {
-    const all = [];
-    let pageToken = '';
-
-    for (;;) {
-      const res = await this.client.listGroupBuys({ pageSize: this.pageSize, pageToken });
-      all.push(...res.groupBuys);
-      if (!res.nextPageToken) break;
-      pageToken = res.nextPageToken;
-    }
-
-    return all;
+    return paginateAll(
+      (pageToken) => this.client.listGroupBuys({ pageSize: this.pageSize, pageToken }),
+      (res) => res.groupBuys,
+    );
   }
 
   loadGroupBuys$ = createEffect(() =>
@@ -75,14 +69,7 @@ export class GroupBuyEffects {
     this.actions$.pipe(
       ofType(GroupBuyActions.submitOrder),
       switchMap(({ groupBuyId, contactInfo, shippingAddress, items }) => {
-        const orderItems = items.map(
-          (item: any) =>
-            new CreateOrderItem({
-              productId: item.productId,
-              specId: item.specId,
-              quantity: item.quantity,
-            }),
-        );
+        const orderItems = cartItemsToOrderItems(items);
 
         return this.client
           .createOrder({
@@ -219,14 +206,7 @@ export class GroupBuyEffects {
     this.actions$.pipe(
       ofType(GroupBuyActions.updateUserOrder),
       switchMap(({ orderId, items, note }) => {
-        const orderItems = items.map(
-          (item: any) =>
-            new CreateOrderItem({
-              productId: item.productId,
-              specId: item.specId,
-              quantity: item.quantity,
-            }),
-        );
+        const orderItems = cartItemsToOrderItems(items);
         return this.client
           .updateOrder({ orderId, items: orderItems, note })
           .then((res: UpdateOrderResponse) => {

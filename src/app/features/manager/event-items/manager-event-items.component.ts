@@ -91,7 +91,7 @@ export class ManagerEventItemsComponent {
 
     try {
       const regs = await this.eventService.listEventRegistrations(id);
-      this.registrations.set(regs);
+      this.registrations.set(regs ?? []);
     } catch (err) {
       console.error(err);
     }

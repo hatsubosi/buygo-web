@@ -76,7 +76,7 @@ export class EventDetailComponent implements OnInit {
 
     try {
       const regs = await this.eventService.getMyRegistrations();
-      const found = regs.find((r) => r.eventId === eventId);
+      const found = (regs ?? []).find((r) => r.eventId === eventId);
       if (found) {
         this.myRegistration.set(found);
         this.notes = found.notes;
