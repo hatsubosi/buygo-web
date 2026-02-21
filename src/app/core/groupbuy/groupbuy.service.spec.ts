@@ -14,6 +14,7 @@ describe('GroupBuyService', () => {
   let store: MockStore;
   const mockAuthService = {
     user: signal(null),
+    isAuthenticated: () => true,
   };
   const mockTransport = {};
 

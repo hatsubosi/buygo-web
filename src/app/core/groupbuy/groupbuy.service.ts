@@ -37,6 +37,7 @@ export class GroupBuyService {
   private store = inject(Store);
   private transport = inject(TransportToken) as Transport;
   private client = createPromiseClient(ProjectServiceDef, this.transport);
+  private authService = inject(AuthService);
 
   // Signals
   groupBuys = this.store.selectSignal(selectAllGroupBuys);
@@ -89,7 +90,7 @@ export class GroupBuyService {
     let pageToken = '';
     const all: GroupBuy[] = [];
 
-    for (;;) {
+    for (; ;) {
       const res = await this.client.listManagerGroupBuys({ pageSize: 100, pageToken });
       all.push(...res.groupBuys);
       if (!res.nextPageToken) break;
@@ -105,9 +106,8 @@ export class GroupBuyService {
 
   constructor() {
     // Clear state on logout
-    const authService = inject(AuthService);
     effect(() => {
-      if (!authService.user()) {
+      if (!this.authService.user()) {
         this.clearCart();
         this.myGroupBuyOrder.set(null);
         this.existingOrderId.set(null);
@@ -193,6 +193,11 @@ export class GroupBuyService {
   }
 
   async getMyGroupBuyOrder(groupBuyId: string) {
+    if (!this.authService.isAuthenticated()) {
+      this.existingOrderId.set(null);
+      return null;
+    }
+
     try {
       const res = await this.client.getMyGroupBuyOrder({ groupBuyId });
       if (res.order) {
