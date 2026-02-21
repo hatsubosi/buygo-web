@@ -7,11 +7,12 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
+import { UiCardComponent } from '../../../shared/ui/ui-card/ui-card.component';
 
 @Component({
   selector: 'app-manager-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, UiContainerComponent, UiBtnComponent, DatePipe],
+  imports: [RouterLink, UiContainerComponent, UiBtnComponent, DatePipe, UiCardComponent],
 
   templateUrl: './manager-dashboard.component.html',
   styleUrl: './manager-dashboard.component.css',

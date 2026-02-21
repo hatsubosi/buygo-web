@@ -4,10 +4,12 @@ import { TransportToken } from '../providers/transport.token';
 import { GroupBuyService as GroupBuyServiceDef } from '../api/api/v1/groupbuy_connect';
 import { Order, PaymentStatus } from '../api/api/v1/groupbuy_pb';
 import { withLoading } from '../utils/with-loading';
+import { ToastService } from '../../shared/ui/ui-toast/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class ManagerService {
   private transport = inject(TransportToken);
+  private toast = inject(ToastService);
   private client = createPromiseClient(GroupBuyServiceDef, this.transport);
 
   // State
@@ -45,7 +47,7 @@ export class ManagerService {
         }),
       );
     } catch (err: any) {
-      alert('Failed to confirm payment: ' + err.message);
+      this.toast.show('Failed to confirm payment: ' + err.message, 'error');
     }
   }
   async batchUpdateStatus(groupBuyId: string, specId: string, targetStatus: number, count: number) {

@@ -43,8 +43,8 @@ describe('EventDetailComponent', () => {
         { provide: EventService, useValue: mockEventService },
         { provide: AuthService, useValue: mockAuthService },
         { provide: ToastService, useValue: mockToastService },
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => 'evt-1' } } } },
         provideRouter([]),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn().mockImplementation((key) => key === 'id' ? 'evt-1' : null) } } } },
       ],
     }).compileComponents();
 
@@ -174,6 +174,7 @@ describe('EventDetailComponent', () => {
 
     it('should show toast error if no items selected', async () => {
       mockAuthService.isAuthenticated.mockReturnValueOnce(true);
+      mockEventService.currentEvent.set({ id: 'evt-1' });
       component.itemQuantities.set({}); // empty selection
       await component.submitRegistration();
       expect(mockToastService.show).toHaveBeenCalledWith(

@@ -13,6 +13,7 @@ import { EventService } from '../../../core/event/event.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
+import { UiCardComponent } from '../../../shared/ui/ui-card/ui-card.component';
 import { PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
 import { RegistrationStatus } from '../../../core/api/api/v1/event_pb';
 import {
@@ -23,7 +24,7 @@ import {
 @Component({
   selector: 'app-user-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CurrencyPipe, UiContainerComponent, UiBtnComponent],
+  imports: [RouterLink, CurrencyPipe, UiContainerComponent, UiBtnComponent, UiCardComponent],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css',
 })

@@ -1,17 +1,26 @@
 import { TestBed } from '@angular/core/testing';
 import { ManagerService } from './manager.service';
 import { TransportToken } from '../providers/transport.token';
+import { ToastService } from '../../shared/ui/ui-toast/toast.service';
 import { vi } from 'vitest';
 
 describe('ManagerService', () => {
   let service: ManagerService;
   const mockTransport = {};
+  const mockToastService = {
+    show: vi.fn(),
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ManagerService, { provide: TransportToken, useValue: mockTransport }],
+      providers: [
+        ManagerService,
+        { provide: TransportToken, useValue: mockTransport },
+        { provide: ToastService, useValue: mockToastService },
+      ],
     });
     service = TestBed.inject(ManagerService);
+    mockToastService.show.mockClear();
   });
 
   it('should be created', () => {
@@ -93,10 +102,11 @@ describe('ManagerService', () => {
       expect(service.orders().find((o: any) => o.id === 'o2')).toEqual(orders[1]);
     });
 
-    it('should handle error gracefully', async () => {
-      vi.spyOn((service as any).client, 'confirmPayment').mockRejectedValue(new Error('Failed'));
-      // Should not throw (uses alert internally)
+    it('should handle error gracefully and show toast', async () => {
+      vi.spyOn((service as any).client, 'confirmPayment').mockRejectedValue(new Error('Failed chunk'));
+
       await expect(service.confirmPayment('o1')).resolves.toBeUndefined();
+      expect(mockToastService.show).toHaveBeenCalledWith('Failed to confirm payment: Failed chunk', 'error');
     });
   });
 

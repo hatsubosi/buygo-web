@@ -11,37 +11,22 @@
         </div>
 
         <div class="px-8 flex gap-6 overflow-x-auto">
-          <button
-            (click)="activeTab.set('overview')"
-            class="pb-4 px-2 text-sm font-medium transition-colors border-b-2"
-            [class.border-blue-500]="activeTab() === 'overview'"
-            [class.text-white]="activeTab() === 'overview'"
-            [class.border-transparent]="activeTab() !== 'overview'"
-            [class.text-gray-400]="activeTab() !== 'overview'"
-            [class.hover:text-gray-300]="activeTab() !== 'overview'"
-          >
+          <button (click)="activeTab.set('overview')" class="pb-4 px-2 text-sm font-medium transition-colors border-b-2"
+            [class.border-blue-500]="activeTab() === 'overview'" [class.text-white]="activeTab() === 'overview'"
+            [class.border-transparent]="activeTab() !== 'overview'" [class.text-gray-400]="activeTab() !== 'overview'"
+            [class.hover:text-gray-300]="activeTab() !== 'overview'">
             Overview
           </button>
-          <button
-            (click)="activeTab.set('orders')"
-            class="pb-4 px-2 text-sm font-medium transition-colors border-b-2"
-            [class.border-blue-500]="activeTab() === 'orders'"
-            [class.text-white]="activeTab() === 'orders'"
-            [class.border-transparent]="activeTab() !== 'orders'"
-            [class.text-gray-400]="activeTab() !== 'orders'"
-            [class.hover:text-gray-300]="activeTab() !== 'orders'"
-          >
+          <button (click)="activeTab.set('orders')" class="pb-4 px-2 text-sm font-medium transition-colors border-b-2"
+            [class.border-blue-500]="activeTab() === 'orders'" [class.text-white]="activeTab() === 'orders'"
+            [class.border-transparent]="activeTab() !== 'orders'" [class.text-gray-400]="activeTab() !== 'orders'"
+            [class.hover:text-gray-300]="activeTab() !== 'orders'">
             My Orders
           </button>
-          <button
-            (click)="activeTab.set('events')"
-            class="pb-4 px-2 text-sm font-medium transition-colors border-b-2"
-            [class.border-blue-500]="activeTab() === 'events'"
-            [class.text-white]="activeTab() === 'events'"
-            [class.border-transparent]="activeTab() !== 'events'"
-            [class.text-gray-400]="activeTab() !== 'events'"
-            [class.hover:text-gray-300]="activeTab() !== 'events'"
-          >
+          <button (click)="activeTab.set('events')" class="pb-4 px-2 text-sm font-medium transition-colors border-b-2"
+            [class.border-blue-500]="activeTab() === 'events'" [class.text-white]="activeTab() === 'events'"
+            [class.border-transparent]="activeTab() !== 'events'" [class.text-gray-400]="activeTab() !== 'events'"
+            [class.hover:text-gray-300]="activeTab() !== 'events'">
             My Events
           </button>
         </div>
@@ -51,254 +36,216 @@
       <div class="p-8">
         <!-- OVERVIEW TAB -->
         @if (activeTab() === 'overview') {
-          <div class="space-y-8 animate-fade-in">
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-                <div class="text-gray-400 text-sm mb-1">Pending Payments</div>
-                <div class="text-3xl font-bold text-white">{{ pendingPaymentCount() }}</div>
-                @if (pendingPaymentCount() > 0) {
-                  <div class="text-xs text-gray-500 mt-2">
-                    <button
-                      (click)="activeTab.set('orders')"
-                      class="text-blue-400 hover:text-blue-300"
-                    >
-                      View Orders &rarr;
-                    </button>
-                  </div>
-                }
+        <div class="space-y-8 animate-fade-in">
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white/5 border border-white/10 rounded-xl p-6">
+              <div class="text-gray-400 text-sm mb-1">Pending Payments</div>
+              <div class="text-3xl font-bold text-white">{{ pendingPaymentCount() }}</div>
+              @if (pendingPaymentCount() > 0) {
+              <div class="text-xs text-gray-500 mt-2">
+                <button (click)="activeTab.set('orders')" class="text-blue-400 hover:text-blue-300">
+                  View Orders &rarr;
+                </button>
               </div>
-              <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-                <div class="text-gray-400 text-sm mb-1">Active Registrations</div>
-                <div class="text-3xl font-bold text-white">{{ activeRegistrationCount() }}</div>
-                @if (activeRegistrationCount() > 0) {
-                  <div class="text-xs text-gray-500 mt-2">
-                    <button
-                      (click)="activeTab.set('events')"
-                      class="text-blue-400 hover:text-blue-300"
-                    >
-                      View Events &rarr;
-                    </button>
-                  </div>
-                }
-              </div>
-              <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-                <div class="text-gray-400 text-sm mb-1">Total Orders</div>
-                <div class="text-3xl font-bold text-white">{{ orders().length }}</div>
-              </div>
+              }
             </div>
-
-            <!-- Recent Activity Preview -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <!-- Recent Orders -->
-              <div>
-                <h3 class="text-lg font-bold text-white mb-4">Recent Orders</h3>
-                @if (orders().length === 0) {
-                  <div class="text-gray-500 text-sm">No recent orders.</div>
-                }
-                <div class="space-y-3">
-                  @for (order of orders().slice(0, 3); track order.id) {
-                    <div
-                      class="bg-white/5 border border-white/10 rounded-lg p-4 flex justify-between items-center hover:bg-white/10 transition-colors cursor-pointer"
-                      [routerLink]="['/user/orders', order.id]"
-                    >
-                      <div>
-                        <div class="text-white font-medium">Order #{{ order.id.slice(0, 8) }}</div>
-                        <div class="text-xs text-gray-400">
-                          {{ Number(order.totalAmount) | currency: 'TWD' : 'symbol' : '1.0-0' }}
-                        </div>
-                      </div>
-                      <span
-                        class="px-2 py-1 rounded text-xs font-bold"
-                        [class]="getPaymentStatusClass(order.paymentStatus)"
-                      >
-                        {{ getPaymentStatusLabel(order.paymentStatus) }}
-                      </span>
-                    </div>
-                  }
-                </div>
-                @if (orders().length > 3) {
-                  <button
-                    (click)="activeTab.set('orders')"
-                    class="mt-3 text-sm text-blue-400 hover:text-blue-300"
-                  >
-                    View All Orders
-                  </button>
-                }
+            <div class="bg-white/5 border border-white/10 rounded-xl p-6">
+              <div class="text-gray-400 text-sm mb-1">Active Registrations</div>
+              <div class="text-3xl font-bold text-white">{{ activeRegistrationCount() }}</div>
+              @if (activeRegistrationCount() > 0) {
+              <div class="text-xs text-gray-500 mt-2">
+                <button (click)="activeTab.set('events')" class="text-blue-400 hover:text-blue-300">
+                  View Events &rarr;
+                </button>
               </div>
-
-              <!-- Upcoming Events -->
-              <div>
-                <h3 class="text-lg font-bold text-white mb-4">Your Events</h3>
-                @if (registrations().length === 0) {
-                  <div class="text-gray-500 text-sm">No event registrations.</div>
-                }
-                <div class="space-y-3">
-                  @for (reg of registrations().slice(0, 3); track reg.id) {
-                    <div
-                      class="bg-white/5 border border-white/10 rounded-lg p-4 flex justify-between items-center hover:bg-white/10 transition-colors cursor-pointer"
-                      [routerLink]="['/event', reg.eventId]"
-                    >
-                      <div>
-                        <div class="text-white font-medium">Event Registration</div>
-                        <div class="text-xs text-gray-400">
-                          Status: {{ getRegStatusLabel(reg.status) }}
-                        </div>
-                      </div>
-                      <span class="material-icons text-gray-400 text-sm">chevron_right</span>
-                    </div>
-                  }
-                </div>
-                @if (registrations().length > 3) {
-                  <button
-                    (click)="activeTab.set('events')"
-                    class="mt-3 text-sm text-blue-400 hover:text-blue-300"
-                  >
-                    View All Events
-                  </button>
-                }
-              </div>
+              }
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-xl p-6">
+              <div class="text-gray-400 text-sm mb-1">Total Orders</div>
+              <div class="text-3xl font-bold text-white">{{ orders().length }}</div>
             </div>
           </div>
+
+          <!-- Recent Activity Preview -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Recent Orders -->
+            <div>
+              <h3 class="text-lg font-bold text-white mb-4">Recent Orders</h3>
+              @if (orders().length === 0) {
+              <div class="text-gray-500 text-sm">No recent orders.</div>
+              }
+              <div class="space-y-3">
+                @for (order of orders().slice(0, 3); track order.id) {
+                <div
+                  class="bg-white/5 border border-white/10 rounded-lg p-4 flex justify-between items-center hover:bg-white/10 transition-colors cursor-pointer"
+                  [routerLink]="['/user/orders', order.id]">
+                  <div>
+                    <div class="text-white font-medium">Order #{{ order.id.slice(0, 8) }}</div>
+                    <div class="text-xs text-gray-400">
+                      {{ Number(order.totalAmount) | currency: 'TWD' : 'symbol' : '1.0-0' }}
+                    </div>
+                  </div>
+                  <span class="px-2 py-1 rounded text-xs font-bold"
+                    [class]="getPaymentStatusClass(order.paymentStatus)">
+                    {{ getPaymentStatusLabel(order.paymentStatus) }}
+                  </span>
+                </div>
+                }
+              </div>
+              @if (orders().length > 3) {
+              <button (click)="activeTab.set('orders')" class="mt-3 text-sm text-blue-400 hover:text-blue-300">
+                View All Orders
+              </button>
+              }
+            </div>
+
+            <!-- Upcoming Events -->
+            <div>
+              <h3 class="text-lg font-bold text-white mb-4">Your Events</h3>
+              @if (registrations().length === 0) {
+              <div class="text-gray-500 text-sm">No event registrations.</div>
+              }
+              <div class="space-y-3">
+                @for (reg of registrations().slice(0, 3); track reg.id) {
+                <div
+                  class="bg-white/5 border border-white/10 rounded-lg p-4 flex justify-between items-center hover:bg-white/10 transition-colors cursor-pointer"
+                  [routerLink]="['/event', reg.eventId]">
+                  <div>
+                    <div class="text-white font-medium">Event Registration</div>
+                    <div class="text-xs text-gray-400">
+                      Status: {{ getRegStatusLabel(reg.status) }}
+                    </div>
+                  </div>
+                  <span class="material-icons text-gray-400 text-sm">chevron_right</span>
+                </div>
+                }
+              </div>
+              @if (registrations().length > 3) {
+              <button (click)="activeTab.set('events')" class="mt-3 text-sm text-blue-400 hover:text-blue-300">
+                View All Events
+              </button>
+              }
+            </div>
+          </div>
+        </div>
         }
 
         <!-- ORDERS TAB -->
         @if (activeTab() === 'orders') {
-          <div class="animate-fade-in">
-            @if (groupBuyService.loadingMyOrders()) {
-              <div class="text-center py-12 text-gray-500">Loading orders...</div>
-            } @else if (orders().length === 0) {
-              <div class="text-center py-16 border border-white/10 rounded-xl bg-white/5">
-                <span class="material-icons text-4xl text-gray-600 mb-4">shopping_bag</span>
-                <p class="text-gray-400 text-lg mb-4">You haven't placed any orders yet.</p>
-                <a routerLink="/" class="text-blue-400 hover:text-blue-300">Browse Projects</a>
-              </div>
-            } @else {
-              <div class="space-y-6">
-                @for (order of orders(); track order.id) {
-                  <div
-                    class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-colors"
-                  >
-                    <div
-                      class="flex flex-row justify-between items-start gap-4 mb-4 pb-4 border-b border-white/5"
-                    >
-                      <div class="shrink-0">
-                        <div class="text-sm text-gray-400 mb-1">
-                          Order ID:
-                          <span class="font-mono text-gray-300">#{{ order.id.slice(0, 8) }}</span>
-                        </div>
-                        <div class="mt-2">
-                          <div class="text-sm text-gray-400">Total</div>
-                          <div class="text-xl font-bold text-white">
-                            {{ Number(order.totalAmount) | currency: 'TWD' : 'symbol' : '1.0-0' }}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="flex flex-col items-end justify-start gap-2 w-auto">
-                        <span
-                          class="px-2 py-1 rounded text-xs font-bold"
-                          [class]="getPaymentStatusClass(order.paymentStatus)"
-                        >
-                          {{ getPaymentStatusLabel(order.paymentStatus) }}
-                        </span>
-                        <a [routerLink]="['/user/orders', order.id]">
-                          <app-ui-btn variant="outline" size="sm">View Details</app-ui-btn>
-                        </a>
-                      </div>
-                    </div>
-                    <!-- Mini Items Preview -->
-                    <div class="space-y-2">
-                      @for (item of order.items.slice(0, 3); track item.id) {
-                        <div class="flex justify-between text-sm">
-                          <div class="text-gray-300">
-                            {{ item.productName }}
-                            @if (item.specName && item.specName !== 'Default') {
-                              <span class="text-gray-500">({{ item.specName }})</span>
-                            }
-                            <span class="text-gray-500"> x{{ item.quantity }}</span>
-                          </div>
-                          <div class="flex items-center gap-2">
-                            <span class="text-xs px-1.5 py-0.5 rounded bg-white/5 text-gray-400">
-                              {{ getItemStatusLabel(item.status) }}
-                            </span>
-                            <span class="text-gray-400">{{
-                              Number(item.price) * item.quantity
-                                | currency: 'TWD' : 'symbol' : '1.0-0'
-                            }}</span>
-                          </div>
-                        </div>
-                      }
-                      @if (order.items.length > 3) {
-                        <div class="text-xs text-center text-gray-500 pt-2">
-                          + {{ order.items.length - 3 }} more items
-                        </div>
-                      }
+        <div class="animate-fade-in">
+          @if (groupBuyService.loadingMyOrders()) {
+          <div class="text-center py-12 text-gray-500">Loading orders...</div>
+          } @else if (orders().length === 0) {
+          <div class="text-center py-16 border border-white/10 rounded-xl bg-white/5">
+            <span class="material-icons text-4xl text-gray-600 mb-4">shopping_bag</span>
+            <p class="text-gray-400 text-lg mb-4">You haven't placed any orders yet.</p>
+            <a routerLink="/" class="text-blue-400 hover:text-blue-300">Browse Projects</a>
+          </div>
+          } @else {
+          <div class="space-y-6">
+            @for (order of orders(); track order.id) {
+            <div class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-colors">
+              <div class="flex flex-row justify-between items-start gap-4 mb-4 pb-4 border-b border-white/5">
+                <div class="shrink-0">
+                  <div class="text-sm text-gray-400 mb-1">
+                    Order ID:
+                    <span class="font-mono text-gray-300">#{{ order.id.slice(0, 8) }}</span>
+                  </div>
+                  <div class="mt-2">
+                    <div class="text-sm text-gray-400">Total</div>
+                    <div class="text-xl font-bold text-white">
+                      {{ Number(order.totalAmount) | currency: 'TWD' : 'symbol' : '1.0-0' }}
                     </div>
                   </div>
+                </div>
+                <div class="flex flex-col items-end justify-start gap-2 w-auto">
+                  <span class="px-2 py-1 rounded text-xs font-bold"
+                    [class]="getPaymentStatusClass(order.paymentStatus)">
+                    {{ getPaymentStatusLabel(order.paymentStatus) }}
+                  </span>
+                  <a [routerLink]="['/user/orders', order.id]">
+                    <app-ui-btn variant="outline" size="sm">View Details</app-ui-btn>
+                  </a>
+                </div>
+              </div>
+              <!-- Mini Items Preview -->
+              <div class="space-y-2">
+                @for (item of order.items.slice(0, 3); track item.id) {
+                <div class="flex justify-between text-sm">
+                  <div class="text-gray-300">
+                    {{ item.productName }}
+                    @if (item.specName && item.specName !== 'Default') {
+                    <span class="text-gray-500">({{ item.specName }})</span>
+                    }
+                    <span class="text-gray-500"> x{{ item.quantity }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs px-1.5 py-0.5 rounded bg-white/5 text-gray-400">
+                      {{ getItemStatusLabel(item.status) }}
+                    </span>
+                    <span class="text-gray-400">{{
+                      Number(item.price) * item.quantity
+                      | currency: 'TWD' : 'symbol' : '1.0-0'
+                      }}</span>
+                  </div>
+                </div>
+                }
+                @if (order.items.length > 3) {
+                <div class="text-xs text-center text-gray-500 pt-2">
+                  + {{ order.items.length - 3 }} more items
+                </div>
                 }
               </div>
+            </div>
             }
           </div>
+          }
+        </div>
         }
 
         <!-- EVENTS TAB -->
         @if (activeTab() === 'events') {
-          <div class="animate-fade-in">
-            @if (eventService.isLoading()) {
-              <div class="text-center py-12 text-gray-500">Loading registrations...</div>
-            } @else if (registrations().length === 0) {
-              <div class="text-center py-16 border border-white/10 rounded-xl bg-white/5">
-                <span class="material-icons text-4xl text-gray-600 mb-4">event</span>
-                <p class="text-gray-400 text-lg mb-4">You haven't registered for any events yet.</p>
-                <a routerLink="/event" class="text-blue-400 hover:text-blue-300">Browse Events</a>
-              </div>
-            } @else {
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @for (reg of registrations(); track reg.id) {
-                  <div
-                    class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-colors flex flex-col justify-between h-full"
-                  >
-                    <div>
-                      <div class="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 class="text-lg font-bold text-white mb-1">Event Registration</h3>
-                          <p class="text-xs text-mono text-gray-500">
-                            Reg ID: #{{ reg.id.slice(0, 8) }}
-                          </p>
-                        </div>
-                        <span
-                          class="px-2 py-1 rounded-full text-xs font-bold border"
-                          [class]="getRegStatusClass(reg.status)"
-                        >
-                          {{ getRegStatusLabel(reg.status) }}
-                        </span>
-                      </div>
-
-                      <div class="space-y-2 mb-6">
-                        @for (item of reg.selectedItems.slice(0, 3); track item.eventItemId) {
-                          <div class="flex justify-between text-sm text-gray-300">
-                            <span>Item ({{ item.eventItemId.slice(0, 4) }}...)</span>
-                            <span>x{{ item.quantity }}</span>
-                          </div>
-                        }
-                        @if (reg.selectedItems.length > 3) {
-                          <div class="text-xs text-gray-500">
-                            + {{ reg.selectedItems.length - 3 }} more items
-                          </div>
-                        }
-                      </div>
-                    </div>
-
-                    <div class="flex justify-end pt-4 border-t border-white/10">
-                      <a [routerLink]="['/event', reg.eventId]">
-                        <app-ui-btn variant="outline" size="sm">View Event Details</app-ui-btn>
-                      </a>
-                    </div>
+        <div class="animate-fade-in">
+          @if (eventService.isLoading()) {
+          <div class="text-center py-12 text-gray-500">Loading registrations...</div>
+          } @else if (registrations().length === 0) {
+          <div class="text-center py-16 border border-white/10 rounded-xl bg-white/5">
+            <span class="material-icons text-4xl text-gray-600 mb-4">event</span>
+            <p class="text-gray-400 text-lg mb-4">You haven't registered for any events yet.</p>
+            <a routerLink="/event" class="text-blue-400 hover:text-blue-300">Browse Events</a>
+          </div>
+          } @else {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            @for (reg of registrations(); track reg.id) {
+            <app-ui-card title="Event Registration" [subtitle]="'Reg: #' + reg.id.slice(0, 8)"
+              [badgeText]="getRegStatusLabel(reg.status)" [badgeClass]="getRegStatusClass(reg.status)">
+              <div content>
+                <div class="space-y-2">
+                  @for (item of reg.selectedItems.slice(0, 3); track item.eventItemId) {
+                  <div class="flex justify-between text-sm text-gray-300">
+                    <span>Item ({{ item.eventItemId.slice(0, 4) }}...)</span>
+                    <span>x{{ item.quantity }}</span>
                   </div>
-                }
+                  }
+                  @if (reg.selectedItems.length > 3) {
+                  <div class="text-xs text-gray-500">
+                    + {{ reg.selectedItems.length - 3 }} more items
+                  </div>
+                  }
+                </div>
               </div>
+
+              <div actions class="flex justify-end">
+                <a [routerLink]="['/event', reg.eventId]">
+                  <app-ui-btn variant="outline" size="sm">View Event Details</app-ui-btn>
+                </a>
+              </div>
+            </app-ui-card>
             }
           </div>
+          }
+        </div>
         }
       </div>
     </div>
