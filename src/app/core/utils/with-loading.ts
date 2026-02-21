@@ -1,9 +1,9 @@
 import { WritableSignal } from '@angular/core';
 
-type WithLoadingOptions = {
+interface WithLoadingOptions {
   rethrow?: boolean;
   onError?: (error: unknown) => void;
-};
+}
 
 function errorMessage(error: unknown): string {
   if (error instanceof Error && error.message) return error.message;

@@ -1,6 +1,5 @@
 import {
   Component,
-  computed,
   inject,
   signal,
   Renderer2,
@@ -19,6 +18,11 @@ import { UiBtnComponent } from '../ui-btn/ui-btn.component';
         <div
           class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
           (click)="close()"
+          (keyup.enter)="close()"
+          (keyup.space)="close()"
+          tabindex="0"
+          role="button"
+          aria-label="Close dialog"
         ></div>
 
         <!-- Dialog Panel -->

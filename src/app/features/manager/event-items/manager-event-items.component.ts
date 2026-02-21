@@ -17,10 +17,10 @@ interface ItemGroup {
   name: string;
   price: number;
   totalQuantity: number;
-  registrations: Array<{
+  registrations: {
     reg: Registration;
     quantity: number;
-  }>;
+  }[];
 }
 
 @Component({

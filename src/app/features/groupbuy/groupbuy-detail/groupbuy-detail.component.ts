@@ -147,7 +147,7 @@ export class GroupBuyDetailComponent implements OnInit {
 
     if (currentQty === 0 && delta > 0) {
       // Add new item
-      let spec = product.specs.find((s) => s.id === specId);
+      const spec = product.specs.find((s) => s.id === specId);
       this.groupBuyService.addToCart(product, spec, 1);
       this.toastService.show('Added to order', 'success');
     } else if (newQty <= 0) {

@@ -49,8 +49,8 @@ export class EventDetailComponent implements OnInit {
   @ViewChild(UiDialogComponent) dialog!: UiDialogComponent;
 
   myRegistration = signal<Registration | null>(null);
-  itemQuantities = signal<{ [key: string]: number }>({});
-  notes: string = '';
+  itemQuantities = signal<Record<string, number>>({});
+  notes = '';
 
   constructor() {
     effect(() => {
@@ -82,7 +82,7 @@ export class EventDetailComponent implements OnInit {
         this.notes = found.notes;
 
         // Pre-fill quantities
-        const quantities: { [key: string]: number } = {};
+        const quantities: Record<string, number> = {};
         found.selectedItems.forEach((i: RegisterItem) => {
           quantities[i.eventItemId] = i.quantity;
         });

@@ -34,7 +34,7 @@ export class AuthService {
   }
 
   // Admin Methods
-  async listUsers(pageOrToken: number | string = 1, pageSize: number = 20) {
+  async listUsers(pageOrToken: number | string = 1, pageSize = 20) {
     const pageToken =
       typeof pageOrToken === 'number'
         ? Math.max(0, (pageOrToken - 1) * pageSize).toString()
@@ -46,7 +46,7 @@ export class AuthService {
     return this.client.updateUserRole({ userId, role });
   }
 
-  async listAssignableManagers(query: string = '') {
+  async listAssignableManagers(query = '') {
     return this.client.listAssignableManagers({ query });
   }
 }
