@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { createPromiseClient, Transport } from '@connectrpc/connect';
 import { TransportToken } from '../providers/transport.token';
@@ -8,9 +8,18 @@ import { UserRole } from '../api/api/v1/auth_pb';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private transport = inject(TransportToken) as Transport;
+  private injector = inject(Injector);
   private router = inject(Router);
-  private client = createPromiseClient(AuthServiceDef, this.transport);
+
+  // Lazily resolved to break circular DI: AuthService ↔ TransportToken
+  private _client: ReturnType<typeof createPromiseClient<typeof AuthServiceDef>> | null = null;
+  private get client() {
+    if (!this._client) {
+      const transport = this.injector.get(TransportToken) as Transport;
+      this._client = createPromiseClient(AuthServiceDef, transport);
+    }
+    return this._client;
+  }
 
   // State
   readonly user = signal<User | null>(null);
