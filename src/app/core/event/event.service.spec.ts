@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { EventService } from './event.service';
-import { provideMockStore } from '@ngrx/store/testing';
 import { TransportToken } from '../providers/transport.token';
 import { AuthService } from '../auth/auth.service';
 import { signal } from '@angular/core';
@@ -17,7 +16,7 @@ describe('EventService', () => {
     TestBed.configureTestingModule({
       providers: [
         EventService,
-        provideMockStore(),
+
         { provide: TransportToken, useValue: mockTransport },
         { provide: AuthService, useValue: mockAuthService },
       ],

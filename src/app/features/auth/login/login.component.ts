@@ -53,8 +53,8 @@ import { AuthService } from '../../../core/auth/auth.service';
           <app-ui-btn
             variant="ghost"
             customClass="w-full justify-center"
-            (onClick)="login('creator')"
-            [loading]="auth.isLoading() && activeProvider === 'creator'"
+            (onClick)="login('mgr')"
+            [loading]="auth.isLoading() && activeProvider === 'mgr'"
           >
             <span class="w-full">Developer Creator Access</span>
           </app-ui-btn>
@@ -63,8 +63,8 @@ import { AuthService } from '../../../core/auth/auth.service';
           <app-ui-btn
             variant="ghost"
             customClass="w-full justify-center"
-            (onClick)="login('dev')"
-            [loading]="auth.isLoading() && activeProvider === 'dev'"
+            (onClick)="login('user1')"
+            [loading]="auth.isLoading() && activeProvider === 'user1'"
           >
             <span class="w-full">Developer Guest Access</span>
           </app-ui-btn>
