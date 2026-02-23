@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -10,7 +11,7 @@ import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-groupbuy-detail',
-  imports: [UiContainerComponent, UiBtnComponent, RouterLink, CurrencySymbolPipe],
+  imports: [UiContainerComponent, UiBtnComponent, RouterLink, CurrencySymbolPipe, NgOptimizedImage],
   templateUrl: './groupbuy-detail.component.html',
   styleUrl: './groupbuy-detail.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

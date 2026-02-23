@@ -1,47 +1,28 @@
 import { TestBed } from '@angular/core/testing';
 import { GroupBuyService } from './groupbuy.service';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { AuthService } from '../auth/auth.service';
 import { TransportToken } from '../providers/transport.token';
-import { GroupBuyActions } from './groupbuy.actions';
 import { signal } from '@angular/core';
-import { Product, ProductSpec, GroupBuy, Order, RoundingConfig } from '../api/api/v1/groupbuy_pb';
+import { Product, ProductSpec, GroupBuy, Order, RoundingConfig, CreateOrderItem } from '../api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
-import { CreateOrderItem } from '../api/api/v1/groupbuy_pb';
 
 describe('GroupBuyService', () => {
   let service: GroupBuyService;
-  let store: MockStore;
   const mockAuthService = {
     user: signal(null),
     isAuthenticated: () => true,
   };
   const mockTransport = {};
 
-  const initialState = {
-    groupBuy: {
-      groupBuys: [],
-      currentGroupBuy: null,
-      loading: false,
-      detailLoading: false,
-      myOrders: [],
-      error: null,
-    },
-  };
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         GroupBuyService,
-        provideMockStore({ initialState }),
         { provide: AuthService, useValue: mockAuthService },
         { provide: TransportToken, useValue: mockTransport },
       ],
     });
-
     service = TestBed.inject(GroupBuyService);
-    store = TestBed.inject(MockStore);
-    vi.spyOn(store, 'dispatch');
   });
 
   it('should be created', () => {
@@ -129,17 +110,42 @@ describe('GroupBuyService', () => {
     });
   });
 
-  describe('Store Interactions', () => {
-    it('should dispatch loadProjects action', () => {
-      service.loadGroupBuys();
-      expect(store.dispatch).toHaveBeenCalledWith(GroupBuyActions.loadGroupBuys());
+  describe('GroupBuy API Calls', () => {
+    it('should load all group buys and update signal', async () => {
+      const clientSpy = vi
+        .spyOn((service as any).client, 'listGroupBuys')
+        .mockResolvedValueOnce({
+          groupBuys: [new GroupBuy({ id: 'g1', title: 'G1' })],
+          nextPageToken: '',
+        });
+
+      await service.loadGroupBuys();
+
+      expect(clientSpy).toHaveBeenCalledTimes(1);
+      expect(service.groupBuys().map((g) => g.id)).toEqual(['g1']);
+      expect(service.isLoadingList()).toBe(false);
     });
 
-    it('should dispatch loadProjectDetail action', () => {
-      service.loadGroupBuy('123');
-      expect(store.dispatch).toHaveBeenCalledWith(
-        GroupBuyActions.loadGroupBuyDetail({ id: '123' }),
-      );
+    it('should set listError on load failure', async () => {
+      vi.spyOn((service as any).client, 'listGroupBuys').mockRejectedValue(new Error('network'));
+
+      await service.loadGroupBuys();
+
+      expect(service.listError()).toBe('network');
+      expect(service.isLoadingList()).toBe(false);
+    });
+
+    it('should load group buy detail and update signals', async () => {
+      const mockGB = new GroupBuy({ id: 'g1', title: 'GB' });
+      vi.spyOn((service as any).client, 'getGroupBuy').mockResolvedValue({
+        groupBuy: mockGB,
+        products: [],
+      });
+
+      await service.loadGroupBuy('g1');
+
+      expect(service.currentGroupBuy()?.id).toBe('g1');
+      expect(service.isLoadingDetail()).toBe(false);
     });
 
     it('should load all manager projects pages', async () => {
@@ -159,6 +165,51 @@ describe('GroupBuyService', () => {
       expect(clientSpy).toHaveBeenCalledTimes(2);
       expect(service.managerGroupBuys().map((g) => g.id)).toEqual(['g1', 'g2']);
     });
+
+    it('should create group buy and update groupBuys signal', async () => {
+      const mockGB = new GroupBuy({ id: 'gb1', title: 'New GB' });
+      const clientSpy = vi
+        .spyOn((service as any).client, 'createGroupBuy')
+        .mockResolvedValue({ groupBuy: mockGB });
+
+      const result = await service.createGroupBuy(
+        'New GB', 'Desc', [], 'img.jpg', undefined, [], [], 5.0,
+        new RoundingConfig({ method: 1, digit: 0 }), 'USD',
+      );
+
+      expect(clientSpy).toHaveBeenCalledTimes(1);
+      expect(result?.id).toBe('gb1');
+      expect(service.groupBuys().some((g) => g.id === 'gb1')).toBe(true);
+      expect(service.isActionLoading()).toBe(false);
+    });
+
+    it('should set actionError when createGroupBuy fails', async () => {
+      vi.spyOn((service as any).client, 'createGroupBuy').mockRejectedValue(new Error('fail'));
+
+      const result = await service.createGroupBuy('t', 'd', [], '', undefined, [], [], 1, undefined, 'JPY');
+
+      expect(result).toBeNull();
+      expect(service.actionError()).toBe('fail');
+    });
+
+    it('should update group buy and refresh groupBuys signal', async () => {
+      const mockGB = new GroupBuy({ id: 'gb1', title: 'Updated' });
+      service.groupBuys.set([new GroupBuy({ id: 'gb1', title: 'Old' })]);
+      vi.spyOn((service as any).client, 'updateGroupBuy').mockResolvedValue({ groupBuy: mockGB });
+
+      await service.updateGroupBuy('gb1', 'Updated', 'desc', 2, [], 'cover', undefined, []);
+
+      expect(service.groupBuys()[0].title).toBe('Updated');
+    });
+
+    it('should add product and update currentProducts signal', async () => {
+      const mockProduct = new Product({ id: 'p1', name: 'Prod' });
+      vi.spyOn((service as any).client, 'addProduct').mockResolvedValue({ product: mockProduct });
+
+      await service.addProduct('gb1', 'Prod', 100, 0.23, ['L']);
+
+      expect(service.currentProducts().some((p) => p.id === 'p1')).toBe(true);
+    });
   });
 
   describe('Order Logic', () => {
@@ -166,11 +217,10 @@ describe('GroupBuyService', () => {
       const mockOrder = new Order({
         id: 'order1',
         groupBuyId: 'proj1',
-        items: [], // simplified for mock
+        items: [],
         paymentStatus: 1,
       });
 
-      // Mock client response
       const clientSpy = vi
         .spyOn((service as any).client, 'getMyGroupBuyOrder')
         .mockResolvedValue({ order: mockOrder });
@@ -188,24 +238,17 @@ describe('GroupBuyService', () => {
       const getMyOrderSpy = vi
         .spyOn((service as any).client, 'getMyGroupBuyOrder')
         .mockResolvedValue({ order: null });
-      const loadMyOrdersSpy = vi.spyOn(service, 'loadMyOrders');
+      vi.spyOn((service as any).client, 'getMyOrders').mockResolvedValue({ orders: [] });
 
       await service.submitOrder('proj1', 'line:abc', 'addr', [
         {
-          groupBuyId: 'proj1',
-          productId: 'p1',
-          specId: 's1',
-          quantity: 2,
-          productName: 'P1',
-          specName: 'S1',
-          price: 100,
-          maxQuantity: 10,
+          groupBuyId: 'proj1', productId: 'p1', specId: 's1', quantity: 2,
+          productName: 'P1', specName: 'S1', price: 100, maxQuantity: 10
         },
       ]);
 
       expect(createOrderSpy).toHaveBeenCalledTimes(1);
       expect(getMyOrderSpy).toHaveBeenCalledWith({ groupBuyId: 'proj1' });
-      expect(loadMyOrdersSpy).toHaveBeenCalled();
       expect(service.lastCreatedOrderId()).toBe('order-new');
       expect(service.submitOrderError()).toBeNull();
       expect(service.isSubmittingOrder()).toBe(false);
@@ -220,6 +263,7 @@ describe('GroupBuyService', () => {
         .spyOn((service as any).client, 'updatePaymentInfo')
         .mockResolvedValue({});
       vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockResolvedValue({ order: null });
+      vi.spyOn((service as any).client, 'getMyOrders').mockResolvedValue({ orders: [] });
       const createOrderSpy = vi.spyOn((service as any).client, 'createOrder');
 
       await service.submitOrder('proj1', 'line:abc', 'addr', []);
@@ -236,9 +280,7 @@ describe('GroupBuyService', () => {
     });
 
     it('should set submitOrderError when submit order fails', async () => {
-      vi.spyOn((service as any).client, 'createOrder').mockRejectedValue(
-        new Error('submit failed'),
-      );
+      vi.spyOn((service as any).client, 'createOrder').mockRejectedValue(new Error('submit failed'));
 
       await service.submitOrder('proj1', 'line:abc', 'addr', []);
 
@@ -248,9 +290,7 @@ describe('GroupBuyService', () => {
 
     it('should set existingOrderId to null when getMyGroupBuyOrder fails', async () => {
       service.existingOrderId.set('old-order');
-      vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockRejectedValue(
-        new Error('network'),
-      );
+      vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockRejectedValue(new Error('network'));
 
       const order = await service.getMyGroupBuyOrder('proj1');
 
@@ -306,94 +346,6 @@ describe('GroupBuyService', () => {
       expect(cart[0].quantity).toBe(2);
     });
   });
-  describe('GroupBuy Creation', () => {
-    it('should create group buy with full payload', async () => {
-      const mockTitle = 'New GB';
-      const mockDesc = 'Desc';
-      const mockProducts = [new Product({ name: 'P1' })];
-      const mockSettings = {
-        exchangeRate: 5.0,
-        roundingConfig: new RoundingConfig({ method: 1, digit: 0 }),
-        sourceCurrency: 'USD',
-        deadline: undefined,
-        coverImage: 'img.jpg',
-        shippingConfigs: [],
-        managerIds: [],
-      };
-
-      const mockResponse = new GroupBuy({ id: 'gb1', title: mockTitle });
-
-      // Spy on client
-      const clientSpy = vi
-        .spyOn((service as any).client, 'createGroupBuy')
-        .mockResolvedValue({ groupBuy: mockResponse });
-
-      await service.createGroupBuy(
-        mockTitle,
-        mockDesc,
-        mockProducts,
-        mockSettings.coverImage,
-        mockSettings.deadline,
-        mockSettings.shippingConfigs,
-        mockSettings.managerIds,
-        mockSettings.exchangeRate,
-        mockSettings.roundingConfig,
-        mockSettings.sourceCurrency,
-      );
-
-      expect(store.dispatch).toHaveBeenCalledWith(
-        GroupBuyActions.createGroupBuy({
-          title: mockTitle,
-          description: mockDesc,
-          products: mockProducts,
-          coverImage: mockSettings.coverImage,
-          deadline: mockSettings.deadline,
-          shippingConfigs: mockSettings.shippingConfigs,
-          managerIds: mockSettings.managerIds,
-          exchangeRate: mockSettings.exchangeRate,
-          roundingConfig: mockSettings.roundingConfig,
-          sourceCurrency: mockSettings.sourceCurrency,
-        }),
-      );
-    });
-  });
-
-  describe('Action Wrappers', () => {
-    it('should dispatch updateGroupBuy action', () => {
-      service.updateGroupBuy('gb1', 'title', 'desc', 2, [], 'cover', undefined, []);
-
-      expect(store.dispatch).toHaveBeenCalledWith(
-        GroupBuyActions.updateGroupBuy({
-          id: 'gb1',
-          title: 'title',
-          description: 'desc',
-          status: 2,
-          products: [],
-          coverImage: 'cover',
-          deadline: undefined,
-          shippingConfigs: [],
-          managerIds: undefined,
-          exchangeRate: undefined,
-          roundingConfig: undefined,
-          sourceCurrency: undefined,
-        }),
-      );
-    });
-
-    it('should dispatch addProduct action', () => {
-      service.addProduct('gb1', 'new product', 100, 0.23, ['size']);
-
-      expect(store.dispatch).toHaveBeenCalledWith(
-        GroupBuyActions.addProduct({
-          groupBuyId: 'gb1',
-          name: 'new product',
-          priceOriginal: 100,
-          exchangeRate: 0.23,
-          specs: ['size'],
-        }),
-      );
-    });
-  });
 
   describe('Client Wrappers', () => {
     it('should call updateOrder API', async () => {
@@ -432,36 +384,20 @@ describe('GroupBuyService', () => {
     });
 
     it('should call category and template APIs', async () => {
-      vi.spyOn((service as any).client, 'createCategory').mockResolvedValue({
-        category: { id: 'c1' },
-      });
-      vi.spyOn((service as any).client, 'listCategories').mockResolvedValue({
-        categories: [{ id: 'c1' }],
-      });
-      vi.spyOn((service as any).client, 'createPriceTemplate').mockResolvedValue({
-        template: { id: 't1' },
-      });
-      vi.spyOn((service as any).client, 'listPriceTemplates').mockResolvedValue({
-        templates: [{ id: 't1' }],
-      });
-      vi.spyOn((service as any).client, 'getPriceTemplate').mockResolvedValue({
-        template: { id: 't1' },
-      });
-      vi.spyOn((service as any).client, 'updatePriceTemplate').mockResolvedValue({
-        template: { id: 't1-updated' },
-      });
+      vi.spyOn((service as any).client, 'createCategory').mockResolvedValue({ category: { id: 'c1' } });
+      vi.spyOn((service as any).client, 'listCategories').mockResolvedValue({ categories: [{ id: 'c1' }] });
+      vi.spyOn((service as any).client, 'createPriceTemplate').mockResolvedValue({ template: { id: 't1' } });
+      vi.spyOn((service as any).client, 'listPriceTemplates').mockResolvedValue({ templates: [{ id: 't1' }] });
+      vi.spyOn((service as any).client, 'getPriceTemplate').mockResolvedValue({ template: { id: 't1' } });
+      vi.spyOn((service as any).client, 'updatePriceTemplate').mockResolvedValue({ template: { id: 't1-updated' } });
       vi.spyOn((service as any).client, 'deletePriceTemplate').mockResolvedValue({});
 
-      await expect(service.createCategory('cat', ['size'])).resolves.toEqual({
-        category: { id: 'c1' },
-      });
+      await expect(service.createCategory('cat', ['size'])).resolves.toEqual({ category: { id: 'c1' } });
       await expect(service.listCategories()).resolves.toEqual([{ id: 'c1' }]);
       await expect(service.createPriceTemplate('tpl', 'JPY', 0.23)).resolves.toEqual({ id: 't1' });
       await expect(service.listPriceTemplates()).resolves.toEqual([{ id: 't1' }]);
       await expect(service.getPriceTemplate('t1')).resolves.toEqual({ id: 't1' });
-      await expect(service.updatePriceTemplate('t1', 'name')).resolves.toEqual({
-        id: 't1-updated',
-      });
+      await expect(service.updatePriceTemplate('t1', 'name')).resolves.toEqual({ id: 't1-updated' });
       await expect(service.deletePriceTemplate('t1')).resolves.toEqual({});
     });
   });

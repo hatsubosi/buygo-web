@@ -1,12 +1,10 @@
 import { Interceptor } from '@connectrpc/connect';
-import { Store } from '@ngrx/store';
-import { selectToken } from './auth.selectors';
-import { firstValueFrom } from 'rxjs'; // For simple one-shot signal/observable read in interceptor
+import { AuthService } from './auth.service';
 
-// Since ConnectRPC interceptors are functions, we can create a factory
-export const authInterceptor = (store: Store): Interceptor => {
+/** Attaches the Bearer token from AuthService to every outgoing request. */
+export const authInterceptor = (authService: AuthService): Interceptor => {
   return (next) => async (req) => {
-    const token = await firstValueFrom(store.select(selectToken));
+    const token = authService.token();
     if (token) {
       req.header.set('Authorization', `Bearer ${token}`);
     }

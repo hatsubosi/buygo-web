@@ -9,7 +9,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
-import { CartItem } from '../../../core/groupbuy/groupbuy.actions';
+import { CartItem } from '../../../core/groupbuy/cart-item.model';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { ShippingType } from '../../../core/api/api/v1/groupbuy_pb';

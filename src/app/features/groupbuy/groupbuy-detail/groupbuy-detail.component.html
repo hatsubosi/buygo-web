@@ -18,9 +18,11 @@
       <!-- Cover Image -->
       @if (project.coverImageUrl) {
         <img
-          [src]="project.coverImageUrl"
-          class="absolute inset-0 h-full w-full object-cover opacity-60"
+          [ngSrc]="project.coverImageUrl"
+          class="absolute inset-0 object-cover opacity-60"
           alt="Project Cover"
+          fill
+          priority
         />
       } @else {
         <div class="absolute inset-0 bg-gray-900"></div>

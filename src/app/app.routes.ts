@@ -1,25 +1,43 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/auth/login/login.component';
-import { GroupBuyListComponent } from './features/groupbuy/groupbuy-list/groupbuy-list.component';
-import { GroupBuyDetailComponent } from './features/groupbuy/groupbuy-detail/groupbuy-detail.component';
-import { GroupBuyCheckoutComponent } from './features/groupbuy/groupbuy-checkout/groupbuy-checkout.component';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
-import { HomeComponent } from './features/home/home.component';
 import { authGuard } from './core/auth/auth.guard';
 import { roleGuard } from './core/auth/role.guard';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+  },
   {
     path: '',
     component: MainLayoutComponent,
     children: [
-      { path: '', component: HomeComponent },
-      { path: 'groupbuy', component: GroupBuyListComponent },
-      { path: 'groupbuy/:id', component: GroupBuyDetailComponent },
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/home/home.component').then((m) => m.HomeComponent),
+      },
+      {
+        path: 'groupbuy',
+        loadComponent: () =>
+          import('./features/groupbuy/groupbuy-list/groupbuy-list.component').then(
+            (m) => m.GroupBuyListComponent,
+          ),
+      },
+      {
+        path: 'groupbuy/:id',
+        loadComponent: () =>
+          import('./features/groupbuy/groupbuy-detail/groupbuy-detail.component').then(
+            (m) => m.GroupBuyDetailComponent,
+          ),
+      },
       {
         path: 'groupbuy/:id/checkout',
-        component: GroupBuyCheckoutComponent,
+        loadComponent: () =>
+          import('./features/groupbuy/groupbuy-checkout/groupbuy-checkout.component').then(
+            (m) => m.GroupBuyCheckoutComponent,
+          ),
         canActivate: [authGuard],
       },
       {

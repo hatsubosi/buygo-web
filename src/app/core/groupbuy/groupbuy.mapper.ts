@@ -1,5 +1,5 @@
 import { Order, OrderItem, CreateOrderItem } from '../api/api/v1/groupbuy_pb';
-import { CartItem } from './groupbuy.actions';
+import { CartItem } from './cart-item.model';
 
 /**
  * Maps an Order's items to CartItem[] for local cart state.
