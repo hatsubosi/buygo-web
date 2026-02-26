@@ -178,9 +178,8 @@ export class ManagerEventDetailComponent {
       await this.eventService.updateEventStatus(e.id, status);
       // Refresh
       this.eventService.loadEvent(e.id);
-      // Grammar fix for 'end' -> 'ended', 'publish' -> 'published', 'archive' -> 'archived'
-      // Simple suffix 'ed' works for these cases.
-      this.toastService.show(`Event ${action}ed successfully`, 'success');
+      const pastTense = action.endsWith('e') ? `${action}d` : `${action}ed`;
+      this.toastService.show(`Event ${pastTense} successfully`, 'success');
     } catch (err: any) {
       this.toastService.show(err.message || 'Failed to update status', 'error');
     }
