@@ -3,17 +3,44 @@ import { ManagerOrderDetailComponent } from './manager-order-detail.component';
 import { ManagerService } from '../../../core/manager/manager.service';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
+import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
-import { PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
+import { CreateOrderItem, PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
 
 describe('ManagerOrderDetailComponent', () => {
   let component: ManagerOrderDetailComponent;
   let fixture: ComponentFixture<ManagerOrderDetailComponent>;
 
+  interface TestOrderItem {
+    productId?: string;
+    specId?: string;
+    quantity?: number;
+    price?: bigint;
+    status?: number;
+  }
+
+  interface TestOrder {
+    id: string;
+    groupBuyId?: string;
+    items: TestOrderItem[];
+    shippingFee?: string;
+    note?: string;
+    paymentStatus?: number;
+  }
+
+  interface TestProduct {
+    id: string;
+    name: string;
+    specs: { id: string; name: string }[];
+  }
+
+  const asCreateOrderItems = (items: Partial<CreateOrderItem>[]): CreateOrderItem[] =>
+    items.map((item) => new CreateOrderItem(item));
+
   const mockManagerService = {
-    orders: signal<any[]>([]),
+    orders: signal<TestOrder[]>([]),
     isLoading: signal(false),
     loadGroupBuyOrders: vi.fn().mockResolvedValue(undefined),
     confirmPayment: vi.fn().mockResolvedValue(undefined),
@@ -21,7 +48,7 @@ describe('ManagerOrderDetailComponent', () => {
 
   const mockGroupBuyService = {
     currentGroupBuy: signal(null),
-    currentProducts: signal<any[]>([]),
+    currentProducts: signal<TestProduct[]>([]),
     loadGroupBuy: vi.fn(),
     updateOrder: vi.fn().mockResolvedValue(undefined),
   };
@@ -77,7 +104,7 @@ describe('ManagerOrderDetailComponent', () => {
 
     it('should find matching order by id', () => {
       const order = { id: 'o1', items: [], shippingFee: '0' };
-      mockManagerService.orders.set([order as any]);
+      mockManagerService.orders.set([order]);
       component.orderId.set('o1');
       expect(component.order()).toBe(order);
     });
@@ -92,7 +119,7 @@ describe('ManagerOrderDetailComponent', () => {
           ],
           shippingFee: '0',
         },
-      ] as any);
+      ]);
       component.orderId.set('o1');
       // 2*100 + 3*50 = 350
       expect(component.subtotal()).toBe(350);
@@ -103,7 +130,7 @@ describe('ManagerOrderDetailComponent', () => {
     });
 
     it('should compute shippingFee from order', () => {
-      mockManagerService.orders.set([{ id: 'o1', items: [], shippingFee: '25' }] as any);
+      mockManagerService.orders.set([{ id: 'o1', items: [], shippingFee: '25' }]);
       component.orderId.set('o1');
       expect(component.shippingFee()).toBe(25);
     });
@@ -119,7 +146,7 @@ describe('ManagerOrderDetailComponent', () => {
           items: [{ productId: 'p1', specId: '', quantity: 1, price: BigInt(100), status: 1 }],
           shippingFee: '30',
         },
-      ] as any);
+      ]);
       component.orderId.set('o1');
       expect(component.total()).toBe(130);
     });
@@ -127,13 +154,13 @@ describe('ManagerOrderDetailComponent', () => {
     it('should return order note when present', () => {
       mockManagerService.orders.set([
         { id: 'o1', items: [], shippingFee: '0', note: 'Please deliver quickly' },
-      ] as any);
+      ]);
       component.orderId.set('o1');
       expect(component.orderNote()).toBe('Please deliver quickly');
     });
 
     it('should return "None" when order has no note', () => {
-      mockManagerService.orders.set([{ id: 'o1', items: [], shippingFee: '0' }] as any);
+      mockManagerService.orders.set([{ id: 'o1', items: [], shippingFee: '0' }]);
       component.orderId.set('o1');
       expect(component.orderNote()).toBe('None');
     });
@@ -152,15 +179,15 @@ describe('ManagerOrderDetailComponent', () => {
 
     it('should not show isLoading when order is found', () => {
       mockManagerService.isLoading.set(false);
-      mockManagerService.orders.set([{ id: 'o1', items: [] } as any]);
+      mockManagerService.orders.set([{ id: 'o1', items: [] }]);
       component.orderId.set('o1');
       expect(component.isLoading()).toBeFalsy();
     });
   });
 
   describe('shipping helpers', () => {
-    function setOrder(items: any[]) {
-      mockManagerService.orders.set([{ id: 'o1', items } as any]);
+    function setOrder(items: TestOrderItem[]) {
+      mockManagerService.orders.set([{ id: 'o1', items }]);
       component.orderId.set('o1');
     }
 
@@ -248,11 +275,11 @@ describe('ManagerOrderDetailComponent', () => {
           ],
           shippingFee: '5',
         },
-      ] as any);
+      ]);
       mockGroupBuyService.currentProducts.set([
         { id: 'p1', name: 'Prod-1', specs: [] },
         { id: 'p2', name: 'Prod-2', specs: [{ id: 's2', name: 'Spec-2' }] },
-      ] as any);
+      ]);
       component.orderId.set('o1');
       component.groupBuyId.set('g1');
     });
@@ -296,11 +323,9 @@ describe('ManagerOrderDetailComponent', () => {
     });
 
     it('should remove the correct item by index', () => {
-      component.editableItems.set([
-        { productId: 'a' } as any,
-        { productId: 'b' } as any,
-        { productId: 'c' } as any,
-      ]);
+      component.editableItems.set(
+        asCreateOrderItems([{ productId: 'a' }, { productId: 'b' }, { productId: 'c' }]),
+      );
       component.removeItem(1);
       const remaining = component.editableItems();
       expect(remaining.length).toBe(2);
@@ -310,19 +335,21 @@ describe('ManagerOrderDetailComponent', () => {
 
     it('should resolve product and spec names', () => {
       expect(component.getProductName('p1')).toBe('Prod-1');
-      expect(component.getProductName('unknown')).toBe('Unknown Product');
+      expect(component.getProductName('any')).toBe('Unknown Product');
       expect(component.getSpecName('p2', 's2')).toBe('Spec-2');
       expect(component.getSpecName('p2', '')).toBe('Default');
       expect(component.getSpecName('p2', 'none')).toBe('Unknown Spec');
       expect(component.getSpecs('p2').length).toBe(1);
     });
 
-    it('should return empty specs for unknown product', () => {
-      expect(component.getSpecs('unknown')).toEqual([]);
+    it('should return empty specs for any product', () => {
+      expect(component.getSpecs('any')).toEqual([]);
     });
 
     it('should save changes and reload orders', async () => {
-      component.editableItems.set([{ productId: 'p1', specId: '', quantity: 2 } as any]);
+      component.editableItems.set(
+        asCreateOrderItems([{ productId: 'p1', specId: '', quantity: 2 }]),
+      );
       component.isDirty.set(true);
 
       await component.saveChanges();
@@ -344,7 +371,9 @@ describe('ManagerOrderDetailComponent', () => {
 
     it('should show error toast when save changes fails', async () => {
       mockGroupBuyService.updateOrder.mockRejectedValueOnce(new Error('save failed'));
-      component.editableItems.set([{ productId: 'p1', specId: '', quantity: 2 } as any]);
+      component.editableItems.set(
+        asCreateOrderItems([{ productId: 'p1', specId: '', quantity: 2 }]),
+      );
       component.isDirty.set(true);
 
       await component.saveChanges();
@@ -355,7 +384,9 @@ describe('ManagerOrderDetailComponent', () => {
 
     it('should show fallback error message when save fails without message', async () => {
       mockGroupBuyService.updateOrder.mockRejectedValueOnce({});
-      component.editableItems.set([{ productId: 'p1', specId: '', quantity: 2 } as any]);
+      component.editableItems.set(
+        asCreateOrderItems([{ productId: 'p1', specId: '', quantity: 2 }]),
+      );
       component.isDirty.set(true);
 
       await component.saveChanges();
@@ -374,7 +405,7 @@ describe('ManagerOrderDetailComponent', () => {
           shippingFee: '0',
           paymentStatus: 2,
         },
-      ] as any);
+      ]);
       component.orderId.set('o1');
       component.groupBuyId.set('g1');
     });
@@ -383,7 +414,7 @@ describe('ManagerOrderDetailComponent', () => {
       // Mock the dialog ViewChild
       component.dialog = {
         open: vi.fn().mockResolvedValue(true),
-      } as any;
+      } as any as UiDialogComponent;
 
       await component.confirmPayment();
 
@@ -400,7 +431,7 @@ describe('ManagerOrderDetailComponent', () => {
     it('should not confirm payment when dialog is cancelled', async () => {
       component.dialog = {
         open: vi.fn().mockResolvedValue(false),
-      } as any;
+      } as any as UiDialogComponent;
 
       await component.confirmPayment();
 
@@ -410,7 +441,7 @@ describe('ManagerOrderDetailComponent', () => {
     it('should show error toast when confirmPayment fails', async () => {
       component.dialog = {
         open: vi.fn().mockResolvedValue(true),
-      } as any;
+      } as any as UiDialogComponent;
       mockManagerService.confirmPayment.mockRejectedValueOnce(new Error('payment error'));
 
       await component.confirmPayment();
@@ -430,7 +461,7 @@ describe('ManagerOrderDetailComponent', () => {
           ],
           shippingFee: '0',
         },
-      ] as any);
+      ]);
       component.orderId.set('o1');
       component.groupBuyId.set('g1');
     });
@@ -438,7 +469,7 @@ describe('ManagerOrderDetailComponent', () => {
     it('should mark all items as shipped when dialog is accepted', async () => {
       component.dialog = {
         open: vi.fn().mockResolvedValue(true),
-      } as any;
+      } as any as UiDialogComponent;
 
       await component.markAsShipped();
 
@@ -451,9 +482,9 @@ describe('ManagerOrderDetailComponent', () => {
       // Verify all items have status 6
       const callArgs = mockGroupBuyService.updateOrder.mock.calls[0];
       expect(callArgs[0]).toBe('o1');
-      const updatedItems = callArgs[1];
+      const updatedItems = callArgs[1] as CreateOrderItem[];
       expect(updatedItems.length).toBe(2);
-      updatedItems.forEach((item: any) => {
+      updatedItems.forEach((item) => {
         expect(item.status).toBe(6);
       });
 
@@ -465,7 +496,7 @@ describe('ManagerOrderDetailComponent', () => {
     it('should not mark as shipped when dialog is cancelled', async () => {
       component.dialog = {
         open: vi.fn().mockResolvedValue(false),
-      } as any;
+      } as any as UiDialogComponent;
 
       await component.markAsShipped();
 
@@ -475,7 +506,7 @@ describe('ManagerOrderDetailComponent', () => {
     it('should show error toast when markAsShipped fails', async () => {
       component.dialog = {
         open: vi.fn().mockResolvedValue(true),
-      } as any;
+      } as any as UiDialogComponent;
       mockGroupBuyService.updateOrder.mockRejectedValueOnce(new Error('ship error'));
 
       await component.markAsShipped();
@@ -487,7 +518,7 @@ describe('ManagerOrderDetailComponent', () => {
     it('should preserve productId, specId and quantity when marking as shipped', async () => {
       component.dialog = {
         open: vi.fn().mockResolvedValue(true),
-      } as any;
+      } as any as UiDialogComponent;
 
       await component.markAsShipped();
 
@@ -511,7 +542,7 @@ describe('ManagerOrderDetailComponent', () => {
           items: [{ productId: 'p1', specId: 's1', quantity: 2, status: 3 }],
           shippingFee: '0',
         },
-      ] as any);
+      ]);
       component.orderId.set('o1');
 
       // Trigger effect by running change detection
@@ -528,7 +559,7 @@ describe('ManagerOrderDetailComponent', () => {
 
     it('should not overwrite editableItems if already populated', async () => {
       // Pre-populate editableItems
-      component.editableItems.set([{ productId: 'existing' } as any]);
+      component.editableItems.set(asCreateOrderItems([{ productId: 'existing' }]));
 
       mockManagerService.orders.set([
         {
@@ -536,7 +567,7 @@ describe('ManagerOrderDetailComponent', () => {
           items: [{ productId: 'p1', specId: '', quantity: 1, status: 1 }],
           shippingFee: '0',
         },
-      ] as any);
+      ]);
       component.orderId.set('o1');
 
       fixture.detectChanges();

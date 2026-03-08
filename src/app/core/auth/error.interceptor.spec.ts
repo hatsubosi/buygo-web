@@ -7,12 +7,12 @@ import { ToastService } from '../../shared/ui/ui-toast/toast.service';
 
 describe('errorInterceptor', () => {
   const createMocks = () => {
-    const authService = { logout: vi.fn() } as unknown as AuthService;
+    const authService = { logout: vi.fn() } as any as AuthService;
     const router = {
       navigate: vi.fn(),
       url: '/current-page',
-    } as unknown as Router;
-    const toast = { show: vi.fn() } as unknown as ToastService;
+    } as any as Router;
+    const toast = { show: vi.fn() } as any as ToastService;
     const req = { header: new Headers(), url: 'http://test/api' };
     return { authService, router, toast, req };
   };

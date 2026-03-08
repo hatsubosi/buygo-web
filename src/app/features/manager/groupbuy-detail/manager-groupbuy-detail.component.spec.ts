@@ -8,7 +8,6 @@ import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
-import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 
 describe('ManagerGroupBuyDetailComponent', () => {
   let component: ManagerGroupBuyDetailComponent;
@@ -244,7 +243,7 @@ describe('ManagerGroupBuyDetailComponent', () => {
       expect(mockGroupBuyService.updateGroupBuy).not.toHaveBeenCalled();
     });
 
-    it('should do nothing for unknown status', async () => {
+    it('should do nothing for any status', async () => {
       mockGroupBuyService.currentGroupBuy.set({ id: 'p1', title: 'T', description: 'D' });
       await component.updateStatus(99);
       expect(mockGroupBuyService.updateGroupBuy).not.toHaveBeenCalled();

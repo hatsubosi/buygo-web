@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GroupBuyCheckoutComponent } from './groupbuy-checkout.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
@@ -7,22 +7,48 @@ import { signal } from '@angular/core';
 import { ShippingType } from '../../../core/api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
 import { ActivatedRoute } from '@angular/router';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 
 describe('GroupBuyCheckoutComponent', () => {
   let component: GroupBuyCheckoutComponent;
   let fixture: ComponentFixture<GroupBuyCheckoutComponent>;
   let router: Router;
 
-  let mockGroupBuyService: any;
-  let mockToastService: any;
-  let paramMapSubject: Subject<any>;
+  interface TestShippingConfig {
+    id: string;
+    type: ShippingType;
+    price?: number | bigint;
+    name?: string;
+  }
+
+  interface TestGroupBuy {
+    id: string;
+    shippingConfigs?: TestShippingConfig[];
+  }
+
+  interface TestCartItem {
+    productId: string;
+    specId: string;
+    quantity: number;
+    price?: number;
+    productName?: string;
+    specName?: string;
+  }
+
+  interface TestOrder {
+    id: string;
+    paymentStatus: number;
+    contactInfo: string;
+    shippingAddress: string;
+    shippingMethodId?: string;
+    note?: string;
+  }
 
   function createMockGroupBuyService() {
     return {
-      currentGroupBuy: signal<any>(null),
+      currentGroupBuy: signal<TestGroupBuy | null>(null),
       currentProducts: signal<any[]>([]),
-      cartItems: signal<any[]>([]),
+      cartItems: signal<TestCartItem[]>([]),
       cartTotal: signal(0),
       cartCount: signal(0),
       lastCreatedOrderId: signal<string | null>(null),
@@ -30,20 +56,22 @@ describe('GroupBuyCheckoutComponent', () => {
       isSubmitting: signal(false),
       isSubmittingOrder: signal(false),
       isLoadingDetail: signal(false),
-      cart: signal<any[]>([]),
+      cart: signal<TestCartItem[]>([]),
       loadGroupBuy: vi.fn().mockResolvedValue(undefined),
       submitOrder: vi.fn().mockResolvedValue(undefined),
       clearCart: vi.fn(),
       removeFromCart: vi.fn(),
       updateCartQuantity: vi.fn(),
-      loadExistingOrderIntoCart: vi.fn().mockResolvedValue(null),
+      loadExistingOrderIntoCart: vi.fn<() => Promise<TestOrder | null>>().mockResolvedValue(null),
     };
   }
 
+  let mockGroupBuyService: ReturnType<typeof createMockGroupBuyService>;
+  const mockToastService = { show: vi.fn() };
+
   beforeEach(async () => {
     mockGroupBuyService = createMockGroupBuyService();
-    mockToastService = { show: vi.fn() };
-    paramMapSubject = new Subject();
+    mockToastService.show.mockReset();
 
     await TestBed.configureTestingModule({
       imports: [GroupBuyCheckoutComponent],
@@ -99,7 +127,7 @@ describe('GroupBuyCheckoutComponent', () => {
   });
 
   it('should return empty array when project has no shippingConfigs', () => {
-    mockGroupBuyService.currentGroupBuy.set({ id: 'p1' } as any);
+    mockGroupBuyService.currentGroupBuy.set({ id: 'p1' });
     expect(component.shippingConfigs).toEqual([]);
   });
 

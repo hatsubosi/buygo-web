@@ -3,10 +3,12 @@ import { EventService } from './event.service';
 import { TransportToken } from '../providers/transport.token';
 import { AuthService } from '../auth/auth.service';
 import { signal } from '@angular/core';
+import { RegisterItem } from '../api/api/v1/event_pb';
 import { vi } from 'vitest';
 
 describe('EventService', () => {
   let service: EventService;
+  type ClientLike = Record<string, (...args: any[]) => any>;
   const mockTransport = {};
   const mockAuthService = {
     user: signal({ id: 'user1', name: 'Test User' }),
@@ -25,6 +27,8 @@ describe('EventService', () => {
     service = TestBed.inject(EventService);
   });
 
+  const getClient = (): ClientLike => (service as any as { client: ClientLike }).client;
+
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
@@ -33,7 +37,7 @@ describe('EventService', () => {
     it('should load events and update signal', async () => {
       const mockEvents = [{ id: '1', title: 'Event 1' }];
       const clientSpy = vi
-        .spyOn((service as any).client, 'listEvents')
+        .spyOn(getClient(), 'listEvents')
         .mockResolvedValue({ events: mockEvents });
 
       await service.loadEvents();
@@ -46,19 +50,19 @@ describe('EventService', () => {
 
     it('should load all event pages with nextPageToken', async () => {
       const clientSpy = vi
-        .spyOn((service as any).client, 'listEvents')
+        .spyOn(getClient(), 'listEvents')
         .mockResolvedValueOnce({ events: [{ id: '1', title: 'Event 1' }], nextPageToken: '100' })
         .mockResolvedValueOnce({ events: [{ id: '2', title: 'Event 2' }], nextPageToken: '' });
 
       await service.loadEvents();
 
       expect(clientSpy).toHaveBeenCalledTimes(2);
-      expect(service.events().map((e: any) => e.id)).toEqual(['1', '2']);
+      expect(service.events().map((e) => e.id)).toEqual(['1', '2']);
     });
 
     it('should handle load events error', async () => {
       const errorMsg = 'Failed to load';
-      vi.spyOn((service as any).client, 'listEvents').mockRejectedValue(new Error(errorMsg));
+      vi.spyOn(getClient(), 'listEvents').mockRejectedValue(new Error(errorMsg));
 
       await service.loadEvents();
 
@@ -69,9 +73,7 @@ describe('EventService', () => {
 
     it('should load single event', async () => {
       const mockEvent = { id: '1', title: 'Event 1' };
-      const clientSpy = vi
-        .spyOn((service as any).client, 'getEvent')
-        .mockResolvedValue({ event: mockEvent });
+      const clientSpy = vi.spyOn(getClient(), 'getEvent').mockResolvedValue({ event: mockEvent });
 
       await service.loadEvent('1');
 
@@ -81,7 +83,7 @@ describe('EventService', () => {
 
     it('should load manager events across pages', async () => {
       const clientSpy = vi
-        .spyOn((service as any).client, 'listManagerEvents')
+        .spyOn(getClient(), 'listManagerEvents')
         .mockResolvedValueOnce({
           events: [{ id: 'm1', title: 'Manager Event 1' }],
           nextPageToken: 'p2',
@@ -94,7 +96,7 @@ describe('EventService', () => {
       await service.loadManagerEvents();
 
       expect(clientSpy).toHaveBeenCalledTimes(2);
-      expect(service.managerEvents().map((e: any) => e.id)).toEqual(['m1', 'm2']);
+      expect(service.managerEvents().map((e) => e.id)).toEqual(['m1', 'm2']);
       expect(service.error()).toBeNull();
     });
   });
@@ -103,7 +105,7 @@ describe('EventService', () => {
     it('should create event and update list', async () => {
       const mockEvent = { id: 'new', title: 'New Event', creator: { id: 'user1' } };
       const clientSpy = vi
-        .spyOn((service as any).client, 'createEvent')
+        .spyOn(getClient(), 'createEvent')
         .mockResolvedValue({ event: mockEvent });
 
       const startDate = new Date();
@@ -118,7 +120,7 @@ describe('EventService', () => {
 
     it('should map createEvent items and discounts payload', async () => {
       const clientSpy = vi
-        .spyOn((service as any).client, 'createEvent')
+        .spyOn(getClient(), 'createEvent')
         .mockResolvedValue({ event: { id: 'mapped', title: 'Mapped Event' } });
 
       const startDate = new Date('2026-01-01T10:00:00.000Z');
@@ -151,7 +153,10 @@ describe('EventService', () => {
       );
 
       expect(clientSpy).toHaveBeenCalledTimes(1);
-      const payload = clientSpy.mock.calls[0][0] as any;
+      const payload = clientSpy.mock.calls[0][0] as {
+        items: { startTime?: any; endTime?: any }[];
+        discounts: { discountAmount: bigint }[];
+      };
       expect(payload.items).toHaveLength(2);
       expect(payload.items[0].startTime).toBeDefined();
       expect(payload.items[0].endTime).toBeDefined();
@@ -161,7 +166,7 @@ describe('EventService', () => {
     });
 
     it('should register for event', async () => {
-      const clientSpy = vi.spyOn((service as any).client, 'registerEvent').mockResolvedValue({});
+      const clientSpy = vi.spyOn(getClient(), 'registerEvent').mockResolvedValue({});
 
       await service.register('evt1', [], 'Contact', 'Notes');
 
@@ -175,7 +180,7 @@ describe('EventService', () => {
 
     it('should inject current user as creator when createEvent response has no creator', async () => {
       const clientSpy = vi
-        .spyOn((service as any).client, 'createEvent')
+        .spyOn(getClient(), 'createEvent')
         .mockResolvedValue({ event: { id: 'new2', title: 'No Creator Event' } });
 
       await service.createEvent('No Creator Event', 'Desc', new Date(), new Date());
@@ -185,9 +190,7 @@ describe('EventService', () => {
     });
 
     it('should set actionError and throw when createEvent fails', async () => {
-      vi.spyOn((service as any).client, 'createEvent').mockRejectedValue(
-        new Error('create failed'),
-      );
+      vi.spyOn(getClient(), 'createEvent').mockRejectedValue(new Error('create failed'));
 
       await expect(service.createEvent('title', 'desc', new Date(), new Date())).rejects.toThrow(
         'create failed',
@@ -198,10 +201,15 @@ describe('EventService', () => {
     });
 
     it('should reject register when quantity is not positive', async () => {
-      const registerSpy = vi.spyOn((service as any).client, 'registerEvent');
+      const registerSpy = vi.spyOn(getClient(), 'registerEvent');
 
       await expect(
-        service.register('evt1', [{ itemId: 'item1', quantity: 0 } as any], 'Contact', 'Notes'),
+        service.register(
+          'evt1',
+          [{ itemId: 'item1', quantity: 0 } as any as RegisterItem],
+          'Contact',
+          'Notes',
+        ),
       ).rejects.toThrow('Quantity must be positive');
 
       expect(registerSpy).not.toHaveBeenCalled();
@@ -210,12 +218,15 @@ describe('EventService', () => {
     });
 
     it('should set error and throw when register API fails', async () => {
-      vi.spyOn((service as any).client, 'registerEvent').mockRejectedValue(
-        new Error('register failed'),
-      );
+      vi.spyOn(getClient(), 'registerEvent').mockRejectedValue(new Error('register failed'));
 
       await expect(
-        service.register('evt1', [{ itemId: 'item1', quantity: 1 } as any], 'Contact', 'Notes'),
+        service.register(
+          'evt1',
+          [{ itemId: 'item1', quantity: 1 } as any as RegisterItem],
+          'Contact',
+          'Notes',
+        ),
       ).rejects.toThrow('register failed');
 
       expect(service.error()).toBe('register failed');
@@ -223,12 +234,12 @@ describe('EventService', () => {
     });
 
     it('should reject updateRegistration when quantity is not positive', async () => {
-      const updateSpy = vi.spyOn((service as any).client, 'updateRegistration');
+      const updateSpy = vi.spyOn(getClient(), 'updateRegistration');
 
       await expect(
         service.updateRegistration(
           'reg1',
-          [{ itemId: 'item1', quantity: 0 } as any],
+          [{ itemId: 'item1', quantity: 0 } as any as RegisterItem],
           'Contact',
           'Notes',
         ),
@@ -239,13 +250,11 @@ describe('EventService', () => {
     });
 
     it('should update registration successfully', async () => {
-      const updateSpy = vi
-        .spyOn((service as any).client, 'updateRegistration')
-        .mockResolvedValue({});
+      const updateSpy = vi.spyOn(getClient(), 'updateRegistration').mockResolvedValue({});
 
       await service.updateRegistration(
         'reg1',
-        [{ eventItemId: 'item1', quantity: 1 } as any],
+        [{ eventItemId: 'item1', quantity: 1 } as any as RegisterItem],
         'Contact',
         'Notes',
       );
@@ -262,7 +271,7 @@ describe('EventService', () => {
 
     it('should return my registrations', async () => {
       const registrations = [{ id: 'r1' }, { id: 'r2' }];
-      vi.spyOn((service as any).client, 'getMyRegistrations').mockResolvedValue({ registrations });
+      vi.spyOn(getClient(), 'getMyRegistrations').mockResolvedValue({ registrations });
 
       await expect(service.getMyRegistrations()).resolves.toEqual(registrations);
       expect(service.isLoading()).toBe(false);
@@ -270,9 +279,7 @@ describe('EventService', () => {
     });
 
     it('should throw and set error when getMyRegistrations fails', async () => {
-      vi.spyOn((service as any).client, 'getMyRegistrations').mockRejectedValue(
-        new Error('my-reg failed'),
-      );
+      vi.spyOn(getClient(), 'getMyRegistrations').mockRejectedValue(new Error('my-reg failed'));
 
       await expect(service.getMyRegistrations()).rejects.toThrow('my-reg failed');
       expect(service.error()).toBe('my-reg failed');
@@ -280,9 +287,7 @@ describe('EventService', () => {
     });
 
     it('should set actionError and throw when cancelRegistration fails', async () => {
-      vi.spyOn((service as any).client, 'cancelRegistration').mockRejectedValue(
-        new Error('cancel failed'),
-      );
+      vi.spyOn(getClient(), 'cancelRegistration').mockRejectedValue(new Error('cancel failed'));
 
       await expect(service.cancelRegistration('reg1')).rejects.toThrow('cancel failed');
 
@@ -291,9 +296,7 @@ describe('EventService', () => {
     });
 
     it('should cancel registration successfully', async () => {
-      const cancelSpy = vi
-        .spyOn((service as any).client, 'cancelRegistration')
-        .mockResolvedValue({});
+      const cancelSpy = vi.spyOn(getClient(), 'cancelRegistration').mockResolvedValue({});
 
       await service.cancelRegistration('reg1');
 
@@ -303,7 +306,7 @@ describe('EventService', () => {
     });
 
     it('should set actionError and throw when updateRegistrationStatus fails', async () => {
-      vi.spyOn((service as any).client, 'updateRegistrationStatus').mockRejectedValue(
+      vi.spyOn(getClient(), 'updateRegistrationStatus').mockRejectedValue(
         new Error('status failed'),
       );
 
@@ -314,9 +317,7 @@ describe('EventService', () => {
     });
 
     it('should update registration status successfully', async () => {
-      const updateSpy = vi
-        .spyOn((service as any).client, 'updateRegistrationStatus')
-        .mockResolvedValue({});
+      const updateSpy = vi.spyOn(getClient(), 'updateRegistrationStatus').mockResolvedValue({});
 
       await service.updateRegistrationStatus('reg1', 2, 3);
 
@@ -330,9 +331,7 @@ describe('EventService', () => {
     });
 
     it('should update event status successfully', async () => {
-      const updateSpy = vi
-        .spyOn((service as any).client, 'updateEventStatus')
-        .mockResolvedValue({});
+      const updateSpy = vi.spyOn(getClient(), 'updateEventStatus').mockResolvedValue({});
 
       await service.updateEventStatus('evt1', 2);
 
@@ -344,7 +343,7 @@ describe('EventService', () => {
     it('should list event registrations', async () => {
       const registrations = [{ id: 'r1' }];
       const listSpy = vi
-        .spyOn((service as any).client, 'listEventRegistrations')
+        .spyOn(getClient(), 'listEventRegistrations')
         .mockResolvedValue({ registrations });
 
       await expect(service.listEventRegistrations('evt1')).resolves.toEqual(registrations);
@@ -354,7 +353,7 @@ describe('EventService', () => {
     });
 
     it('should throw and set error when listing event registrations fails', async () => {
-      vi.spyOn((service as any).client, 'listEventRegistrations').mockRejectedValue(
+      vi.spyOn(getClient(), 'listEventRegistrations').mockRejectedValue(
         new Error('list-reg failed'),
       );
 
@@ -364,9 +363,7 @@ describe('EventService', () => {
     });
 
     it('should throw and set actionError when updateEvent fails', async () => {
-      vi.spyOn((service as any).client, 'updateEvent').mockRejectedValue(
-        new Error('update failed'),
-      );
+      vi.spyOn(getClient(), 'updateEvent').mockRejectedValue(new Error('update failed'));
 
       await expect(
         service.updateEvent('evt1', {
@@ -388,7 +385,7 @@ describe('EventService', () => {
     });
 
     it('should call updateEvent with mapped payload', async () => {
-      const updateSpy = vi.spyOn((service as any).client, 'updateEvent').mockResolvedValue({});
+      const updateSpy = vi.spyOn(getClient(), 'updateEvent').mockResolvedValue({});
       const now = new Date();
 
       await service.updateEvent('evt1', {
@@ -421,7 +418,7 @@ describe('EventService', () => {
     });
 
     it('should set actionError and throw when updateEventStatus fails', async () => {
-      vi.spyOn((service as any).client, 'updateEventStatus').mockRejectedValue(
+      vi.spyOn(getClient(), 'updateEventStatus').mockRejectedValue(
         new Error('update-status failed'),
       );
 

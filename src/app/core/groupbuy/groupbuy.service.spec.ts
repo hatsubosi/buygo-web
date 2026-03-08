@@ -8,6 +8,7 @@ import {
   ProductSpec,
   GroupBuy,
   Order,
+  OrderItem,
   RoundingConfig,
   CreateOrderItem,
 } from '../api/api/v1/groupbuy_pb';
@@ -15,6 +16,7 @@ import { vi } from 'vitest';
 
 describe('GroupBuyService', () => {
   let service: GroupBuyService;
+  type ClientLike = Record<string, (...args: any[]) => any>;
   const mockAuthService = {
     user: signal(null),
     isAuthenticated: () => true,
@@ -31,6 +33,8 @@ describe('GroupBuyService', () => {
     });
     service = TestBed.inject(GroupBuyService);
   });
+
+  const getClient = (): ClientLike => (service as any as { client: ClientLike }).client;
 
   it('should be created', () => {
     expect(service).toBeTruthy();
@@ -119,7 +123,7 @@ describe('GroupBuyService', () => {
 
   describe('GroupBuy API Calls', () => {
     it('should load all group buys and update signal', async () => {
-      const clientSpy = vi.spyOn((service as any).client, 'listGroupBuys').mockResolvedValueOnce({
+      const clientSpy = vi.spyOn(getClient(), 'listGroupBuys').mockResolvedValueOnce({
         groupBuys: [new GroupBuy({ id: 'g1', title: 'G1' })],
         nextPageToken: '',
       });
@@ -132,7 +136,7 @@ describe('GroupBuyService', () => {
     });
 
     it('should set listError on load failure', async () => {
-      vi.spyOn((service as any).client, 'listGroupBuys').mockRejectedValue(new Error('network'));
+      vi.spyOn(getClient(), 'listGroupBuys').mockRejectedValue(new Error('network'));
 
       await service.loadGroupBuys();
 
@@ -142,7 +146,7 @@ describe('GroupBuyService', () => {
 
     it('should load group buy detail and update signals', async () => {
       const mockGB = new GroupBuy({ id: 'g1', title: 'GB' });
-      vi.spyOn((service as any).client, 'getGroupBuy').mockResolvedValue({
+      vi.spyOn(getClient(), 'getGroupBuy').mockResolvedValue({
         groupBuy: mockGB,
         products: [],
       });
@@ -155,7 +159,7 @@ describe('GroupBuyService', () => {
 
     it('should load all manager projects pages', async () => {
       const clientSpy = vi
-        .spyOn((service as any).client, 'listManagerGroupBuys')
+        .spyOn(getClient(), 'listManagerGroupBuys')
         .mockResolvedValueOnce({
           groupBuys: [new GroupBuy({ id: 'g1', title: 'G1' })],
           nextPageToken: '100',
@@ -174,7 +178,7 @@ describe('GroupBuyService', () => {
     it('should create group buy and update groupBuys signal', async () => {
       const mockGB = new GroupBuy({ id: 'gb1', title: 'New GB' });
       const clientSpy = vi
-        .spyOn((service as any).client, 'createGroupBuy')
+        .spyOn(getClient(), 'createGroupBuy')
         .mockResolvedValue({ groupBuy: mockGB });
 
       const result = await service.createGroupBuy(
@@ -197,7 +201,7 @@ describe('GroupBuyService', () => {
     });
 
     it('should set actionError when createGroupBuy fails', async () => {
-      vi.spyOn((service as any).client, 'createGroupBuy').mockRejectedValue(new Error('fail'));
+      vi.spyOn(getClient(), 'createGroupBuy').mockRejectedValue(new Error('fail'));
 
       const result = await service.createGroupBuy(
         't',
@@ -219,7 +223,7 @@ describe('GroupBuyService', () => {
     it('should update group buy and refresh groupBuys signal', async () => {
       const mockGB = new GroupBuy({ id: 'gb1', title: 'Updated' });
       service.groupBuys.set([new GroupBuy({ id: 'gb1', title: 'Old' })]);
-      vi.spyOn((service as any).client, 'updateGroupBuy').mockResolvedValue({ groupBuy: mockGB });
+      vi.spyOn(getClient(), 'updateGroupBuy').mockResolvedValue({ groupBuy: mockGB });
 
       await service.updateGroupBuy('gb1', 'Updated', 'desc', 2, [], 'cover', undefined, []);
 
@@ -228,7 +232,7 @@ describe('GroupBuyService', () => {
 
     it('should add product and update currentProducts signal', async () => {
       const mockProduct = new Product({ id: 'p1', name: 'Prod' });
-      vi.spyOn((service as any).client, 'addProduct').mockResolvedValue({ product: mockProduct });
+      vi.spyOn(getClient(), 'addProduct').mockResolvedValue({ product: mockProduct });
 
       await service.addProduct('gb1', 'Prod', 100, 0.23, ['L']);
 
@@ -246,7 +250,7 @@ describe('GroupBuyService', () => {
       });
 
       const clientSpy = vi
-        .spyOn((service as any).client, 'getMyGroupBuyOrder')
+        .spyOn(getClient(), 'getMyGroupBuyOrder')
         .mockResolvedValue({ order: mockOrder });
 
       await service.loadExistingOrderIntoCart('proj1');
@@ -257,12 +261,12 @@ describe('GroupBuyService', () => {
 
     it('should submit order by creating new order when no existing order id', async () => {
       const createOrderSpy = vi
-        .spyOn((service as any).client, 'createOrder')
+        .spyOn(getClient(), 'createOrder')
         .mockResolvedValue({ orderId: 'order-new' });
       const getMyOrderSpy = vi
-        .spyOn((service as any).client, 'getMyGroupBuyOrder')
+        .spyOn(getClient(), 'getMyGroupBuyOrder')
         .mockResolvedValue({ order: null });
-      vi.spyOn((service as any).client, 'getMyOrders').mockResolvedValue({ orders: [] });
+      vi.spyOn(getClient(), 'getMyOrders').mockResolvedValue({ orders: [] });
 
       await service.submitOrder('proj1', 'line:abc', 'addr', [
         {
@@ -287,14 +291,12 @@ describe('GroupBuyService', () => {
     it('should submit order by updating existing order', async () => {
       service.existingOrderId.set('order-existing');
       const updateOrderSpy = vi
-        .spyOn((service as any).client, 'updateOrder')
+        .spyOn(getClient(), 'updateOrder')
         .mockResolvedValue({ order: new Order({ id: 'order-existing' }) });
-      const updatePaymentSpy = vi
-        .spyOn((service as any).client, 'updatePaymentInfo')
-        .mockResolvedValue({});
-      vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockResolvedValue({ order: null });
-      vi.spyOn((service as any).client, 'getMyOrders').mockResolvedValue({ orders: [] });
-      const createOrderSpy = vi.spyOn((service as any).client, 'createOrder');
+      const updatePaymentSpy = vi.spyOn(getClient(), 'updatePaymentInfo').mockResolvedValue({});
+      vi.spyOn(getClient(), 'getMyGroupBuyOrder').mockResolvedValue({ order: null });
+      vi.spyOn(getClient(), 'getMyOrders').mockResolvedValue({ orders: [] });
+      const createOrderSpy = vi.spyOn(getClient(), 'createOrder');
 
       await service.submitOrder('proj1', 'line:abc', 'addr', []);
 
@@ -310,9 +312,7 @@ describe('GroupBuyService', () => {
     });
 
     it('should set submitOrderError when submit order fails', async () => {
-      vi.spyOn((service as any).client, 'createOrder').mockRejectedValue(
-        new Error('submit failed'),
-      );
+      vi.spyOn(getClient(), 'createOrder').mockRejectedValue(new Error('submit failed'));
 
       await service.submitOrder('proj1', 'line:abc', 'addr', []);
 
@@ -322,9 +322,7 @@ describe('GroupBuyService', () => {
 
     it('should set existingOrderId to null when getMyGroupBuyOrder fails', async () => {
       service.existingOrderId.set('old-order');
-      vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockRejectedValue(
-        new Error('network'),
-      );
+      vi.spyOn(getClient(), 'getMyGroupBuyOrder').mockRejectedValue(new Error('network'));
 
       const order = await service.getMyGroupBuyOrder('proj1');
 
@@ -368,7 +366,7 @@ describe('GroupBuyService', () => {
             productName: 'Prod',
             specName: 'Spec',
             price: BigInt(100),
-          } as any,
+          } as OrderItem,
         ],
         paymentStatus: 1,
       });
@@ -384,7 +382,7 @@ describe('GroupBuyService', () => {
   describe('Client Wrappers', () => {
     it('should call updateOrder API', async () => {
       const items = [new CreateOrderItem({ productId: 'p1', specId: 's1', quantity: 1 })];
-      const updateOrderSpy = vi.spyOn((service as any).client, 'updateOrder').mockResolvedValue({});
+      const updateOrderSpy = vi.spyOn(getClient(), 'updateOrder').mockResolvedValue({});
 
       await service.updateOrder('o1', items, 'note');
 
@@ -392,15 +390,13 @@ describe('GroupBuyService', () => {
     });
 
     it('should rethrow friendly error when updateOrder fails', async () => {
-      vi.spyOn((service as any).client, 'updateOrder').mockRejectedValue(new Error('x'));
+      vi.spyOn(getClient(), 'updateOrder').mockRejectedValue(new Error('x'));
 
       await expect(service.updateOrder('o1', [], 'note')).rejects.toThrow('x');
     });
 
     it('should call updatePaymentInfoAsync with paidAt and amount', async () => {
-      const updatePaymentSpy = vi
-        .spyOn((service as any).client, 'updatePaymentInfo')
-        .mockResolvedValue({});
+      const updatePaymentSpy = vi.spyOn(getClient(), 'updatePaymentInfo').mockResolvedValue({});
       const paidAt = new Date('2025-01-01T00:00:00.000Z');
 
       await service.updatePaymentInfoAsync('o1', 'bank', '12345', 'line', 'addr', paidAt, 300);
@@ -418,25 +414,25 @@ describe('GroupBuyService', () => {
     });
 
     it('should call category and template APIs', async () => {
-      vi.spyOn((service as any).client, 'createCategory').mockResolvedValue({
+      vi.spyOn(getClient(), 'createCategory').mockResolvedValue({
         category: { id: 'c1' },
       });
-      vi.spyOn((service as any).client, 'listCategories').mockResolvedValue({
+      vi.spyOn(getClient(), 'listCategories').mockResolvedValue({
         categories: [{ id: 'c1' }],
       });
-      vi.spyOn((service as any).client, 'createPriceTemplate').mockResolvedValue({
+      vi.spyOn(getClient(), 'createPriceTemplate').mockResolvedValue({
         template: { id: 't1' },
       });
-      vi.spyOn((service as any).client, 'listPriceTemplates').mockResolvedValue({
+      vi.spyOn(getClient(), 'listPriceTemplates').mockResolvedValue({
         templates: [{ id: 't1' }],
       });
-      vi.spyOn((service as any).client, 'getPriceTemplate').mockResolvedValue({
+      vi.spyOn(getClient(), 'getPriceTemplate').mockResolvedValue({
         template: { id: 't1' },
       });
-      vi.spyOn((service as any).client, 'updatePriceTemplate').mockResolvedValue({
+      vi.spyOn(getClient(), 'updatePriceTemplate').mockResolvedValue({
         template: { id: 't1-updated' },
       });
-      vi.spyOn((service as any).client, 'deletePriceTemplate').mockResolvedValue({});
+      vi.spyOn(getClient(), 'deletePriceTemplate').mockResolvedValue({});
 
       await expect(service.createCategory('cat', ['size'])).resolves.toEqual({
         category: { id: 'c1' },

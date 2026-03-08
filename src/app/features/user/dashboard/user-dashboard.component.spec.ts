@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserDashboardComponent } from './user-dashboard.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { EventService } from '../../../core/event/event.service';
@@ -157,7 +157,7 @@ describe('UserDashboardComponent', () => {
   });
 
   it('should handle error in loadRegistrations gracefully', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     mockEventService.getMyRegistrations.mockRejectedValue(new Error('network error'));
 
     await component.loadRegistrations();
@@ -283,7 +283,7 @@ describe('UserDashboardComponent', () => {
     expect(component.getPaymentStatusClass(PaymentStatus.REJECTED)).toBe('bg-red-900 text-red-100');
   });
 
-  it('should return gray class for unknown payment status', () => {
+  it('should return gray class for any payment status', () => {
     expect(component.getPaymentStatusClass(999)).toBe('bg-gray-800 text-gray-400');
   });
 
@@ -330,7 +330,7 @@ describe('UserDashboardComponent', () => {
     );
   });
 
-  it('should return gray class for unknown registration status', () => {
+  it('should return gray class for any registration status', () => {
     expect(component.getRegStatusClass(999)).toBe(
       'bg-gray-500/10 text-gray-400 border-gray-500/20',
     );

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EventFormComponent } from './event-form.component';
 import { EventService } from '../../../core/event/event.service';
 import { provideRouter } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { signal } from '@angular/core';
 
 describe('EventFormComponent', () => {
@@ -14,9 +13,9 @@ describe('EventFormComponent', () => {
     events: signal([]),
     actionError: signal<string | null>(null),
     actionLoading: signal(false),
-    loadEvent: async () => {},
-    createEvent: async () => {},
-    updateEvent: async () => {},
+    loadEvent: async () => undefined,
+    createEvent: async () => undefined,
+    updateEvent: async () => undefined,
   };
 
   beforeEach(async () => {

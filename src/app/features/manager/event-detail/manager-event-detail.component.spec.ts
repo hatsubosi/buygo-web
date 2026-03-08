@@ -1,8 +1,9 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ManagerEventDetailComponent } from './manager-event-detail.component';
 import { EventService } from '../../../core/event/event.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
+import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 import { provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
@@ -12,16 +13,43 @@ describe('ManagerEventDetailComponent', () => {
   let fixture: ComponentFixture<ManagerEventDetailComponent>;
   let router: Router;
 
+  interface TestEvent {
+    id: string;
+    status?: number;
+    items: { id: string; name: string }[];
+    creator?: { id: string };
+    managers: { id: string }[];
+  }
+
+  interface TestRegistration {
+    id: string;
+    user?: { name?: string } | null;
+    status?: number;
+    paymentStatus?: number;
+    contactInfo?: string;
+    totalAmount?: number | bigint | string;
+    discountApplied?: number;
+    notes?: string;
+    selectedItems?: { eventItemId: string; quantity: number }[];
+  }
+
+  interface TestUser {
+    id: string;
+    role: UserRole;
+  }
+
   const mockEventService = {
-    currentEvent: signal<any>(null),
+    currentEvent: signal<TestEvent | null>(null),
     loadEvent: vi.fn().mockResolvedValue(undefined),
-    listEventRegistrations: vi.fn().mockResolvedValue([]),
+    listEventRegistrations: vi
+      .fn<(id: string) => Promise<TestRegistration[] | null>>()
+      .mockResolvedValue([]),
     updateRegistrationStatus: vi.fn().mockResolvedValue(undefined),
     updateEventStatus: vi.fn().mockResolvedValue(undefined),
   };
 
   const mockAuthService = {
-    user: signal<any>(null),
+    user: signal<TestUser | null>(null),
   };
 
   const mockToastService = {
@@ -31,9 +59,9 @@ describe('ManagerEventDetailComponent', () => {
   beforeEach(async () => {
     // Reset all mocks and signals between tests
     vi.clearAllMocks();
-    mockEventService.currentEvent = signal<any>(null);
+    mockEventService.currentEvent = signal<TestEvent | null>(null);
     mockEventService.listEventRegistrations.mockResolvedValue([]);
-    mockAuthService.user = signal<any>(null);
+    mockAuthService.user = signal<TestUser | null>(null);
 
     await TestBed.configureTestingModule({
       imports: [ManagerEventDetailComponent],
@@ -211,7 +239,7 @@ describe('ManagerEventDetailComponent', () => {
     });
     fixture.detectChanges();
 
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     await component.loadRegistrations();
 
@@ -258,7 +286,7 @@ describe('ManagerEventDetailComponent', () => {
     fixture.detectChanges();
 
     const reg = { id: 'r1' };
-    await component.updateStatus(reg, '2' as any, '3' as any);
+    await component.updateStatus(reg, '2', '3');
 
     expect(mockEventService.updateRegistrationStatus).toHaveBeenCalledWith('r1', 2, 3);
   });
@@ -272,7 +300,7 @@ describe('ManagerEventDetailComponent', () => {
     });
     fixture.detectChanges();
 
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     const reg = { id: 'r1' };
     await component.updateStatus(reg, 2, 1);
@@ -295,7 +323,7 @@ describe('ManagerEventDetailComponent', () => {
     // Mock the dialog ViewChild
     component.dialog = {
       open: vi.fn().mockResolvedValue(true),
-    } as any;
+    } as any as UiDialogComponent;
 
     await component.changeEventStatus(2);
 
@@ -323,7 +351,7 @@ describe('ManagerEventDetailComponent', () => {
 
     component.dialog = {
       open: vi.fn().mockResolvedValue(true),
-    } as any;
+    } as any as UiDialogComponent;
 
     await component.changeEventStatus(3);
 
@@ -348,7 +376,7 @@ describe('ManagerEventDetailComponent', () => {
 
     component.dialog = {
       open: vi.fn().mockResolvedValue(true),
-    } as any;
+    } as any as UiDialogComponent;
 
     await component.changeEventStatus(4);
 
@@ -373,7 +401,7 @@ describe('ManagerEventDetailComponent', () => {
 
     component.dialog = {
       open: vi.fn().mockResolvedValue(false),
-    } as any;
+    } as any as UiDialogComponent;
 
     await component.changeEventStatus(2);
 
@@ -386,14 +414,14 @@ describe('ManagerEventDetailComponent', () => {
 
     component.dialog = {
       open: vi.fn(),
-    } as any;
+    } as any as UiDialogComponent;
 
     await component.changeEventStatus(2);
 
     expect(component.dialog.open).not.toHaveBeenCalled();
   });
 
-  it('should return early for unknown status in changeEventStatus', async () => {
+  it('should return early for any status in changeEventStatus', async () => {
     mockEventService.currentEvent.set({
       id: 'evt-1',
       items: [],
@@ -403,7 +431,7 @@ describe('ManagerEventDetailComponent', () => {
 
     component.dialog = {
       open: vi.fn(),
-    } as any;
+    } as any as UiDialogComponent;
 
     await component.changeEventStatus(99);
 
@@ -421,7 +449,7 @@ describe('ManagerEventDetailComponent', () => {
 
     component.dialog = {
       open: vi.fn().mockResolvedValue(true),
-    } as any;
+    } as any as UiDialogComponent;
 
     mockEventService.updateEventStatus.mockRejectedValueOnce(new Error('Permission denied'));
 
@@ -441,7 +469,7 @@ describe('ManagerEventDetailComponent', () => {
 
     component.dialog = {
       open: vi.fn().mockResolvedValue(true),
-    } as any;
+    } as any as UiDialogComponent;
 
     mockEventService.updateEventStatus.mockRejectedValueOnce({});
 
@@ -574,7 +602,8 @@ describe('ManagerEventDetailComponent', () => {
   // --- toNumber ---
 
   it('should expose Number as toNumber', () => {
-    expect((component as any).toNumber('42')).toBe(42);
-    expect((component as any).toNumber(0)).toBe(0);
+    const withToNumber = component as any as { toNumber: (v: any) => number };
+    expect(withToNumber.toNumber('42')).toBe(42);
+    expect(withToNumber.toNumber(0)).toBe(0);
   });
 });

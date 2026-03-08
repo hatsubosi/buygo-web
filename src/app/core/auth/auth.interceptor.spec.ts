@@ -12,7 +12,7 @@ describe('authInterceptor', () => {
   it('should add Authorization header when token exists', async () => {
     const mockAuthService = {
       token: vi.fn().mockReturnValue('test-token'),
-    } as unknown as AuthService;
+    } as any as AuthService;
     const interceptor = authInterceptor(mockAuthService);
     const req = createMockRequest();
     const next = vi.fn().mockResolvedValue({ ok: true });
@@ -24,7 +24,7 @@ describe('authInterceptor', () => {
   });
 
   it('should not add Authorization header when token is null', async () => {
-    const mockAuthService = { token: vi.fn().mockReturnValue(null) } as unknown as AuthService;
+    const mockAuthService = { token: vi.fn().mockReturnValue(null) } as any as AuthService;
     const interceptor = authInterceptor(mockAuthService);
     const req = createMockRequest();
     const next = vi.fn().mockResolvedValue({ ok: true });
@@ -36,7 +36,7 @@ describe('authInterceptor', () => {
   });
 
   it('should not add Authorization header when token is empty string', async () => {
-    const mockAuthService = { token: vi.fn().mockReturnValue('') } as unknown as AuthService;
+    const mockAuthService = { token: vi.fn().mockReturnValue('') } as any as AuthService;
     const interceptor = authInterceptor(mockAuthService);
     const req = createMockRequest();
     const next = vi.fn().mockResolvedValue({ ok: true });
@@ -47,7 +47,7 @@ describe('authInterceptor', () => {
   });
 
   it('should return the response from next', async () => {
-    const mockAuthService = { token: vi.fn().mockReturnValue('token') } as unknown as AuthService;
+    const mockAuthService = { token: vi.fn().mockReturnValue('token') } as any as AuthService;
     const interceptor = authInterceptor(mockAuthService);
     const req = createMockRequest();
     const expectedResponse = { ok: true, data: 'test' };

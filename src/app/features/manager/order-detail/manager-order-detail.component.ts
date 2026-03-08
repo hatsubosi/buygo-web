@@ -77,7 +77,7 @@ export class ManagerOrderDetailComponent {
 
   total = computed(() => this.subtotal() + this.shippingFee());
 
-  orderNote = computed(() => (this.order() as any)?.note || 'None');
+  orderNote = computed(() => this.order()?.note || 'None');
 
   // Add Item Form State
   newItem = {
@@ -85,6 +85,13 @@ export class ManagerOrderDetailComponent {
     specId: '',
     quantity: 1,
   };
+
+  private getErrorMessage(error: unknown, fallback: string): string {
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    return fallback;
+  }
 
   constructor() {
     // Load Data on Init
@@ -166,8 +173,8 @@ export class ManagerOrderDetailComponent {
       await this.managerService.loadGroupBuyOrders(this.groupBuyId());
       this.isDirty.set(false);
       this.toastService.show('Order updated successfully', 'success');
-    } catch (err: any) {
-      this.toastService.show(err.message || 'Failed to update order', 'error');
+    } catch (err: unknown) {
+      this.toastService.show(this.getErrorMessage(err, 'Failed to update order'), 'error');
     } finally {
       this.isSaving = false;
     }
@@ -186,8 +193,8 @@ export class ManagerOrderDetailComponent {
       // Reload
       await this.managerService.loadGroupBuyOrders(this.groupBuyId());
       this.toastService.show('Payment confirmed', 'success');
-    } catch (err: any) {
-      this.toastService.show(err.message, 'error');
+    } catch (err: unknown) {
+      this.toastService.show(this.getErrorMessage(err, 'Failed to confirm payment'), 'error');
     }
   }
 
@@ -246,7 +253,11 @@ export class ManagerOrderDetailComponent {
 
     this.isSaving = true;
     try {
-      const o = this.order()!;
+      const o = this.order();
+      if (!o) {
+        this.toastService.show('Order not found', 'error');
+        return;
+      }
       // Map existing items to new state with Status=6
       const updatedItems = o.items.map(
         (i) =>
@@ -263,8 +274,11 @@ export class ManagerOrderDetailComponent {
       // Reload
       await this.managerService.loadGroupBuyOrders(this.groupBuyId());
       this.toastService.show('Order marked as shipped!', 'success');
-    } catch (err: any) {
-      this.toastService.show('Failed to update: ' + err.message, 'error');
+    } catch (err: unknown) {
+      this.toastService.show(
+        `Failed to update: ${this.getErrorMessage(err, 'Unknown error')}`,
+        'error',
+      );
     } finally {
       this.isSaving = false;
     }

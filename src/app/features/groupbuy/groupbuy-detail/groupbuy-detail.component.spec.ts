@@ -5,13 +5,13 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
-import { of } from 'rxjs';
-import { PaymentStatus } from '../../../core/api/api/v1/groupbuy_pb';
+import { Observable, of } from 'rxjs';
+import { PaymentStatus, Product } from '../../../core/api/api/v1/groupbuy_pb';
 
 describe('GroupBuyDetailComponent', () => {
   let component: GroupBuyDetailComponent;
   let fixture: ComponentFixture<GroupBuyDetailComponent>;
-  let mockRouter: { navigate: ReturnType<typeof vi.fn>; url: string };
+  let mockRouter: Router;
 
   // Re-create writable signals for each test via factory
   function createMockGroupBuyService() {
@@ -49,7 +49,14 @@ describe('GroupBuyDetailComponent', () => {
   let mockGroupBuyService: ReturnType<typeof createMockGroupBuyService>;
   let mockAuthService: ReturnType<typeof createMockAuthService>;
   let mockToastService: ReturnType<typeof createMockToastService>;
-  let mockActivatedRoute: any;
+  interface MockRoute {
+    paramMap: Observable<{ get: (key: string) => string | null }>;
+    snapshot: {
+      paramMap: { get: (key: string) => string | null };
+      queryParamMap: { get: (key: string) => string | null };
+    };
+  }
+  let mockActivatedRoute: MockRoute;
 
   beforeEach(async () => {
     mockGroupBuyService = createMockGroupBuyService();
@@ -74,8 +81,8 @@ describe('GroupBuyDetailComponent', () => {
       ],
     }).compileComponents();
 
-    mockRouter = TestBed.inject(Router) as any;
-    mockRouter.navigate = vi.fn();
+    mockRouter = TestBed.inject(Router);
+    vi.spyOn(mockRouter, 'navigate').mockResolvedValue(true);
 
     fixture = TestBed.createComponent(GroupBuyDetailComponent);
     component = fixture.componentInstance;
@@ -299,7 +306,7 @@ describe('GroupBuyDetailComponent', () => {
   // ──────────────────────────────────────────
   describe('onSpecSelect', () => {
     it('should store the selected spec id for the product', () => {
-      const event = { target: { value: 'spec-42' } } as any;
+      const event = { target: { value: 'spec-42' } } as any as Event;
       component.onSpecSelect('prod-1', event);
       expect(component.selectedSpecs['prod-1']).toBe('spec-42');
     });
@@ -311,7 +318,7 @@ describe('GroupBuyDetailComponent', () => {
   describe('checkAuth via addToCart', () => {
     it('should redirect to login when not authenticated', () => {
       mockAuthService.isAuthenticated.mockReturnValue(false);
-      const product = { id: 'p1', specs: [] } as any;
+      const product = { id: 'p1', specs: [] } as any as Product;
       component.addToCart('proj1', product);
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/login'], {
@@ -336,7 +343,7 @@ describe('GroupBuyDetailComponent', () => {
           { id: 's1', name: 'Red' },
           { id: 's2', name: 'Blue' },
         ],
-      } as any;
+      } as any as Product;
       component.addToCart('proj1', product);
       expect(mockGroupBuyService.addToCart).toHaveBeenCalledWith(
         product,
@@ -354,7 +361,7 @@ describe('GroupBuyDetailComponent', () => {
           { id: 's1', name: 'Red' },
           { id: 's2', name: 'Blue' },
         ],
-      } as any;
+      } as any as Product;
       component.addToCart('proj1', product);
       expect(mockGroupBuyService.addToCart).toHaveBeenCalledWith(
         product,
@@ -364,7 +371,7 @@ describe('GroupBuyDetailComponent', () => {
     });
 
     it('should add product with no specs (specId empty, spec undefined)', () => {
-      const product = { id: 'p1', specs: [] } as any;
+      const product = { id: 'p1', specs: [] } as any as Product;
       component.addToCart('proj1', product);
       expect(mockGroupBuyService.addToCart).toHaveBeenCalledWith(product, undefined, 1);
     });
@@ -375,13 +382,13 @@ describe('GroupBuyDetailComponent', () => {
   // ──────────────────────────────────────────
   describe('getQuantity', () => {
     it('should return 0 when cart is empty', () => {
-      const product = { id: 'p1', specs: [{ id: 's1' }] } as any;
+      const product = { id: 'p1', specs: [{ id: 's1' }] } as any as Product;
       expect(component.getQuantity(product)).toBe(0);
     });
 
     it('should return the quantity when item is in cart', () => {
       mockGroupBuyService.cart.set([{ productId: 'p1', specId: 's1', quantity: 3 }]);
-      const product = { id: 'p1', specs: [{ id: 's1' }] } as any;
+      const product = { id: 'p1', specs: [{ id: 's1' }] } as any as Product;
       expect(component.getQuantity(product)).toBe(3);
     });
 
@@ -394,18 +401,18 @@ describe('GroupBuyDetailComponent', () => {
       const product = {
         id: 'p1',
         specs: [{ id: 's1' }, { id: 's2' }],
-      } as any;
+      } as any as Product;
       expect(component.getQuantity(product)).toBe(5);
     });
 
     it('should return 0 for product with no specs and empty cart', () => {
-      const product = { id: 'p1', specs: [] } as any;
+      const product = { id: 'p1', specs: [] } as any as Product;
       expect(component.getQuantity(product)).toBe(0);
     });
 
     it('should find item in cart when product has no specs using empty specId', () => {
       mockGroupBuyService.cart.set([{ productId: 'p1', specId: '', quantity: 2 }]);
-      const product = { id: 'p1', specs: [] } as any;
+      const product = { id: 'p1', specs: [] } as any as Product;
       expect(component.getQuantity(product)).toBe(2);
     });
   });
@@ -420,7 +427,7 @@ describe('GroupBuyDetailComponent', () => {
 
     it('should redirect to login when not authenticated', () => {
       mockAuthService.isAuthenticated.mockReturnValue(false);
-      const product = { id: 'p1', specs: [{ id: 's1' }] } as any;
+      const product = { id: 'p1', specs: [{ id: 's1' }] } as any as Product;
       component.updateProductQuantity(product, 1);
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/login'], expect.any(Object));
     });
@@ -429,7 +436,7 @@ describe('GroupBuyDetailComponent', () => {
       const product = {
         id: 'p1',
         specs: [{ id: 's1', name: 'Red' }],
-      } as any;
+      } as any as Product;
       // Cart is empty, so getQuantity returns 0
       component.updateProductQuantity(product, 1);
       expect(mockGroupBuyService.addToCart).toHaveBeenCalledWith(
@@ -442,27 +449,27 @@ describe('GroupBuyDetailComponent', () => {
 
     it('should remove item when new quantity would be <= 0', () => {
       mockGroupBuyService.cart.set([{ productId: 'p1', specId: 's1', quantity: 1 }]);
-      const product = { id: 'p1', specs: [{ id: 's1' }] } as any;
+      const product = { id: 'p1', specs: [{ id: 's1' }] } as any as Product;
       component.updateProductQuantity(product, -1);
       expect(mockGroupBuyService.removeFromCart).toHaveBeenCalledWith('p1', 's1');
     });
 
     it('should update quantity when result is > 0', () => {
       mockGroupBuyService.cart.set([{ productId: 'p1', specId: 's1', quantity: 2 }]);
-      const product = { id: 'p1', specs: [{ id: 's1' }] } as any;
+      const product = { id: 'p1', specs: [{ id: 's1' }] } as any as Product;
       component.updateProductQuantity(product, -1);
       expect(mockGroupBuyService.updateCartQuantity).toHaveBeenCalledWith('p1', 's1', 1);
     });
 
     it('should update quantity when increasing from existing item', () => {
       mockGroupBuyService.cart.set([{ productId: 'p1', specId: 's1', quantity: 2 }]);
-      const product = { id: 'p1', specs: [{ id: 's1' }] } as any;
+      const product = { id: 'p1', specs: [{ id: 's1' }] } as any as Product;
       component.updateProductQuantity(product, 1);
       expect(mockGroupBuyService.updateCartQuantity).toHaveBeenCalledWith('p1', 's1', 3);
     });
 
     it('should work with product having no specs', () => {
-      const product = { id: 'p1', specs: [] } as any;
+      const product = { id: 'p1', specs: [] } as any as Product;
       component.updateProductQuantity(product, 1);
       expect(mockGroupBuyService.addToCart).toHaveBeenCalledWith(product, undefined, 1);
     });
@@ -657,7 +664,7 @@ describe('GroupBuyDetailComponent', () => {
           exchangeRate: 0.23,
           specs: [],
         },
-      ] as any);
+      ] as any[]);
       fixture.detectChanges();
       const el = fixture.nativeElement;
       expect(el.textContent).toContain('Product One');
@@ -684,7 +691,7 @@ describe('GroupBuyDetailComponent', () => {
           exchangeRate: 1,
           specs: [],
         },
-      ] as any);
+      ] as any[]);
       fixture.detectChanges();
       expect(fixture.nativeElement.textContent).toContain('No Image');
     });
@@ -712,7 +719,7 @@ describe('GroupBuyDetailComponent', () => {
             { id: 's2', name: 'Blue' },
           ],
         },
-      ] as any);
+      ] as any[]);
       fixture.detectChanges();
       const select = fixture.nativeElement.querySelector('select');
       expect(select).toBeTruthy();
@@ -742,7 +749,7 @@ describe('GroupBuyDetailComponent', () => {
           exchangeRate: 1,
           specs: [],
         },
-      ] as any);
+      ] as any[]);
       fixture.detectChanges();
       expect(fixture.nativeElement.textContent).toContain('Add to Order');
     });
@@ -767,7 +774,7 @@ describe('GroupBuyDetailComponent', () => {
           exchangeRate: 1,
           specs: [{ id: 's1' }],
         },
-      ] as any);
+      ] as any[]);
       mockGroupBuyService.cart.set([{ productId: 'p1', specId: 's1', quantity: 3 }]);
       fixture.detectChanges();
       expect(fixture.nativeElement.textContent).toContain('3');
@@ -793,7 +800,7 @@ describe('GroupBuyDetailComponent', () => {
           exchangeRate: 1,
           specs: [],
         },
-      ] as any);
+      ] as any[]);
       mockGroupBuyService.myGroupBuyOrder.set({
         id: 'o1',
         paymentStatus: 2, // SUBMITTED
@@ -909,7 +916,7 @@ describe('GroupBuyDetailComponent', () => {
           exchangeRate: 0.23,
           specs: [],
         },
-      ] as any);
+      ] as any[]);
       fixture.detectChanges();
       const el = fixture.nativeElement;
       expect(el.textContent).toContain('5000');

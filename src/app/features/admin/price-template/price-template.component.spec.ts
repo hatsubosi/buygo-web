@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PriceTemplateComponent } from './price-template.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
-import { signal } from '@angular/core';
 
 describe('PriceTemplateComponent', () => {
   let component: PriceTemplateComponent;
@@ -10,13 +9,13 @@ describe('PriceTemplateComponent', () => {
 
   const mockGroupBuyService = {
     listPriceTemplates: async () => [],
-    createPriceTemplate: async () => {},
-    updatePriceTemplate: async () => {},
-    deletePriceTemplate: async () => {},
+    createPriceTemplate: async () => undefined,
+    updatePriceTemplate: async () => undefined,
+    deletePriceTemplate: async () => undefined,
   };
 
   const mockToastService = {
-    show: () => {},
+    show: () => undefined,
   };
 
   beforeEach(async () => {

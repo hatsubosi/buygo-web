@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CategoryManagementComponent } from './category-management.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
-import { signal } from '@angular/core';
 
 describe('CategoryManagementComponent', () => {
   let component: CategoryManagementComponent;
@@ -10,15 +9,15 @@ describe('CategoryManagementComponent', () => {
 
   const mockGroupBuyService = {
     listCategories: async () => [],
-    createCategory: async () => {},
+    createCategory: async () => undefined,
     listPriceTemplates: async () => [],
-    createPriceTemplate: async () => {},
-    updatePriceTemplate: async () => {},
-    deletePriceTemplate: async () => {},
+    createPriceTemplate: async () => undefined,
+    updatePriceTemplate: async () => undefined,
+    deletePriceTemplate: async () => undefined,
   };
 
   const mockToastService = {
-    show: () => {},
+    show: () => undefined,
   };
 
   beforeEach(async () => {

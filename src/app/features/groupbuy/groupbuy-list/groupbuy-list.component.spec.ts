@@ -14,7 +14,7 @@ describe('GroupBuyListComponent', () => {
   const mockGroupBuyService = {
     groupBuys: signal([]),
     isLoadingList: signal(false),
-    loadGroupBuys: () => {},
+    loadGroupBuys: () => undefined,
   };
 
   const mockAuthService = {
@@ -70,7 +70,9 @@ describe('GroupBuyListComponent', () => {
     component.prevPage();
     expect(component.page()).toBe(1);
     expect(navigateSpy).toHaveBeenCalled();
-    const lastCall = navigateSpy.mock.calls.at(-1)!;
+    const lastCall = navigateSpy.mock.calls.at(-1);
+    expect(lastCall).toBeTruthy();
+    if (!lastCall) return;
     expect(lastCall[0]).toEqual([]);
     expect((lastCall[1] as any)?.queryParams?.page).toBe(1);
   });

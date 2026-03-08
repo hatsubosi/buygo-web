@@ -27,7 +27,6 @@ class TestHostComponent {
 }
 
 describe('UiCardComponent', () => {
-  let hostComponent: TestHostComponent;
   let fixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(async () => {
@@ -36,7 +35,6 @@ describe('UiCardComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
-    hostComponent = fixture.componentInstance;
     fixture.detectChanges();
   });
 

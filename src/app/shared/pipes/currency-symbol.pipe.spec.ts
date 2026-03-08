@@ -44,7 +44,7 @@ describe('CurrencySymbolPipe', () => {
     expect(pipe.transform('usd')).toBe('$');
   });
 
-  it('should return the code itself for unknown currencies', () => {
+  it('should return the code itself for any currencies', () => {
     expect(pipe.transform('XYZ')).toBe('XYZ');
     expect(pipe.transform('BTC')).toBe('BTC');
   });

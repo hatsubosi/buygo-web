@@ -10,7 +10,7 @@ describe('ManagerEventItemsComponent', () => {
 
   const mockEventService = {
     currentEvent: signal(null),
-    loadEvent: async () => {},
+    loadEvent: async () => undefined,
     listEventRegistrations: async () => [],
   };
 

@@ -69,6 +69,13 @@ export class GroupBuyService {
   readonly myGroupBuyOrder = signal<Order | null>(null);
   readonly existingOrderId = signal<string | null>(null);
 
+  private static getErrorMessage(error: unknown, fallback: string): string {
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    return fallback;
+  }
+
   constructor() {
     // Clear cart & order state on logout
     effect(() => {
@@ -94,8 +101,8 @@ export class GroupBuyService {
         (res) => res.groupBuys,
       );
       this.groupBuys.set(all);
-    } catch (err: any) {
-      this.listError.set(err.message || 'Failed to load group buys');
+    } catch (err: unknown) {
+      this.listError.set(GroupBuyService.getErrorMessage(err, 'Failed to load group buys'));
     } finally {
       this.isLoadingList.set(false);
     }
@@ -110,8 +117,8 @@ export class GroupBuyService {
       if (!res.groupBuy) throw new Error('Project not found');
       this.currentGroupBuy.set(res.groupBuy);
       this.currentProducts.set(res.products);
-    } catch (err: any) {
-      this.detailError.set(err.message || 'Failed to load group buy');
+    } catch (err: unknown) {
+      this.detailError.set(GroupBuyService.getErrorMessage(err, 'Failed to load group buy'));
     } finally {
       this.isLoadingDetail.set(false);
     }
@@ -152,11 +159,12 @@ export class GroupBuyService {
         roundingConfig,
         sourceCurrency,
       });
-      if (!res.groupBuy) throw new Error('No project returned');
-      this.groupBuys.update((prev) => [...prev, res.groupBuy!]);
-      return res.groupBuy;
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Failed to create group buy');
+      const groupBuy = res.groupBuy;
+      if (!groupBuy) throw new Error('No project returned');
+      this.groupBuys.update((prev) => [...prev, groupBuy]);
+      return groupBuy;
+    } catch (err: unknown) {
+      this.actionError.set(GroupBuyService.getErrorMessage(err, 'Failed to create group buy'));
       return null;
     } finally {
       this.isActionLoading.set(false);
@@ -194,14 +202,15 @@ export class GroupBuyService {
         roundingConfig,
         sourceCurrency,
       });
-      if (!res.groupBuy) throw new Error('No project returned');
-      this.groupBuys.update((prev) => prev.map((gb) => (gb.id === id ? res.groupBuy! : gb)));
+      const groupBuy = res.groupBuy;
+      if (!groupBuy) throw new Error('No project returned');
+      this.groupBuys.update((prev) => prev.map((gb) => (gb.id === id ? groupBuy : gb)));
       if (this.currentGroupBuy()?.id === id) {
-        this.currentGroupBuy.set(res.groupBuy);
+        this.currentGroupBuy.set(groupBuy);
       }
-      return res.groupBuy;
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Failed to update group buy');
+      return groupBuy;
+    } catch (err: unknown) {
+      this.actionError.set(GroupBuyService.getErrorMessage(err, 'Failed to update group buy'));
       return null;
     } finally {
       this.isActionLoading.set(false);
@@ -285,8 +294,8 @@ export class GroupBuyService {
     try {
       const res = await this.client.getMyOrders({});
       this.myOrders.set(res.orders);
-    } catch (err: any) {
-      this.myOrdersError.set(err.message || 'Failed to load orders');
+    } catch (err: unknown) {
+      this.myOrdersError.set(GroupBuyService.getErrorMessage(err, 'Failed to load orders'));
     } finally {
       this.loadingMyOrders.set(false);
     }
@@ -354,7 +363,11 @@ export class GroupBuyService {
 
       if (startId) {
         const res = await this.client.updateOrder({ orderId: startId, items: orderItems, note });
-        orderId = res.order!.id;
+        const updatedOrder = res.order;
+        if (!updatedOrder) {
+          throw new Error('Failed to update existing order');
+        }
+        orderId = updatedOrder.id;
         await this.client.updatePaymentInfo({ orderId: startId, contactInfo, shippingAddress });
       } else {
         const res = await this.client.createOrder({
@@ -373,8 +386,8 @@ export class GroupBuyService {
       await this.loadMyOrders();
       this.lastCreatedOrderId.set(orderId);
       this.clearCart();
-    } catch (err: any) {
-      this.submitOrderError.set(err.message || 'Failed to submit order');
+    } catch (err: unknown) {
+      this.submitOrderError.set(GroupBuyService.getErrorMessage(err, 'Failed to submit order'));
     } finally {
       this.isSubmittingOrder.set(false);
     }
@@ -386,10 +399,11 @@ export class GroupBuyService {
     try {
       const orderItems = cartItemsToOrderItems(items);
       const res = await this.client.updateOrder({ orderId, items: orderItems, note });
-      if (!res.order) throw new Error('No order returned');
-      this.myOrders.update((prev) => prev.map((o) => (o.id === res.order!.id ? res.order! : o)));
-    } catch (err: any) {
-      this.updateOrderError.set(err.message || 'Failed to update order');
+      const order = res.order;
+      if (!order) throw new Error('No order returned');
+      this.myOrders.update((prev) => prev.map((o) => (o.id === order.id ? order : o)));
+    } catch (err: unknown) {
+      this.updateOrderError.set(GroupBuyService.getErrorMessage(err, 'Failed to update order'));
     } finally {
       this.updatingOrder.set(false);
     }
@@ -401,19 +415,24 @@ export class GroupBuyService {
     try {
       const res = await this.client.updatePaymentInfo({ orderId, method, accountLast5 });
       if (res.order) {
-        this.myOrders.update((prev) => prev.map((o) => (o.id === res.order!.id ? res.order! : o)));
+        const order = res.order;
+        this.myOrders.update((prev) => prev.map((o) => (o.id === order.id ? order : o)));
       }
-    } catch (err: any) {
-      this.updateOrderError.set(err.message || 'Failed to update payment info');
+    } catch (err: unknown) {
+      this.updateOrderError.set(
+        GroupBuyService.getErrorMessage(err, 'Failed to update payment info'),
+      );
     } finally {
       this.updatingOrder.set(false);
     }
   }
 
   async updateOrder(orderId: string, items: CreateOrderItem[], note?: string): Promise<void> {
-    await this.client.updateOrder({ orderId, items, note }).catch((err: any) => {
-      throw new Error(err.message || 'Failed to update order');
-    });
+    try {
+      await this.client.updateOrder({ orderId, items, note });
+    } catch (err: unknown) {
+      throw new Error(GroupBuyService.getErrorMessage(err, 'Failed to update order'));
+    }
   }
 
   async updatePaymentInfoAsync(
@@ -432,13 +451,11 @@ export class GroupBuyService {
         accountLast5,
         contactInfo,
         shippingAddress,
-        paidAt: paidAt
-          ? ({ seconds: BigInt(Math.floor(paidAt.getTime() / 1000)) } as any)
-          : undefined,
+        paidAt: paidAt ? Timestamp.fromDate(paidAt) : undefined,
         amount: amount ? BigInt(amount) : undefined,
       })
-      .catch((err: any) => {
-        throw new Error(err.message || 'Failed to update payment info');
+      .catch((err: unknown) => {
+        throw new Error(GroupBuyService.getErrorMessage(err, 'Failed to update payment info'));
       });
   }
 
@@ -464,10 +481,11 @@ export class GroupBuyService {
         specs,
         roundingConfig: new RoundingConfig({ method: RoundingMethod.CEIL, digit: 100 }),
       });
-      if (!res.product) throw new Error('No product returned');
-      this.currentProducts.update((prev) => [...prev, res.product!]);
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Failed to add product');
+      const product = res.product;
+      if (!product) throw new Error('No product returned');
+      this.currentProducts.update((prev) => [...prev, product]);
+    } catch (err: unknown) {
+      this.actionError.set(GroupBuyService.getErrorMessage(err, 'Failed to add product'));
     } finally {
       this.isActionLoading.set(false);
     }

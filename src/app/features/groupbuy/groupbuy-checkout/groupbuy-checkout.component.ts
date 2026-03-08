@@ -1,18 +1,11 @@
-import {
-  Component,
-  inject,
-  effect,
-  OnInit,
-  computed,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, inject, effect, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { CartItem } from '../../../core/groupbuy/cart-item.model';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
-import { ShippingType } from '../../../core/api/api/v1/groupbuy_pb';
+import { ShippingConfig, ShippingType } from '../../../core/api/api/v1/groupbuy_pb';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 
 @Component({
@@ -43,7 +36,7 @@ export class GroupBuyCheckoutComponent implements OnInit {
   }
 
   get selectedConfig() {
-    return this.shippingConfigs.find((c: any) => c.id === this.selectedShippingMethodId);
+    return this.shippingConfigs.find((c: ShippingConfig) => c.id === this.selectedShippingMethodId);
   }
 
   get shippingFee() {
@@ -142,8 +135,8 @@ export class GroupBuyCheckoutComponent implements OnInit {
       if (order.shippingMethodId) {
         this.selectedShippingMethodId = order.shippingMethodId;
       }
-      if ((order as any).note) {
-        this.note = (order as any).note;
+      if (order.note) {
+        this.note = order.note;
       }
     }
   }
@@ -153,7 +146,7 @@ export class GroupBuyCheckoutComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
 
-  updateQuantity(item: any, change: number) {
+  updateQuantity(item: Pick<CartItem, 'productId' | 'specId' | 'quantity'>, change: number) {
     const newQty = item.quantity + change;
     if (newQty <= 0) {
       this.groupBuyService.removeFromCart(item.productId, item.specId);

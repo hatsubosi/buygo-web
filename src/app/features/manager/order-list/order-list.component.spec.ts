@@ -14,12 +14,12 @@ describe('OrderListComponent', () => {
     orders: signal([]),
     isLoading: signal(false),
     error: signal(null),
-    loadProjectOrders: async () => {},
-    confirmPayment: async () => {},
+    loadProjectOrders: async () => undefined,
+    confirmPayment: async () => undefined,
   };
 
   const mockToastService = {
-    show: () => {},
+    show: () => undefined,
   };
 
   beforeEach(async () => {

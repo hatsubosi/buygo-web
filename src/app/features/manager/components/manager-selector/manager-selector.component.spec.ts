@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ManagerSelectorComponent } from './manager-selector.component';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { signal } from '@angular/core';
 
 describe('ManagerSelectorComponent', () => {
   let component: ManagerSelectorComponent;

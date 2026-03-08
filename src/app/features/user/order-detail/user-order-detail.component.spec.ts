@@ -17,17 +17,17 @@ describe('UserOrderDetailComponent', () => {
     loadingMyOrders: signal(false),
     updatingOrder: signal(false),
     updateOrderError: signal(null),
-    loadProject: async () => {},
-    loadMyOrders: async () => {},
-    updatePaymentInfoAsync: async () => {},
-    updateOrder: async () => {},
-    updateUserOrder: async () => {},
-    setCart: () => {},
-    clearCart: () => {},
+    loadProject: async () => undefined,
+    loadMyOrders: async () => undefined,
+    updatePaymentInfoAsync: async () => undefined,
+    updateOrder: async () => undefined,
+    updateUserOrder: async () => undefined,
+    setCart: () => undefined,
+    clearCart: () => undefined,
   };
 
   const mockToastService = {
-    show: () => {},
+    show: () => undefined,
   };
 
   beforeEach(async () => {

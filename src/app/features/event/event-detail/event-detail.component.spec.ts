@@ -101,7 +101,7 @@ describe('EventDetailComponent', () => {
       const ts = Timestamp.fromDate(new Date('2026-06-01T12:00:00Z'));
       const result = component.toDate(ts);
       expect(result).toBeInstanceOf(Date);
-      expect(result!.getFullYear()).toBe(2026);
+      expect(result?.getFullYear()).toBe(2026);
     });
 
     it('should return null for undefined', () => {
@@ -527,7 +527,7 @@ describe('EventDetailComponent', () => {
       mockEventService.currentEvent.set({ id: 'evt-1' });
       mockAuthService.user.set({ id: 'u1' });
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
       mockEventService.getMyRegistrations.mockRejectedValueOnce(new Error('Network fail'));
 
       await component.loadMyRegistration();
@@ -618,7 +618,7 @@ describe('EventDetailComponent', () => {
       mockEventService.currentEvent.set({ id: 'evt-1' });
       mockEventService.register.mockRejectedValueOnce(new Error('Network error'));
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
       await component.submitRegistration();
 
       expect(mockToastService.show).toHaveBeenCalledWith('Network error', 'error');
@@ -631,7 +631,7 @@ describe('EventDetailComponent', () => {
       mockEventService.currentEvent.set({ id: 'evt-1' });
       mockEventService.register.mockRejectedValueOnce({});
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
       await component.submitRegistration();
 
       expect(mockToastService.show).toHaveBeenCalledWith('Operation failed', 'error');
@@ -649,7 +649,7 @@ describe('EventDetailComponent', () => {
       } as any);
       mockEventService.updateRegistration.mockRejectedValueOnce(new Error('Update failed'));
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
       await component.submitRegistration();
 
       expect(mockToastService.show).toHaveBeenCalledWith('Update failed', 'error');

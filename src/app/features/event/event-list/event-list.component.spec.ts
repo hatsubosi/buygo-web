@@ -41,7 +41,7 @@ describe('EventListComponent', () => {
     const ts = Timestamp.fromDate(new Date('2026-01-15T00:00:00Z'));
     const result = component.toDate(ts);
     expect(result).toBeInstanceOf(Date);
-    expect(result!.getFullYear()).toBe(2026);
+    expect(result?.getFullYear()).toBe(2026);
   });
 
   it('should return null for undefined timestamp', () => {
@@ -62,7 +62,9 @@ describe('EventListComponent', () => {
     component.prevPage();
     expect(component.page()).toBe(1);
     expect(navigateSpy).toHaveBeenCalled();
-    const lastCall = navigateSpy.mock.calls.at(-1)!;
+    const lastCall = navigateSpy.mock.calls.at(-1);
+    expect(lastCall).toBeTruthy();
+    if (!lastCall) return;
     expect(lastCall[0]).toEqual([]);
     expect((lastCall[1] as any)?.queryParams?.page).toBe(1);
   });

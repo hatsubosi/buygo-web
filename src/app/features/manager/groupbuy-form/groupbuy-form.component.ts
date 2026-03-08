@@ -10,7 +10,14 @@ import {
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ManagerSelectorComponent } from '../components/manager-selector/manager-selector.component';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormArray,
+  AbstractControl,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
@@ -47,6 +54,10 @@ export class GroupBuyFormComponent {
   fb = inject(FormBuilder);
   router = inject(Router);
 
+  private static readonly DEFAULT_EXCHANGE_RATE = 0.23;
+  private static readonly DEFAULT_ROUNDING_METHOD = 1;
+  private static readonly DEFAULT_ROUNDING_DIGIT = 0;
+
   @ViewChild(UiDialogComponent) dialog!: UiDialogComponent;
 
   id = input<string>(); // Router param for Edit Mode
@@ -77,13 +88,17 @@ export class GroupBuyFormComponent {
     return this.form.get('shippingConfigs') as FormArray;
   }
 
-  getSpecs(prod: any): FormArray {
+  getSpecs(prod: AbstractControl): FormArray {
     // helper for template typing
     return prod.get('specs') as FormArray;
   }
 
   get managerIdsControl() {
-    return this.form.get('managerIds')!;
+    const control = this.form.get('managerIds');
+    if (!control) {
+      throw new Error('managerIds control is missing');
+    }
+    return control;
   }
 
   categories = signal<Category[]>([]);
@@ -190,9 +205,9 @@ export class GroupBuyFormComponent {
 
   // Template Modal State
   isTemplateModalOpen = signal(false);
-  currentProductForTemplate: any = null; // Store which product to apply template to
+  currentProductForTemplate: AbstractControl | null = null; // Store which product to apply template to
 
-  openTemplateModal(prodCtrl: any) {
+  openTemplateModal(prodCtrl: AbstractControl) {
     this.currentProductForTemplate = prodCtrl;
     this.isTemplateModalOpen.set(true);
   }
@@ -208,8 +223,8 @@ export class GroupBuyFormComponent {
     if (!cat) return;
 
     const specsArray = this.currentProductForTemplate.get('specs') as FormArray;
-    cat.specNames.forEach((name: string) => {
-      specsArray.push(this.createSpecGroup({ name } as any));
+    cat.specNames.forEach((name) => {
+      specsArray.push(this.createSpecGroup(new ProductSpec({ name })));
     });
 
     this.closeTemplateModal();
@@ -319,17 +334,17 @@ export class GroupBuyFormComponent {
     }
   }
 
-  addSpec(prodCtrl: any) {
+  addSpec(prodCtrl: AbstractControl) {
     // prodCtrl is AbstractControl
     (prodCtrl.get('specs') as FormArray).push(this.createSpecGroup());
   }
 
-  removeSpec(prodCtrl: any, index: number) {
+  removeSpec(prodCtrl: AbstractControl, index: number) {
     (prodCtrl.get('specs') as FormArray).removeAt(index);
   }
 
-  calculateFinalPrice(prod: any): number {
-    const priceOriginal = prod.get('priceOriginal')?.value || 0;
+  calculateFinalPrice(prod: AbstractControl): number {
+    const priceOriginal = Number(prod.get('priceOriginal')?.value || 0);
     let rate = prod.get('exchangeRate')?.value;
     if (!rate || rate === 0) {
       rate = this.form.get('exchangeRate')?.value || 0;
@@ -366,11 +381,14 @@ export class GroupBuyFormComponent {
     }
 
     this.submitted = true;
-    const val = this.form.value;
+    const val = this.form.getRawValue() as GroupBuyFormValue;
+    const products = val.products ?? [];
+    const shippingConfigs = val.shippingConfigs ?? [];
+    const managerIds = val.managerIds ?? [];
 
     // Map Form Products to Proto Products
-    const productsList: Product[] = val.products.map((p: any) => {
-      const specs = p.specs.map((s: any) => new ProductSpec({ id: s.id, name: s.name }));
+    const productsList: Product[] = products.map((p) => {
+      const specs = (p.specs ?? []).map((s) => new ProductSpec({ id: s.id, name: s.name }));
 
       // Calculate Final Price locally strictly? Or trust backend?
       // Trust backend mostly, but frontend form preview should match.
@@ -384,13 +402,13 @@ export class GroupBuyFormComponent {
         imageUrl: p.imageUrl,
         maxQuantity: p.maxQuantity,
         priceOriginal: BigInt(p.priceOriginal),
-        exchangeRate: Number(p.exchangeRate),
-        specs: specs,
+        exchangeRate: Number(p.exchangeRate ?? GroupBuyFormComponent.DEFAULT_EXCHANGE_RATE),
+        specs,
       });
     });
 
-    const shippingConfigsList: ShippingConfig[] = val.shippingConfigs.map(
-      (c: any) =>
+    const shippingConfigsList: ShippingConfig[] = shippingConfigs.map(
+      (c) =>
         new ShippingConfig({
           id: c.id,
           name: c.name,
@@ -403,12 +421,13 @@ export class GroupBuyFormComponent {
       const projectId = this.id();
       if (projectId) {
         const deadline = val.deadline ? new Date(val.deadline) : undefined;
-        const managerIds = val.managerIds || [];
         const currentStatus = this.groupBuyService.currentGroupBuy()?.status || 1;
 
         const roundingConfig = new RoundingConfig({
-          method: Number(val.roundingMethod) as RoundingMethod,
-          digit: Number(val.roundingDigit),
+          method: Number(
+            val.roundingMethod ?? GroupBuyFormComponent.DEFAULT_ROUNDING_METHOD,
+          ) as RoundingMethod,
+          digit: Number(val.roundingDigit ?? GroupBuyFormComponent.DEFAULT_ROUNDING_DIGIT),
         });
 
         this.groupBuyService.updateGroupBuy(
@@ -421,7 +440,7 @@ export class GroupBuyFormComponent {
           deadline,
           shippingConfigsList,
           managerIds,
-          Number(val.exchangeRate),
+          Number(val.exchangeRate ?? GroupBuyFormComponent.DEFAULT_EXCHANGE_RATE),
           roundingConfig,
           val.sourceCurrency,
         );
@@ -429,11 +448,12 @@ export class GroupBuyFormComponent {
     } else {
       // Create Mode
       const deadline = val.deadline ? new Date(val.deadline) : undefined;
-      const managerIds = val.managerIds || [];
 
       const roundingConfig = new RoundingConfig({
-        method: Number(val.roundingMethod) as RoundingMethod,
-        digit: Number(val.roundingDigit),
+        method: Number(
+          val.roundingMethod ?? GroupBuyFormComponent.DEFAULT_ROUNDING_METHOD,
+        ) as RoundingMethod,
+        digit: Number(val.roundingDigit ?? GroupBuyFormComponent.DEFAULT_ROUNDING_DIGIT),
       });
 
       this.groupBuyService.createGroupBuy(
@@ -444,10 +464,47 @@ export class GroupBuyFormComponent {
         deadline,
         shippingConfigsList,
         managerIds,
-        Number(val.exchangeRate),
+        Number(val.exchangeRate ?? GroupBuyFormComponent.DEFAULT_EXCHANGE_RATE),
         roundingConfig,
         val.sourceCurrency,
       );
     }
   }
+}
+
+interface GroupBuyFormSpecValue {
+  id: string;
+  name: string;
+}
+
+interface GroupBuyFormProductValue {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  maxQuantity: number;
+  priceOriginal: number;
+  exchangeRate: number | null;
+  specs: GroupBuyFormSpecValue[];
+}
+
+interface GroupBuyFormShippingConfigValue {
+  id: string;
+  name: string;
+  type: number;
+  price: number;
+}
+
+interface GroupBuyFormValue {
+  title: string;
+  description: string;
+  coverImage: string;
+  deadline: string;
+  sourceCurrency: string;
+  exchangeRate: number;
+  roundingMethod: number;
+  roundingDigit: number;
+  products: GroupBuyFormProductValue[];
+  shippingConfigs: GroupBuyFormShippingConfigValue[];
+  managerIds: string[];
 }

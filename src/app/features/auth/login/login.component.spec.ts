@@ -9,15 +9,15 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
 
   const mockAuthService = {
-    login: async () => {},
-    loginWithGoogle: async () => {},
-    loginWithLine: async () => {},
+    login: async () => undefined,
+    loginWithGoogle: async () => undefined,
+    loginWithLine: async () => undefined,
     isLoading: signal(false),
     error: signal(null),
   };
 
   const mockRouter = {
-    navigate: () => {},
+    navigate: () => undefined,
   };
 
   const mockActivatedRoute = {

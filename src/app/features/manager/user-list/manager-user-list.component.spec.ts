@@ -13,11 +13,11 @@ describe('ManagerUserListComponent', () => {
   const mockAuthService = {
     user: signal(null),
     listUsers: async () => ({ users: [], nextPageToken: '' }),
-    updateUserRole: async () => {},
+    updateUserRole: async () => undefined,
   };
 
   const mockToastService = {
-    show: () => {},
+    show: () => undefined,
   };
 
   beforeEach(async () => {

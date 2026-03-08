@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OrderConfirmationComponent } from './order-confirmation.component';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
-import { ActivatedRoute, provideRouter, Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
 
@@ -13,7 +13,7 @@ describe('OrderConfirmationComponent', () => {
   const mockGroupBuyService = {
     currentGroupBuy: signal(null),
     lastCreatedOrderId: signal(null),
-    loadProject: async () => {},
+    loadProject: async () => undefined,
   };
 
   beforeEach(async () => {

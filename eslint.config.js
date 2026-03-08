@@ -56,5 +56,11 @@ module.exports = defineConfig([
       "@angular-eslint/template/interactive-supports-focus": "warn",
       "@angular-eslint/template/alt-text": "warn"
     },
-  }
+  },
+  {
+    files: ["**/*.spec.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ]);

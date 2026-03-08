@@ -76,10 +76,12 @@ describe('StatusDashboardComponent', () => {
     const row = component.createEmptyRow('p1', 'Product', 's1', 'Spec');
     row.cells[1].count = 5;
     component.openDialog(row, 2, 1);
-    expect(component.selectedAction).toBeTruthy();
-    expect(component.selectedAction!.maxCount).toBe(5);
-    expect(component.selectedAction!.targetStatus).toBe(2);
-    expect(component.selectedAction!.fromStatus).toBe(1);
+    const action = component.selectedAction;
+    expect(action).toBeTruthy();
+    if (!action) return;
+    expect(action.maxCount).toBe(5);
+    expect(action.targetStatus).toBe(2);
+    expect(action.fromStatus).toBe(1);
     expect(component.moveCount).toBe(5);
   });
 

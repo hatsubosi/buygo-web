@@ -18,12 +18,12 @@ describe('ManagerDashboardComponent', () => {
 
   const mockGroupBuyService = {
     managerGroupBuys: signal([]),
-    loadManagerProjects: async () => {},
+    loadManagerProjects: async () => undefined,
   };
 
   const mockEventService = {
     managerEvents: signal([]),
-    loadManagerEvents: async () => {},
+    loadManagerEvents: async () => undefined,
   };
 
   beforeEach(async () => {
