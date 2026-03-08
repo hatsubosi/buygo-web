@@ -20,6 +20,10 @@ import {
   getOrderItemStatusLabel,
   getPaymentStatusLabel as sharedGetPaymentStatusLabel,
 } from '../../../shared/utils/status-label.util';
+import {
+  toRegistrationStatusBadgeClass,
+  toRegistrationStatusLabel,
+} from '../../../shared/utils/status-mapper';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -96,26 +100,10 @@ export class UserDashboardComponent {
   }
 
   getRegStatusLabel(status: number) {
-    switch (status) {
-      case RegistrationStatus.PENDING:
-        return 'Pending';
-      case RegistrationStatus.CONFIRMED:
-        return 'Confirmed';
-      // case RegistrationStatus.CANCELLED: return 'Cancelled'; // Check if this exists in proto
-      default:
-        return 'Unknown';
-    }
+    return toRegistrationStatusLabel(status);
   }
 
   getRegStatusClass(status: number) {
-    switch (status) {
-      case RegistrationStatus.CONFIRMED:
-        return 'bg-green-500/10 text-green-400 border-green-500/20'; // Confirmed
-      case RegistrationStatus.PENDING:
-        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'; // Pending
-      // case RegistrationStatus.CANCELLED: return 'bg-red-500/10 text-red-400 border-red-500/20'; // Cancelled
-      default:
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
-    }
+    return toRegistrationStatusBadgeClass(status);
   }
 }

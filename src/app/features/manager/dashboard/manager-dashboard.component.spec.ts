@@ -57,8 +57,8 @@ describe('ManagerDashboardComponent', () => {
   it('should return correct event status', () => {
     expect(component.getEventStatus(1)).toBe('Draft');
     expect(component.getEventStatus(2)).toBe('Active');
-    expect(component.getEventStatus(3)).toBe('Cancelled');
-    expect(component.getEventStatus(4)).toBe('Ended');
+    expect(component.getEventStatus(3)).toBe('Ended');
+    expect(component.getEventStatus(4)).toBe('Archived');
     expect(component.getEventStatus(99)).toBe('Unknown');
   });
 

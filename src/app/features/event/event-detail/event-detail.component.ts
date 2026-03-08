@@ -18,12 +18,8 @@ import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { Timestamp } from '@bufbuild/protobuf';
-import {
-  RegisterItem,
-  Registration,
-  EventItem,
-  RegistrationStatus,
-} from '../../../core/api/api/v1/event_pb';
+import { RegisterItem, Registration, EventItem } from '../../../core/api/api/v1/event_pb';
+import { toRegistrationStatusLabel } from '../../../shared/utils/status-mapper';
 
 @Component({
   selector: 'app-event-detail',
@@ -282,18 +278,8 @@ export class EventDetailComponent implements OnInit {
     return p === 0 ? 'Free' : '$' + p;
   }
 
-  getStatusLabel(status: RegistrationStatus): string {
-    switch (status) {
-      case RegistrationStatus.PENDING:
-        return 'Pending';
-      case RegistrationStatus.CONFIRMED:
-        return 'Confirmed';
-      case RegistrationStatus.CANCELLED:
-        return 'Cancelled';
-      case RegistrationStatus.UNSPECIFIED:
-        return 'Unspecified';
-      default:
-        return 'Unknown';
-    }
+  getStatusLabel(status: number): string {
+    if (status === 0) return 'Unspecified';
+    return toRegistrationStatusLabel(status);
   }
 }

@@ -62,8 +62,8 @@ describe('ManagerEventDetailComponent', () => {
   it('should return correct event status', () => {
     expect(component.getEventStatus(1)).toBe('Draft');
     expect(component.getEventStatus(2)).toBe('Active');
-    expect(component.getEventStatus(3)).toBe('Cancelled');
-    expect(component.getEventStatus(4)).toBe('Ended');
+    expect(component.getEventStatus(3)).toBe('Ended');
+    expect(component.getEventStatus(4)).toBe('Archived');
     expect(component.getEventStatus(99)).toBe('Unknown');
   });
 
@@ -78,7 +78,7 @@ describe('ManagerEventDetailComponent', () => {
     expect(component.getPaymentStatus(1)).toBe('Unpaid');
     expect(component.getPaymentStatus(2)).toBe('Submitted');
     expect(component.getPaymentStatus(3)).toBe('Paid');
-    expect(component.getPaymentStatus(4)).toBe('Refunded');
+    expect(component.getPaymentStatus(4)).toBe('Rejected');
     expect(component.getPaymentStatus(99)).toBe('Unknown');
   });
 

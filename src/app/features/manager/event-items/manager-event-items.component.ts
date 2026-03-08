@@ -10,7 +10,8 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { EventService } from '../../../core/event/event.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
-import { Event, Registration } from '../../../core/api/api/v1/event_pb';
+import { Event, Registration, RegistrationStatus } from '../../../core/api/api/v1/event_pb';
+import { toRegistrationStatusLabel } from '../../../shared/utils/status-mapper';
 
 interface ItemGroup {
   itemId: string;
@@ -65,8 +66,7 @@ export class ManagerEventItemsComponent {
           group.registrations.push({ reg, quantity: sel.quantity });
           // Only count quantity if not cancelled?
           // Usually "Sold" implies valid sales.
-          if (reg.status !== 3) {
-            // 3 = Cancelled
+          if (reg.status !== RegistrationStatus.CANCELLED) {
             group.totalQuantity += sel.quantity;
           }
         }
@@ -98,15 +98,6 @@ export class ManagerEventItemsComponent {
   }
 
   getRegStatus(status: number): string {
-    switch (status) {
-      case 1:
-        return 'Pending';
-      case 2:
-        return 'Confirmed';
-      case 3:
-        return 'Cancelled';
-      default:
-        return 'Unknown';
-    }
+    return toRegistrationStatusLabel(status);
   }
 }

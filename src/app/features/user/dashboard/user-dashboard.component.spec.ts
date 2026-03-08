@@ -313,7 +313,7 @@ describe('UserDashboardComponent', () => {
   it('should return Unknown for unrecognized registration status', () => {
     expect(component.getRegStatusLabel(999)).toBe('Unknown');
     expect(component.getRegStatusLabel(RegistrationStatus.UNSPECIFIED)).toBe('Unknown');
-    expect(component.getRegStatusLabel(RegistrationStatus.CANCELLED)).toBe('Unknown');
+    expect(component.getRegStatusLabel(RegistrationStatus.CANCELLED)).toBe('Cancelled');
   });
 
   // ── getRegStatusClass ───────────────────────────────────────────────
@@ -336,9 +336,9 @@ describe('UserDashboardComponent', () => {
     );
   });
 
-  it('should return gray class for CANCELLED registration status', () => {
+  it('should return red class for CANCELLED registration status', () => {
     expect(component.getRegStatusClass(RegistrationStatus.CANCELLED)).toBe(
-      'bg-gray-500/10 text-gray-400 border-gray-500/20',
+      'bg-red-500/10 text-red-400 border-red-500/20',
     );
   });
 

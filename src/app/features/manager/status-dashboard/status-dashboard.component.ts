@@ -15,6 +15,7 @@ import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-contain
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { OrderItemStatus } from '../../../core/api/api/v1/groupbuy_pb';
+import { toOrderItemStatusProgressLabel } from '../../../shared/utils/status-mapper';
 
 interface StatusCell {
   status: OrderItemStatus;
@@ -298,24 +299,7 @@ export class StatusDashboardComponent {
   }
 
   getStatusLabel(status: number): string {
-    switch (status) {
-      case 1:
-        return 'Unordered';
-      case 2:
-        return 'Ordered';
-      case 3:
-        return 'Arrived Overseas';
-      case 4:
-        return 'Arrived Domestic';
-      case 5:
-        return 'Ready for Pickup';
-      case 6:
-        return 'Sent';
-      case 7:
-        return 'Failed/Cancelled';
-      default:
-        return 'Unknown';
-    }
+    return toOrderItemStatusProgressLabel(status);
   }
 
   openDialog(row: StatusRow, targetStatus: number, fromStatus: number) {

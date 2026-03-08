@@ -8,6 +8,7 @@ import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-contain
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
 import { UiCardComponent } from '../../../shared/ui/ui-card/ui-card.component';
+import { toEventStatusLabel, toGroupBuyStatusLabel } from '../../../shared/utils/status-mapper';
 
 @Component({
   selector: 'app-manager-dashboard',
@@ -33,14 +34,12 @@ export class ManagerDashboardComponent implements OnInit {
 
   events = computed(() => this.eventService.managerEvents());
 
-  getProjectStatus(status: any): string {
-    const map = { 1: 'Draft', 2: 'Active', 3: 'Ended', 4: 'Archived' };
-    return (map as any)[status] || 'Unknown';
+  getProjectStatus(status: number): string {
+    return toGroupBuyStatusLabel(status);
   }
 
-  getEventStatus(status: any): string {
-    const map = { 1: 'Draft', 2: 'Active', 3: 'Cancelled', 4: 'Ended' };
-    return (map as any)[status] || 'Unknown';
+  getEventStatus(status: number): string {
+    return toEventStatusLabel(status);
   }
 
   toDate(ts: any): Date | null {

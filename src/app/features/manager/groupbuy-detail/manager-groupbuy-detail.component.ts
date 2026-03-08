@@ -21,6 +21,7 @@ import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { Timestamp } from '@bufbuild/protobuf';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
 import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
+import { toGroupBuyStatusLabel } from '../../../shared/utils/status-mapper';
 
 @Component({
   selector: 'app-manager-groupbuy-detail',
@@ -138,9 +139,8 @@ export class ManagerGroupBuyDetailComponent {
     );
   });
 
-  getProjectStatus(status: any): string {
-    const map = { 1: 'Draft', 2: 'Active', 3: 'Ended', 4: 'Archived' };
-    return (map as any)[status] || 'Unknown';
+  getProjectStatus(status: number): string {
+    return toGroupBuyStatusLabel(status);
   }
 
   toDate(ts: any): Date | null {

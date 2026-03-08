@@ -12,6 +12,7 @@ import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-container.component';
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { GroupBuyStatus } from '../../../core/api/api/v1/groupbuy_pb';
+import { toGroupBuyStatusLabel } from '../../../shared/utils/status-mapper';
 
 @Component({
   selector: 'app-groupbuy-list',
@@ -127,18 +128,7 @@ export class GroupBuyListComponent implements OnInit {
   }
 
   getStatusLabel(status: GroupBuyStatus): string {
-    switch (status) {
-      case GroupBuyStatus.ACTIVE:
-        return 'Active';
-      case GroupBuyStatus.DRAFT:
-        return 'Draft';
-      case GroupBuyStatus.ENDED:
-        return 'Ended';
-      case GroupBuyStatus.ARCHIVED:
-        return 'Archived';
-      default:
-        return 'Unknown';
-    }
+    return toGroupBuyStatusLabel(status);
   }
 
   openProject(id: string) {

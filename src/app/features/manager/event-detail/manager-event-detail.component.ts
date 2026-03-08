@@ -19,6 +19,8 @@ import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
 import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 import { Timestamp } from '@bufbuild/protobuf';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
+import { toEventStatusLabel, toRegistrationStatusLabel } from '../../../shared/utils/status-mapper';
+import { getPaymentStatusLabel } from '../../../shared/utils/status-label.util';
 
 @Component({
   selector: 'app-manager-event-detail',
@@ -124,20 +126,16 @@ export class ManagerEventDetailComponent {
     return item ? item.name : 'Unknown Item';
   }
 
-  getEventStatus(status: any): string {
-    const map = { 1: 'Draft', 2: 'Active', 3: 'Cancelled', 4: 'Ended' };
-    return (map as any)[status] || 'Unknown';
+  getEventStatus(status: number): string {
+    return toEventStatusLabel(status);
   }
 
-  getRegStatus(status: any): string {
-    const map = { 1: 'Pending', 2: 'Confirmed', 3: 'Cancelled' };
-    return (map as any)[status] || 'Unknown';
+  getRegStatus(status: number): string {
+    return toRegistrationStatusLabel(status);
   }
 
-  getPaymentStatus(status: any): string {
-    // Assuming: 1=Unpaid, 2=Submitted, 3=Confirmed/Paid, 4=Refunded
-    const map = { 1: 'Unpaid', 2: 'Submitted', 3: 'Paid', 4: 'Refunded' };
-    return (map as any)[status] || 'Unknown';
+  getPaymentStatus(status: number): string {
+    return getPaymentStatusLabel(status);
   }
 
   toDate(ts: any): Date | null {
