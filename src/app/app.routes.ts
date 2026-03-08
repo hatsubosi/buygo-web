@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
 import { authGuard } from './core/auth/auth.guard';
-import { roleGuard } from './core/auth/role.guard';
+import { adminGuard, managerGuard } from './core/auth/role.guard';
 
 export const routes: Routes = [
   {
@@ -56,7 +56,7 @@ export const routes: Routes = [
         path: 'manager',
         loadChildren: () =>
           import('./features/manager/manager.routes').then((m) => m.MANAGER_ROUTES),
-        canActivate: [authGuard, roleGuard],
+        canActivate: [authGuard, managerGuard],
       },
       {
         path: 'admin/categories',
@@ -64,7 +64,7 @@ export const routes: Routes = [
           import('./features/admin/category-management/category-management.component').then(
             (m) => m.CategoryManagementComponent,
           ),
-        canActivate: [authGuard, roleGuard],
+        canActivate: [authGuard, adminGuard],
       },
       {
         path: 'admin/price-templates',
@@ -72,7 +72,7 @@ export const routes: Routes = [
           import('./features/admin/price-template/price-template.component').then(
             (m) => m.PriceTemplateComponent,
           ),
-        canActivate: [authGuard, roleGuard],
+        canActivate: [authGuard, adminGuard],
       },
       {
         path: 'user',
