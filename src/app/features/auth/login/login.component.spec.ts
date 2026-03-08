@@ -51,6 +51,12 @@ describe('LoginComponent', () => {
     expect(loginSpy).toHaveBeenCalledWith('google', 'mock-token-google');
   });
 
+  it('should call auth.login with apple mock token', () => {
+    const loginSpy = vi.spyOn(mockAuthService, 'login');
+    component.login('apple');
+    expect(loginSpy).toHaveBeenCalledWith('apple', 'mock-token-apple');
+  });
+
   it('should track activeProvider', () => {
     component.login('line');
     expect(component.activeProvider).toBe('line');

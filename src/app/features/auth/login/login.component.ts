@@ -42,6 +42,16 @@ import { AuthService } from '../../../core/auth/auth.service';
             <span class="w-full">Continue with Google</span>
           </app-ui-btn>
 
+          <!-- Mock Apple Login -->
+          <app-ui-btn
+            variant="secondary"
+            customClass="w-full justify-center"
+            (onClick)="login('apple')"
+            [loading]="auth.isLoading() && activeProvider === 'apple'"
+          >
+            <span class="w-full">Continue with Apple</span>
+          </app-ui-btn>
+
           <!-- Divider -->
           <div class="flex items-center gap-4 py-2">
             <div class="h-px flex-1 bg-white/10"></div>
