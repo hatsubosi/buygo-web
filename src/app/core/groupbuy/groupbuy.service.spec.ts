@@ -3,7 +3,14 @@ import { GroupBuyService } from './groupbuy.service';
 import { AuthService } from '../auth/auth.service';
 import { TransportToken } from '../providers/transport.token';
 import { signal } from '@angular/core';
-import { Product, ProductSpec, GroupBuy, Order, RoundingConfig, CreateOrderItem } from '../api/api/v1/groupbuy_pb';
+import {
+  Product,
+  ProductSpec,
+  GroupBuy,
+  Order,
+  RoundingConfig,
+  CreateOrderItem,
+} from '../api/api/v1/groupbuy_pb';
 import { vi } from 'vitest';
 
 describe('GroupBuyService', () => {
@@ -112,12 +119,10 @@ describe('GroupBuyService', () => {
 
   describe('GroupBuy API Calls', () => {
     it('should load all group buys and update signal', async () => {
-      const clientSpy = vi
-        .spyOn((service as any).client, 'listGroupBuys')
-        .mockResolvedValueOnce({
-          groupBuys: [new GroupBuy({ id: 'g1', title: 'G1' })],
-          nextPageToken: '',
-        });
+      const clientSpy = vi.spyOn((service as any).client, 'listGroupBuys').mockResolvedValueOnce({
+        groupBuys: [new GroupBuy({ id: 'g1', title: 'G1' })],
+        nextPageToken: '',
+      });
 
       await service.loadGroupBuys();
 
@@ -173,8 +178,16 @@ describe('GroupBuyService', () => {
         .mockResolvedValue({ groupBuy: mockGB });
 
       const result = await service.createGroupBuy(
-        'New GB', 'Desc', [], 'img.jpg', undefined, [], [], 5.0,
-        new RoundingConfig({ method: 1, digit: 0 }), 'USD',
+        'New GB',
+        'Desc',
+        [],
+        'img.jpg',
+        undefined,
+        [],
+        [],
+        5.0,
+        new RoundingConfig({ method: 1, digit: 0 }),
+        'USD',
       );
 
       expect(clientSpy).toHaveBeenCalledTimes(1);
@@ -186,7 +199,18 @@ describe('GroupBuyService', () => {
     it('should set actionError when createGroupBuy fails', async () => {
       vi.spyOn((service as any).client, 'createGroupBuy').mockRejectedValue(new Error('fail'));
 
-      const result = await service.createGroupBuy('t', 'd', [], '', undefined, [], [], 1, undefined, 'JPY');
+      const result = await service.createGroupBuy(
+        't',
+        'd',
+        [],
+        '',
+        undefined,
+        [],
+        [],
+        1,
+        undefined,
+        'JPY',
+      );
 
       expect(result).toBeNull();
       expect(service.actionError()).toBe('fail');
@@ -242,8 +266,14 @@ describe('GroupBuyService', () => {
 
       await service.submitOrder('proj1', 'line:abc', 'addr', [
         {
-          groupBuyId: 'proj1', productId: 'p1', specId: 's1', quantity: 2,
-          productName: 'P1', specName: 'S1', price: 100, maxQuantity: 10
+          groupBuyId: 'proj1',
+          productId: 'p1',
+          specId: 's1',
+          quantity: 2,
+          productName: 'P1',
+          specName: 'S1',
+          price: 100,
+          maxQuantity: 10,
         },
       ]);
 
@@ -280,7 +310,9 @@ describe('GroupBuyService', () => {
     });
 
     it('should set submitOrderError when submit order fails', async () => {
-      vi.spyOn((service as any).client, 'createOrder').mockRejectedValue(new Error('submit failed'));
+      vi.spyOn((service as any).client, 'createOrder').mockRejectedValue(
+        new Error('submit failed'),
+      );
 
       await service.submitOrder('proj1', 'line:abc', 'addr', []);
 
@@ -290,7 +322,9 @@ describe('GroupBuyService', () => {
 
     it('should set existingOrderId to null when getMyGroupBuyOrder fails', async () => {
       service.existingOrderId.set('old-order');
-      vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockRejectedValue(new Error('network'));
+      vi.spyOn((service as any).client, 'getMyGroupBuyOrder').mockRejectedValue(
+        new Error('network'),
+      );
 
       const order = await service.getMyGroupBuyOrder('proj1');
 
@@ -384,20 +418,36 @@ describe('GroupBuyService', () => {
     });
 
     it('should call category and template APIs', async () => {
-      vi.spyOn((service as any).client, 'createCategory').mockResolvedValue({ category: { id: 'c1' } });
-      vi.spyOn((service as any).client, 'listCategories').mockResolvedValue({ categories: [{ id: 'c1' }] });
-      vi.spyOn((service as any).client, 'createPriceTemplate').mockResolvedValue({ template: { id: 't1' } });
-      vi.spyOn((service as any).client, 'listPriceTemplates').mockResolvedValue({ templates: [{ id: 't1' }] });
-      vi.spyOn((service as any).client, 'getPriceTemplate').mockResolvedValue({ template: { id: 't1' } });
-      vi.spyOn((service as any).client, 'updatePriceTemplate').mockResolvedValue({ template: { id: 't1-updated' } });
+      vi.spyOn((service as any).client, 'createCategory').mockResolvedValue({
+        category: { id: 'c1' },
+      });
+      vi.spyOn((service as any).client, 'listCategories').mockResolvedValue({
+        categories: [{ id: 'c1' }],
+      });
+      vi.spyOn((service as any).client, 'createPriceTemplate').mockResolvedValue({
+        template: { id: 't1' },
+      });
+      vi.spyOn((service as any).client, 'listPriceTemplates').mockResolvedValue({
+        templates: [{ id: 't1' }],
+      });
+      vi.spyOn((service as any).client, 'getPriceTemplate').mockResolvedValue({
+        template: { id: 't1' },
+      });
+      vi.spyOn((service as any).client, 'updatePriceTemplate').mockResolvedValue({
+        template: { id: 't1-updated' },
+      });
       vi.spyOn((service as any).client, 'deletePriceTemplate').mockResolvedValue({});
 
-      await expect(service.createCategory('cat', ['size'])).resolves.toEqual({ category: { id: 'c1' } });
+      await expect(service.createCategory('cat', ['size'])).resolves.toEqual({
+        category: { id: 'c1' },
+      });
       await expect(service.listCategories()).resolves.toEqual([{ id: 'c1' }]);
       await expect(service.createPriceTemplate('tpl', 'JPY', 0.23)).resolves.toEqual({ id: 't1' });
       await expect(service.listPriceTemplates()).resolves.toEqual([{ id: 't1' }]);
       await expect(service.getPriceTemplate('t1')).resolves.toEqual({ id: 't1' });
-      await expect(service.updatePriceTemplate('t1', 'name')).resolves.toEqual({ id: 't1-updated' });
+      await expect(service.updatePriceTemplate('t1', 'name')).resolves.toEqual({
+        id: 't1-updated',
+      });
       await expect(service.deletePriceTemplate('t1')).resolves.toEqual({});
     });
   });

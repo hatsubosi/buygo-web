@@ -674,7 +674,16 @@ describe('GroupBuyDetailComponent', () => {
         managers: [],
       } as any);
       mockGroupBuyService.currentProducts.set([
-        { id: 'p1', name: 'P', description: '', imageUrl: '', priceOriginal: 0, priceFinal: 0, exchangeRate: 1, specs: [] },
+        {
+          id: 'p1',
+          name: 'P',
+          description: '',
+          imageUrl: '',
+          priceOriginal: 0,
+          priceFinal: 0,
+          exchangeRate: 1,
+          specs: [],
+        },
       ] as any);
       fixture.detectChanges();
       expect(fixture.nativeElement.textContent).toContain('No Image');
@@ -723,7 +732,16 @@ describe('GroupBuyDetailComponent', () => {
         managers: [],
       } as any);
       mockGroupBuyService.currentProducts.set([
-        { id: 'p1', name: 'P', description: '', imageUrl: '', priceOriginal: 0, priceFinal: 0, exchangeRate: 1, specs: [] },
+        {
+          id: 'p1',
+          name: 'P',
+          description: '',
+          imageUrl: '',
+          priceOriginal: 0,
+          priceFinal: 0,
+          exchangeRate: 1,
+          specs: [],
+        },
       ] as any);
       fixture.detectChanges();
       expect(fixture.nativeElement.textContent).toContain('Add to Order');
@@ -739,7 +757,16 @@ describe('GroupBuyDetailComponent', () => {
         managers: [],
       } as any);
       mockGroupBuyService.currentProducts.set([
-        { id: 'p1', name: 'P', description: '', imageUrl: '', priceOriginal: 0, priceFinal: 0, exchangeRate: 1, specs: [{ id: 's1' }] },
+        {
+          id: 'p1',
+          name: 'P',
+          description: '',
+          imageUrl: '',
+          priceOriginal: 0,
+          priceFinal: 0,
+          exchangeRate: 1,
+          specs: [{ id: 's1' }],
+        },
       ] as any);
       mockGroupBuyService.cart.set([{ productId: 'p1', specId: 's1', quantity: 3 }]);
       fixture.detectChanges();
@@ -756,7 +783,16 @@ describe('GroupBuyDetailComponent', () => {
         managers: [],
       } as any);
       mockGroupBuyService.currentProducts.set([
-        { id: 'p1', name: 'P', description: '', imageUrl: '', priceOriginal: 0, priceFinal: 0, exchangeRate: 1, specs: [] },
+        {
+          id: 'p1',
+          name: 'P',
+          description: '',
+          imageUrl: '',
+          priceOriginal: 0,
+          priceFinal: 0,
+          exchangeRate: 1,
+          specs: [],
+        },
       ] as any);
       mockGroupBuyService.myGroupBuyOrder.set({
         id: 'o1',

@@ -8,12 +8,14 @@ import { signal } from '@angular/core';
 import { PaymentStatus, OrderItemStatus } from '../../../core/api/api/v1/groupbuy_pb';
 import { RegistrationStatus } from '../../../core/api/api/v1/event_pb';
 
-function makeOrder(overrides: Partial<{
-  id: string;
-  totalAmount: string;
-  paymentStatus: number;
-  items: any[];
-}> = {}) {
+function makeOrder(
+  overrides: Partial<{
+    id: string;
+    totalAmount: string;
+    paymentStatus: number;
+    items: any[];
+  }> = {},
+) {
   return {
     id: overrides.id ?? 'order-abc-12345678',
     totalAmount: overrides.totalAmount ?? '100',
@@ -31,19 +33,19 @@ function makeOrder(overrides: Partial<{
   };
 }
 
-function makeRegistration(overrides: Partial<{
-  id: string;
-  eventId: string;
-  status: number;
-  selectedItems: any[];
-}> = {}) {
+function makeRegistration(
+  overrides: Partial<{
+    id: string;
+    eventId: string;
+    status: number;
+    selectedItems: any[];
+  }> = {},
+) {
   return {
     id: overrides.id ?? 'reg-abc-12345678',
     eventId: overrides.eventId ?? 'event-1',
     status: overrides.status ?? RegistrationStatus.CONFIRMED,
-    selectedItems: overrides.selectedItems ?? [
-      { eventItemId: 'item-abcd', quantity: 1 },
-    ],
+    selectedItems: overrides.selectedItems ?? [{ eventItemId: 'item-abcd', quantity: 1 }],
   };
 }
 
@@ -210,9 +212,7 @@ describe('UserDashboardComponent', () => {
   });
 
   it('should return 0 pending when all orders are paid', () => {
-    mockMyOrders.set([
-      makeOrder({ paymentStatus: PaymentStatus.CONFIRMED }),
-    ]);
+    mockMyOrders.set([makeOrder({ paymentStatus: PaymentStatus.CONFIRMED })]);
     expect(component.pendingPaymentCount()).toBe(0);
   });
 
@@ -235,9 +235,7 @@ describe('UserDashboardComponent', () => {
   });
 
   it('should return 0 active registrations when all cancelled', () => {
-    component.registrations.set([
-      makeRegistration({ status: RegistrationStatus.CANCELLED }),
-    ]);
+    component.registrations.set([makeRegistration({ status: RegistrationStatus.CANCELLED })]);
     expect(component.activeRegistrationCount()).toBe(0);
   });
 
@@ -266,11 +264,15 @@ describe('UserDashboardComponent', () => {
   // ── getPaymentStatusClass ───────────────────────────────────────────
 
   it('should return green class for CONFIRMED payment', () => {
-    expect(component.getPaymentStatusClass(PaymentStatus.CONFIRMED)).toBe('bg-green-900/50 text-green-300');
+    expect(component.getPaymentStatusClass(PaymentStatus.CONFIRMED)).toBe(
+      'bg-green-900/50 text-green-300',
+    );
   });
 
   it('should return yellow class for SUBMITTED payment', () => {
-    expect(component.getPaymentStatusClass(PaymentStatus.SUBMITTED)).toBe('bg-yellow-900/50 text-yellow-300');
+    expect(component.getPaymentStatusClass(PaymentStatus.SUBMITTED)).toBe(
+      'bg-yellow-900/50 text-yellow-300',
+    );
   });
 
   it('should return red class for UNSET payment', () => {
@@ -286,14 +288,18 @@ describe('UserDashboardComponent', () => {
   });
 
   it('should return gray class for UNSPECIFIED payment status', () => {
-    expect(component.getPaymentStatusClass(PaymentStatus.UNSPECIFIED)).toBe('bg-gray-800 text-gray-400');
+    expect(component.getPaymentStatusClass(PaymentStatus.UNSPECIFIED)).toBe(
+      'bg-gray-800 text-gray-400',
+    );
   });
 
   // ── getItemStatusLabel ──────────────────────────────────────────────
 
   it('should return correct item status labels', () => {
     expect(component.getItemStatusLabel(OrderItemStatus.ITEM_STATUS_ORDERED)).toBe('Ordered');
-    expect(component.getItemStatusLabel(OrderItemStatus.ITEM_STATUS_READY_FOR_PICKUP)).toBe('Ready');
+    expect(component.getItemStatusLabel(OrderItemStatus.ITEM_STATUS_READY_FOR_PICKUP)).toBe(
+      'Ready',
+    );
     expect(component.getItemStatusLabel(OrderItemStatus.ITEM_STATUS_SENT)).toBe('Sent/Picked Up');
   });
 
@@ -419,7 +425,7 @@ describe('UserDashboardComponent', () => {
 
       const el: HTMLElement = fixture.nativeElement;
       const buttons = Array.from(el.querySelectorAll('button'));
-      const viewAll = buttons.find(b => b.textContent?.includes('View All Orders'));
+      const viewAll = buttons.find((b) => b.textContent?.includes('View All Orders'));
       expect(viewAll).toBeUndefined();
     });
 
@@ -445,9 +451,7 @@ describe('UserDashboardComponent', () => {
     });
 
     it('should show "View Events" link when active registrations > 0', () => {
-      component.registrations.set([
-        makeRegistration({ status: RegistrationStatus.CONFIRMED }),
-      ]);
+      component.registrations.set([makeRegistration({ status: RegistrationStatus.CONFIRMED })]);
       fixture.detectChanges();
 
       const el: HTMLElement = fixture.nativeElement;
@@ -535,11 +539,46 @@ describe('UserDashboardComponent', () => {
       mockMyOrders.set([
         makeOrder({
           items: [
-            { id: 'i1', productName: 'A', specName: 'Default', quantity: 1, price: '10', status: 0 },
-            { id: 'i2', productName: 'B', specName: 'Default', quantity: 1, price: '10', status: 0 },
-            { id: 'i3', productName: 'C', specName: 'Default', quantity: 1, price: '10', status: 0 },
-            { id: 'i4', productName: 'D', specName: 'Default', quantity: 1, price: '10', status: 0 },
-            { id: 'i5', productName: 'E', specName: 'Default', quantity: 1, price: '10', status: 0 },
+            {
+              id: 'i1',
+              productName: 'A',
+              specName: 'Default',
+              quantity: 1,
+              price: '10',
+              status: 0,
+            },
+            {
+              id: 'i2',
+              productName: 'B',
+              specName: 'Default',
+              quantity: 1,
+              price: '10',
+              status: 0,
+            },
+            {
+              id: 'i3',
+              productName: 'C',
+              specName: 'Default',
+              quantity: 1,
+              price: '10',
+              status: 0,
+            },
+            {
+              id: 'i4',
+              productName: 'D',
+              specName: 'Default',
+              quantity: 1,
+              price: '10',
+              status: 0,
+            },
+            {
+              id: 'i5',
+              productName: 'E',
+              specName: 'Default',
+              quantity: 1,
+              price: '10',
+              status: 0,
+            },
           ],
         }),
       ]);
@@ -589,9 +628,7 @@ describe('UserDashboardComponent', () => {
         makeRegistration({
           id: 'regabcde-12345678',
           status: RegistrationStatus.PENDING,
-          selectedItems: [
-            { eventItemId: 'abcdefgh', quantity: 2 },
-          ],
+          selectedItems: [{ eventItemId: 'abcdefgh', quantity: 2 }],
         }),
       ]);
       fixture.detectChanges();
@@ -635,7 +672,7 @@ describe('UserDashboardComponent', () => {
     it('should switch to orders tab when Orders button is clicked', () => {
       const el: HTMLElement = fixture.nativeElement;
       const buttons = Array.from(el.querySelectorAll('button'));
-      const ordersBtn = buttons.find(b => b.textContent?.trim() === 'My Orders');
+      const ordersBtn = buttons.find((b) => b.textContent?.trim() === 'My Orders');
       ordersBtn?.click();
       fixture.detectChanges();
 
@@ -645,7 +682,7 @@ describe('UserDashboardComponent', () => {
     it('should switch to events tab when Events button is clicked', () => {
       const el: HTMLElement = fixture.nativeElement;
       const buttons = Array.from(el.querySelectorAll('button'));
-      const eventsBtn = buttons.find(b => b.textContent?.trim() === 'My Events');
+      const eventsBtn = buttons.find((b) => b.textContent?.trim() === 'My Events');
       eventsBtn?.click();
       fixture.detectChanges();
 
@@ -658,7 +695,7 @@ describe('UserDashboardComponent', () => {
 
       const el: HTMLElement = fixture.nativeElement;
       const buttons = Array.from(el.querySelectorAll('button'));
-      const overviewBtn = buttons.find(b => b.textContent?.trim() === 'Overview');
+      const overviewBtn = buttons.find((b) => b.textContent?.trim() === 'Overview');
       overviewBtn?.click();
       fixture.detectChanges();
 

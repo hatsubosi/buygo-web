@@ -103,9 +103,7 @@ describe('ManagerOrderDetailComponent', () => {
     });
 
     it('should compute shippingFee from order', () => {
-      mockManagerService.orders.set([
-        { id: 'o1', items: [], shippingFee: '25' },
-      ] as any);
+      mockManagerService.orders.set([{ id: 'o1', items: [], shippingFee: '25' }] as any);
       component.orderId.set('o1');
       expect(component.shippingFee()).toBe(25);
     });
@@ -118,9 +116,7 @@ describe('ManagerOrderDetailComponent', () => {
       mockManagerService.orders.set([
         {
           id: 'o1',
-          items: [
-            { productId: 'p1', specId: '', quantity: 1, price: BigInt(100), status: 1 },
-          ],
+          items: [{ productId: 'p1', specId: '', quantity: 1, price: BigInt(100), status: 1 }],
           shippingFee: '30',
         },
       ] as any);
@@ -137,9 +133,7 @@ describe('ManagerOrderDetailComponent', () => {
     });
 
     it('should return "None" when order has no note', () => {
-      mockManagerService.orders.set([
-        { id: 'o1', items: [], shippingFee: '0' },
-      ] as any);
+      mockManagerService.orders.set([{ id: 'o1', items: [], shippingFee: '0' }] as any);
       component.orderId.set('o1');
       expect(component.orderNote()).toBe('None');
     });
@@ -514,9 +508,7 @@ describe('ManagerOrderDetailComponent', () => {
       mockManagerService.orders.set([
         {
           id: 'o1',
-          items: [
-            { productId: 'p1', specId: 's1', quantity: 2, status: 3 },
-          ],
+          items: [{ productId: 'p1', specId: 's1', quantity: 2, status: 3 }],
           shippingFee: '0',
         },
       ] as any);
@@ -541,9 +533,7 @@ describe('ManagerOrderDetailComponent', () => {
       mockManagerService.orders.set([
         {
           id: 'o1',
-          items: [
-            { productId: 'p1', specId: '', quantity: 1, status: 1 },
-          ],
+          items: [{ productId: 'p1', specId: '', quantity: 1, status: 1 }],
           shippingFee: '0',
         },
       ] as any);

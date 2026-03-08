@@ -9,15 +9,20 @@ describe('AuthService', () => {
   let service: AuthService;
   const mockTransport = {};
 
-
   beforeEach(() => {
     // Reset localStorage to an empty real implementation for each test
     const store: Record<string, string> = {};
     vi.stubGlobal('localStorage', {
       getItem: (key: string) => store[key] ?? null,
-      setItem: (key: string, val: string) => { store[key] = val; },
-      removeItem: (key: string) => { delete store[key]; },
-      clear: () => { Object.keys(store).forEach((k) => delete store[k]); },
+      setItem: (key: string, val: string) => {
+        store[key] = val;
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        Object.keys(store).forEach((k) => delete store[k]);
+      },
     });
     TestBed.configureTestingModule({
       providers: [
@@ -76,7 +81,6 @@ describe('AuthService', () => {
     });
   });
 
-
   describe('logout', () => {
     it('should clear user and token signals', () => {
       (service as any).user.set({ id: 'u1' });
@@ -98,7 +102,6 @@ describe('AuthService', () => {
       vi.unstubAllGlobals();
     });
   });
-
 
   describe('Admin API Calls', () => {
     it('should call listUsers on client', async () => {

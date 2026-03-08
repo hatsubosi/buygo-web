@@ -197,8 +197,20 @@ describe('ManagerProductListComponent', () => {
 
   it('should render product cards when products are available', () => {
     mockGroupBuyService.currentProducts.set([
-      { id: 'abc123def', name: 'Keycaps Set A', priceOriginal: 1500, priceFinal: 12, specs: ['Red', 'Blue'] },
-      { id: 'xyz789ghi', name: 'Switches Pack', priceOriginal: 800, priceFinal: 6, specs: ['Linear'] },
+      {
+        id: 'abc123def',
+        name: 'Keycaps Set A',
+        priceOriginal: 1500,
+        priceFinal: 12,
+        specs: ['Red', 'Blue'],
+      },
+      {
+        id: 'xyz789ghi',
+        name: 'Switches Pack',
+        priceOriginal: 800,
+        priceFinal: 6,
+        specs: ['Linear'],
+      },
     ]);
     fixture.detectChanges();
 

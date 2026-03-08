@@ -41,9 +41,7 @@ describe('ManagerEventDetailComponent', () => {
         { provide: EventService, useValue: mockEventService },
         { provide: AuthService, useValue: mockAuthService },
         { provide: ToastService, useValue: mockToastService },
-        provideRouter([
-          { path: 'manager', component: ManagerEventDetailComponent },
-        ]),
+        provideRouter([{ path: 'manager', component: ManagerEventDetailComponent }]),
       ],
     }).compileComponents();
 
@@ -205,9 +203,7 @@ describe('ManagerEventDetailComponent', () => {
   });
 
   it('should handle error when loading registrations fails', async () => {
-    mockEventService.listEventRegistrations.mockRejectedValue(
-      new Error('Network error')
-    );
+    mockEventService.listEventRegistrations.mockRejectedValue(new Error('Network error'));
     mockEventService.currentEvent.set({
       id: 'evt-1',
       items: [],
@@ -219,10 +215,7 @@ describe('ManagerEventDetailComponent', () => {
 
     await component.loadRegistrations();
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Failed to load regs',
-      expect.any(Error)
-    );
+    expect(consoleSpy).toHaveBeenCalledWith('Failed to load regs', expect.any(Error));
     consoleSpy.mockRestore();
   });
 
@@ -253,11 +246,7 @@ describe('ManagerEventDetailComponent', () => {
     const reg = { id: 'r1' };
     await component.updateStatus(reg, 2, 1);
 
-    expect(mockEventService.updateRegistrationStatus).toHaveBeenCalledWith(
-      'r1',
-      2,
-      1
-    );
+    expect(mockEventService.updateRegistrationStatus).toHaveBeenCalledWith('r1', 2, 1);
   });
 
   it('should convert string status values to numbers', async () => {
@@ -271,17 +260,11 @@ describe('ManagerEventDetailComponent', () => {
     const reg = { id: 'r1' };
     await component.updateStatus(reg, '2' as any, '3' as any);
 
-    expect(mockEventService.updateRegistrationStatus).toHaveBeenCalledWith(
-      'r1',
-      2,
-      3
-    );
+    expect(mockEventService.updateRegistrationStatus).toHaveBeenCalledWith('r1', 2, 3);
   });
 
   it('should show error toast when updateStatus fails', async () => {
-    mockEventService.updateRegistrationStatus.mockRejectedValueOnce(
-      new Error('Server error')
-    );
+    mockEventService.updateRegistrationStatus.mockRejectedValueOnce(new Error('Server error'));
     mockEventService.currentEvent.set({
       id: 'evt-1',
       items: [],
@@ -294,10 +277,7 @@ describe('ManagerEventDetailComponent', () => {
     const reg = { id: 'r1' };
     await component.updateStatus(reg, 2, 1);
 
-    expect(mockToastService.show).toHaveBeenCalledWith(
-      'Error updating status',
-      'error'
-    );
+    expect(mockToastService.show).toHaveBeenCalledWith('Error updating status', 'error');
     consoleSpy.mockRestore();
   });
 
@@ -325,17 +305,11 @@ describe('ManagerEventDetailComponent', () => {
         type: 'default',
         confirmText: 'Yes, proceed',
         cancelText: 'Cancel',
-      })
+      }),
     );
-    expect(mockEventService.updateEventStatus).toHaveBeenCalledWith(
-      'evt-1',
-      2
-    );
+    expect(mockEventService.updateEventStatus).toHaveBeenCalledWith('evt-1', 2);
     expect(mockEventService.loadEvent).toHaveBeenCalledWith('evt-1');
-    expect(mockToastService.show).toHaveBeenCalledWith(
-      'Event published successfully',
-      'success'
-    );
+    expect(mockToastService.show).toHaveBeenCalledWith('Event published successfully', 'success');
   });
 
   it('should use destructive dialog type for end (status 3)', async () => {
@@ -357,16 +331,10 @@ describe('ManagerEventDetailComponent', () => {
       expect.objectContaining({
         title: 'Confirm end',
         type: 'destructive',
-      })
+      }),
     );
-    expect(mockEventService.updateEventStatus).toHaveBeenCalledWith(
-      'evt-1',
-      3
-    );
-    expect(mockToastService.show).toHaveBeenCalledWith(
-      'Event ended successfully',
-      'success'
-    );
+    expect(mockEventService.updateEventStatus).toHaveBeenCalledWith('evt-1', 3);
+    expect(mockToastService.show).toHaveBeenCalledWith('Event ended successfully', 'success');
   });
 
   it('should use destructive dialog type for archive (status 4)', async () => {
@@ -388,16 +356,10 @@ describe('ManagerEventDetailComponent', () => {
       expect.objectContaining({
         title: 'Confirm archive',
         type: 'destructive',
-      })
+      }),
     );
-    expect(mockEventService.updateEventStatus).toHaveBeenCalledWith(
-      'evt-1',
-      4
-    );
-    expect(mockToastService.show).toHaveBeenCalledWith(
-      'Event archived successfully',
-      'success'
-    );
+    expect(mockEventService.updateEventStatus).toHaveBeenCalledWith('evt-1', 4);
+    expect(mockToastService.show).toHaveBeenCalledWith('Event archived successfully', 'success');
   });
 
   it('should not proceed when dialog is cancelled', async () => {
@@ -461,16 +423,11 @@ describe('ManagerEventDetailComponent', () => {
       open: vi.fn().mockResolvedValue(true),
     } as any;
 
-    mockEventService.updateEventStatus.mockRejectedValueOnce(
-      new Error('Permission denied')
-    );
+    mockEventService.updateEventStatus.mockRejectedValueOnce(new Error('Permission denied'));
 
     await component.changeEventStatus(2);
 
-    expect(mockToastService.show).toHaveBeenCalledWith(
-      'Permission denied',
-      'error'
-    );
+    expect(mockToastService.show).toHaveBeenCalledWith('Permission denied', 'error');
   });
 
   it('should show generic error when updateEventStatus fails without message', async () => {
@@ -490,10 +447,7 @@ describe('ManagerEventDetailComponent', () => {
 
     await component.changeEventStatus(2);
 
-    expect(mockToastService.show).toHaveBeenCalledWith(
-      'Failed to update status',
-      'error'
-    );
+    expect(mockToastService.show).toHaveBeenCalledWith('Failed to update status', 'error');
   });
 
   // --- copyPublicLink ---
@@ -513,15 +467,13 @@ describe('ManagerEventDetailComponent', () => {
 
     component.copyPublicLink();
 
-    expect(writeTextMock).toHaveBeenCalledWith(
-      expect.stringContaining('/event/evt-123')
-    );
+    expect(writeTextMock).toHaveBeenCalledWith(expect.stringContaining('/event/evt-123'));
 
     // Wait for the promise to resolve to trigger the toast
     await vi.waitFor(() => {
       expect(mockToastService.show).toHaveBeenCalledWith(
         'Public link copied to clipboard!',
-        'success'
+        'success',
       );
     });
   });

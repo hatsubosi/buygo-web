@@ -134,14 +134,16 @@ describe('ManagerGroupBuyDetailComponent', () => {
       ]);
       mockManagerService.orders.set([
         {
-          id: 'o1', paymentStatus: 1,
+          id: 'o1',
+          paymentStatus: 1,
           items: [
             { productId: 'p1', quantity: 2 },
             { productId: 'p2', quantity: 1 },
           ],
         },
         {
-          id: 'o2', paymentStatus: 1,
+          id: 'o2',
+          paymentStatus: 1,
           items: [{ productId: 'p1', quantity: 3 }],
         },
       ]);
@@ -165,7 +167,14 @@ describe('ManagerGroupBuyDetailComponent', () => {
         { id: 'p2', name: 'Expensive', priceOriginal: BigInt(1000), exchangeRate: BigInt(1) },
       ]);
       mockManagerService.orders.set([
-        { id: 'o1', paymentStatus: 1, items: [{ productId: 'p1', quantity: 1 }, { productId: 'p2', quantity: 1 }] },
+        {
+          id: 'o1',
+          paymentStatus: 1,
+          items: [
+            { productId: 'p1', quantity: 1 },
+            { productId: 'p2', quantity: 1 },
+          ],
+        },
       ]);
 
       const stats = component.salesStats();
@@ -203,7 +212,14 @@ describe('ManagerGroupBuyDetailComponent', () => {
         { id: 'p2', name: 'B', priceOriginal: BigInt(50), exchangeRate: BigInt(2) },
       ]);
       mockManagerService.orders.set([
-        { id: 'o1', paymentStatus: 1, items: [{ productId: 'p1', quantity: 3 }, { productId: 'p2', quantity: 2 }] },
+        {
+          id: 'o1',
+          paymentStatus: 1,
+          items: [
+            { productId: 'p1', quantity: 3 },
+            { productId: 'p2', quantity: 2 },
+          ],
+        },
       ]);
 
       const fin = component.financialStats();
@@ -258,8 +274,12 @@ describe('ManagerGroupBuyDetailComponent', () => {
         }),
       );
       expect(mockGroupBuyService.updateGroupBuy).toHaveBeenCalledWith(
-        'p1', 'My Project', 'Desc', 2,
-        [{ id: 'prod1' }], 'img.png',
+        'p1',
+        'My Project',
+        'Desc',
+        2,
+        [{ id: 'prod1' }],
+        'img.png',
         new Date('2026-06-01'),
         [{ id: 's1' }],
       );

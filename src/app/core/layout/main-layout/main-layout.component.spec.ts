@@ -26,10 +26,7 @@ describe('MainLayoutComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [MainLayoutComponent],
-      providers: [
-        { provide: AuthService, useValue: mockAuthService },
-        provideRouter([]),
-      ],
+      providers: [{ provide: AuthService, useValue: mockAuthService }, provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MainLayoutComponent);
@@ -385,7 +382,9 @@ describe('MainLayoutComponent', () => {
       fixture.detectChanges();
       // The login link should exist with routerLink to /login
       const loginLinks = fixture.nativeElement.querySelectorAll('a');
-      const loginLink = Array.from(loginLinks).find((a: any) => a.getAttribute('href')?.includes('/login'));
+      const loginLink = Array.from(loginLinks).find((a: any) =>
+        a.getAttribute('href')?.includes('/login'),
+      );
       expect(loginLink).toBeTruthy();
     });
   });

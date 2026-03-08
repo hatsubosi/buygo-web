@@ -699,8 +699,7 @@ describe('EventDetailComponent', () => {
 
       expect(dialogOpenMock).toHaveBeenCalledWith({
         title: 'Cancel Registration',
-        message:
-          'Are you sure you want to cancel your registration? This action cannot be undone.',
+        message: 'Are you sure you want to cancel your registration? This action cannot be undone.',
         type: 'destructive',
         confirmText: 'Yes, Cancel',
         cancelText: 'Keep Registration',
@@ -859,7 +858,13 @@ describe('EventDetailComponent', () => {
         creator: { id: 'u1' },
         managers: [],
         items: [
-          { id: 'i1', name: 'VIP Ticket', price: BigInt(500), maxParticipants: 50, allowMultiple: false },
+          {
+            id: 'i1',
+            name: 'VIP Ticket',
+            price: BigInt(500),
+            maxParticipants: 50,
+            allowMultiple: false,
+          },
           { id: 'i2', name: 'Regular', price: BigInt(0), maxParticipants: 0, allowMultiple: true },
         ],
         discounts: [],
@@ -904,7 +909,13 @@ describe('EventDetailComponent', () => {
         creator: { id: 'u1' },
         managers: [],
         items: [
-          { id: 'i1', name: 'Single', price: BigInt(100), maxParticipants: 0, allowMultiple: false },
+          {
+            id: 'i1',
+            name: 'Single',
+            price: BigInt(100),
+            maxParticipants: 0,
+            allowMultiple: false,
+          },
           { id: 'i2', name: 'Multi', price: BigInt(200), maxParticipants: 0, allowMultiple: true },
         ],
         discounts: [],
@@ -936,7 +947,7 @@ describe('EventDetailComponent', () => {
         ],
         discounts: [],
       } as any);
-      component.itemQuantities.set({ 'i1': 2 });
+      component.itemQuantities.set({ i1: 2 });
       fixture.detectChanges();
       const el = fixture.nativeElement;
       expect(el.textContent).toContain('Summary');
@@ -958,11 +969,9 @@ describe('EventDetailComponent', () => {
         items: [
           { id: 'i1', name: 'Item', price: BigInt(100), maxParticipants: 0, allowMultiple: true },
         ],
-        discounts: [
-          { minQuantity: 2, discountAmount: BigInt(30) },
-        ],
+        discounts: [{ minQuantity: 2, discountAmount: BigInt(30) }],
       } as any);
-      component.itemQuantities.set({ 'i1': 3 });
+      component.itemQuantities.set({ i1: 3 });
       fixture.detectChanges();
       const el = fixture.nativeElement;
       expect(el.textContent).toContain('Discount Applied');

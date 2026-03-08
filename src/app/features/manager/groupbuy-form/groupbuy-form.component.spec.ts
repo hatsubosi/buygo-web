@@ -176,7 +176,9 @@ describe('GroupBuyFormComponent', () => {
 
     it('should show "No advanced shipping" when no shipping configs', () => {
       fixture.detectChanges();
-      expect(fixture.nativeElement.textContent).toContain('No advanced shipping configuration added.');
+      expect(fixture.nativeElement.textContent).toContain(
+        'No advanced shipping configuration added.',
+      );
     });
 
     it('should render shipping config after adding one', () => {

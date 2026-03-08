@@ -98,7 +98,10 @@ describe('errorInterceptor', () => {
 
     await expect(interceptor(next)(req as never)).rejects.toThrow(error);
 
-    expect(toast.show).toHaveBeenCalledWith(expect.stringContaining('custom error message'), 'error');
+    expect(toast.show).toHaveBeenCalledWith(
+      expect.stringContaining('custom error message'),
+      'error',
+    );
   });
 
   it('should rethrow non-ConnectError without toast or logout', async () => {

@@ -10,7 +10,9 @@ describe('authInterceptor', () => {
   });
 
   it('should add Authorization header when token exists', async () => {
-    const mockAuthService = { token: vi.fn().mockReturnValue('test-token') } as unknown as AuthService;
+    const mockAuthService = {
+      token: vi.fn().mockReturnValue('test-token'),
+    } as unknown as AuthService;
     const interceptor = authInterceptor(mockAuthService);
     const req = createMockRequest();
     const next = vi.fn().mockResolvedValue({ ok: true });

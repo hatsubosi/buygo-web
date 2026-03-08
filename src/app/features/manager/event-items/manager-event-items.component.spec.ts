@@ -94,7 +94,10 @@ describe('ManagerEventItemsComponent', () => {
     });
 
     it('should render event header with back link and title', () => {
-      component.event.set({ id: 'evt-1', items: [{ id: 'i1', name: 'Ticket', price: BigInt(300) }] } as any);
+      component.event.set({
+        id: 'evt-1',
+        items: [{ id: 'i1', name: 'Ticket', price: BigInt(300) }],
+      } as any);
       fixture.detectChanges();
       const el = fixture.nativeElement;
       expect(el.textContent).toContain('Guests by Item');
@@ -106,7 +109,13 @@ describe('ManagerEventItemsComponent', () => {
         items: [{ id: 'i1', name: 'VIP Pass', price: BigInt(500) }],
       } as any);
       component.registrations.set([
-        { id: 'r1', status: 2, user: { name: 'Alice', email: 'a@b.com' }, contactInfo: '', selectedItems: [{ eventItemId: 'i1', quantity: 3 }] },
+        {
+          id: 'r1',
+          status: 2,
+          user: { name: 'Alice', email: 'a@b.com' },
+          contactInfo: '',
+          selectedItems: [{ eventItemId: 'i1', quantity: 3 }],
+        },
       ] as any);
       fixture.detectChanges();
       const el = fixture.nativeElement;
@@ -120,8 +129,20 @@ describe('ManagerEventItemsComponent', () => {
         items: [{ id: 'i1', name: 'Ticket', price: BigInt(100) }],
       } as any);
       component.registrations.set([
-        { id: 'r1', status: 2, user: { name: 'Bob', email: 'bob@test.com' }, contactInfo: '', selectedItems: [{ eventItemId: 'i1', quantity: 2 }] },
-        { id: 'r2', status: 1, user: { name: 'Carol', email: 'carol@test.com' }, contactInfo: '', selectedItems: [{ eventItemId: 'i1', quantity: 1 }] },
+        {
+          id: 'r1',
+          status: 2,
+          user: { name: 'Bob', email: 'bob@test.com' },
+          contactInfo: '',
+          selectedItems: [{ eventItemId: 'i1', quantity: 2 }],
+        },
+        {
+          id: 'r2',
+          status: 1,
+          user: { name: 'Carol', email: 'carol@test.com' },
+          contactInfo: '',
+          selectedItems: [{ eventItemId: 'i1', quantity: 1 }],
+        },
       ] as any);
       fixture.detectChanges();
       const el = fixture.nativeElement;

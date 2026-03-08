@@ -20,7 +20,10 @@ export function provideTransport(): EnvironmentProviders {
         return createConnectTransport({
           baseUrl: environment.apiUrl,
           useBinaryFormat: true,
-          interceptors: [authInterceptor(authService), errorInterceptor(authService, router, toast)],
+          interceptors: [
+            authInterceptor(authService),
+            errorInterceptor(authService, router, toast),
+          ],
         });
       },
     },

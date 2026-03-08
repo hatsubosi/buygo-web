@@ -108,9 +108,14 @@ export class EventService {
       this.error.set(err.message);
       throw err;
     }
-    await withLoading(this.isLoading, this.error, async () => {
-      await this.client.registerEvent({ eventId, items, contactInfo, notes });
-    }, { rethrow: true });
+    await withLoading(
+      this.isLoading,
+      this.error,
+      async () => {
+        await this.client.registerEvent({ eventId, items, contactInfo, notes });
+      },
+      { rethrow: true },
+    );
   }
 
   async updateRegistration(
@@ -124,16 +129,26 @@ export class EventService {
       this.error.set(err.message);
       throw err;
     }
-    await withLoading(this.isLoading, this.error, async () => {
-      await this.client.updateRegistration({ registrationId, items, contactInfo, notes });
-    }, { rethrow: true });
+    await withLoading(
+      this.isLoading,
+      this.error,
+      async () => {
+        await this.client.updateRegistration({ registrationId, items, contactInfo, notes });
+      },
+      { rethrow: true },
+    );
   }
 
   async getMyRegistrations() {
-    return withLoading(this.isLoading, this.error, async () => {
-      const res = await this.client.getMyRegistrations({});
-      return res.registrations;
-    }, { rethrow: true });
+    return withLoading(
+      this.isLoading,
+      this.error,
+      async () => {
+        const res = await this.client.getMyRegistrations({});
+        return res.registrations;
+      },
+      { rethrow: true },
+    );
   }
 
   async cancelRegistration(registrationId: string) {
@@ -150,10 +165,15 @@ export class EventService {
   }
 
   async listEventRegistrations(eventId: string) {
-    return withLoading(this.isLoading, this.error, async () => {
-      const res = await this.client.listEventRegistrations({ eventId });
-      return res.registrations;
-    }, { rethrow: true });
+    return withLoading(
+      this.isLoading,
+      this.error,
+      async () => {
+        const res = await this.client.listEventRegistrations({ eventId });
+        return res.registrations;
+      },
+      { rethrow: true },
+    );
   }
 
   async updateRegistrationStatus(registrationId: string, status: number, paymentStatus: number) {

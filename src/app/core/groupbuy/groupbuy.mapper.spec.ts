@@ -47,9 +47,7 @@ describe('groupbuy mapper', () => {
     it('should use custom maxQuantity when provided', () => {
       const order = new Order({
         groupBuyId: 'gb1',
-        items: [
-          new OrderItem({ productId: 'p1', quantity: 1, price: BigInt(100) }),
-        ],
+        items: [new OrderItem({ productId: 'p1', quantity: 1, price: BigInt(100) })],
       });
 
       const result = orderToCartItems(order, 50);
@@ -67,8 +65,26 @@ describe('groupbuy mapper', () => {
   describe('cartItemsToOrderItems', () => {
     it('should map CartItem array to CreateOrderItem array', () => {
       const items: CartItem[] = [
-        { groupBuyId: 'gb1', productId: 'p1', specId: 's1', quantity: 2, productName: 'A', specName: 'Red', price: 100, maxQuantity: 10 },
-        { groupBuyId: 'gb1', productId: 'p2', specId: 's2', quantity: 5, productName: 'B', specName: 'Blue', price: 200, maxQuantity: 20 },
+        {
+          groupBuyId: 'gb1',
+          productId: 'p1',
+          specId: 's1',
+          quantity: 2,
+          productName: 'A',
+          specName: 'Red',
+          price: 100,
+          maxQuantity: 10,
+        },
+        {
+          groupBuyId: 'gb1',
+          productId: 'p2',
+          specId: 's2',
+          quantity: 5,
+          productName: 'B',
+          specName: 'Blue',
+          price: 200,
+          maxQuantity: 20,
+        },
       ];
 
       const result = cartItemsToOrderItems(items);

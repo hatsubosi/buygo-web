@@ -329,7 +329,9 @@ describe('GroupBuyCheckoutComponent', () => {
       component.contactInfo = 'test@test.com';
       mockGroupBuyService.currentGroupBuy.set({
         id: 'p1',
-        shippingConfigs: [{ id: 'sc1', name: 'Standard', type: ShippingType.DELIVERY, price: BigInt(100) }],
+        shippingConfigs: [
+          { id: 'sc1', name: 'Standard', type: ShippingType.DELIVERY, price: BigInt(100) },
+        ],
       });
       component.selectedShippingMethodId = '';
       component.submitOrder();
@@ -603,7 +605,7 @@ describe('GroupBuyCheckoutComponent', () => {
           provideRouter([{ path: '**', component: GroupBuyCheckoutComponent }]),
           {
             provide: ActivatedRoute,
-            useValue: { paramMap: of({ get: (key: string) => key === 'id' ? 'proj-99' : null }) },
+            useValue: { paramMap: of({ get: (key: string) => (key === 'id' ? 'proj-99' : null) }) },
           },
         ],
       }).compileComponents();
@@ -785,8 +787,22 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show cart items with product name and price when cart has items', () => {
       mockGroupBuyService.cartCount.set(2);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 2, price: 100, productName: 'Widget', specName: 'Red' },
-        { productId: 'p2', specId: '', quantity: 1, price: 50, productName: 'Gadget', specName: '' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 2,
+          price: 100,
+          productName: 'Widget',
+          specName: 'Red',
+        },
+        {
+          productId: 'p2',
+          specId: '',
+          quantity: 1,
+          price: 50,
+          productName: 'Gadget',
+          specName: '',
+        },
       ]);
       fixture.detectChanges();
 
@@ -800,7 +816,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show spec name when item has specName', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 1, price: 100, productName: 'Widget', specName: 'Red' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 1,
+          price: 100,
+          productName: 'Widget',
+          specName: 'Red',
+        },
       ]);
       fixture.detectChanges();
 
@@ -811,7 +834,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show quantity +/- buttons for each cart item', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 3, price: 100, productName: 'Widget', specName: 'Red' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 3,
+          price: 100,
+          productName: 'Widget',
+          specName: 'Red',
+        },
       ]);
       fixture.detectChanges();
 
@@ -825,7 +855,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show "Shipping Method" section when shippingConfigs exist', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 1, price: 100, productName: 'Widget', specName: '' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 1,
+          price: 100,
+          productName: 'Widget',
+          specName: '',
+        },
       ]);
       mockGroupBuyService.currentGroupBuy.set({
         id: 'p1',
@@ -840,7 +877,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should NOT show "Shipping Method" when no shippingConfigs', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 1, price: 100, productName: 'Widget', specName: '' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 1,
+          price: 100,
+          productName: 'Widget',
+          specName: '',
+        },
       ]);
       mockGroupBuyService.currentGroupBuy.set({
         id: 'p1',
@@ -855,7 +899,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show "Contact Info" label', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 1, price: 100, productName: 'Widget', specName: '' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 1,
+          price: 100,
+          productName: 'Widget',
+          specName: '',
+        },
       ]);
       fixture.detectChanges();
 
@@ -866,7 +917,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show total amount', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 1, price: 100, productName: 'Widget', specName: '' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 1,
+          price: 100,
+          productName: 'Widget',
+          specName: '',
+        },
       ]);
       mockGroupBuyService.cartTotal.set(250);
       fixture.detectChanges();
@@ -879,7 +937,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show "Confirm Order" button', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 1, price: 100, productName: 'Widget', specName: '' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 1,
+          price: 100,
+          productName: 'Widget',
+          specName: '',
+        },
       ]);
       fixture.detectChanges();
 
@@ -890,7 +955,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show error message when submitOrderError is set', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 1, price: 100, productName: 'Widget', specName: '' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 1,
+          price: 100,
+          productName: 'Widget',
+          specName: '',
+        },
       ]);
       mockGroupBuyService.submitOrderError.set('Something went wrong');
       fixture.detectChanges();
@@ -902,7 +974,14 @@ describe('GroupBuyCheckoutComponent', () => {
     it('should show meetup helper text when shipping type is MEETUP', () => {
       mockGroupBuyService.cartCount.set(1);
       mockGroupBuyService.cart.set([
-        { productId: 'p1', specId: 's1', quantity: 1, price: 100, productName: 'Widget', specName: '' },
+        {
+          productId: 'p1',
+          specId: 's1',
+          quantity: 1,
+          price: 100,
+          productName: 'Widget',
+          specName: '',
+        },
       ]);
       mockGroupBuyService.currentGroupBuy.set({
         id: 'p1',

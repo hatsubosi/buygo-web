@@ -195,9 +195,7 @@ export class GroupBuyService {
         sourceCurrency,
       });
       if (!res.groupBuy) throw new Error('No project returned');
-      this.groupBuys.update((prev) =>
-        prev.map((gb) => (gb.id === id ? res.groupBuy! : gb)),
-      );
+      this.groupBuys.update((prev) => prev.map((gb) => (gb.id === id ? res.groupBuy! : gb)));
       if (this.currentGroupBuy()?.id === id) {
         this.currentGroupBuy.set(res.groupBuy);
       }
@@ -263,9 +261,7 @@ export class GroupBuyService {
     }
     this.cart.set(
       this.cart().map((item) =>
-        item.productId === productId && item.specId === specId
-          ? { ...item, quantity }
-          : item,
+        item.productId === productId && item.specId === specId ? { ...item, quantity } : item,
       ),
     );
   }
@@ -350,7 +346,8 @@ export class GroupBuyService {
     this.submitOrderError.set(null);
     try {
       const orderItems = items.map(
-        (i) => new CreateOrderItem({ productId: i.productId, specId: i.specId, quantity: i.quantity }),
+        (i) =>
+          new CreateOrderItem({ productId: i.productId, specId: i.specId, quantity: i.quantity }),
       );
       const startId = this.existingOrderId();
       let orderId = '';
@@ -428,17 +425,21 @@ export class GroupBuyService {
     paidAt?: Date | null,
     amount?: number,
   ): Promise<void> {
-    await this.client.updatePaymentInfo({
-      orderId,
-      method,
-      accountLast5,
-      contactInfo,
-      shippingAddress,
-      paidAt: paidAt ? ({ seconds: BigInt(Math.floor(paidAt.getTime() / 1000)) } as any) : undefined,
-      amount: amount ? BigInt(amount) : undefined,
-    }).catch((err: any) => {
-      throw new Error(err.message || 'Failed to update payment info');
-    });
+    await this.client
+      .updatePaymentInfo({
+        orderId,
+        method,
+        accountLast5,
+        contactInfo,
+        shippingAddress,
+        paidAt: paidAt
+          ? ({ seconds: BigInt(Math.floor(paidAt.getTime() / 1000)) } as any)
+          : undefined,
+        amount: amount ? BigInt(amount) : undefined,
+      })
+      .catch((err: any) => {
+        throw new Error(err.message || 'Failed to update payment info');
+      });
   }
 
   // ────────────────────────────────────────────────────────────────
@@ -495,7 +496,12 @@ export class GroupBuyService {
     exchangeRate: number,
     roundingConfig?: RoundingConfig,
   ) {
-    const res = await this.client.createPriceTemplate({ name, sourceCurrency, exchangeRate, roundingConfig });
+    const res = await this.client.createPriceTemplate({
+      name,
+      sourceCurrency,
+      exchangeRate,
+      roundingConfig,
+    });
     return res.template;
   }
 
@@ -516,7 +522,13 @@ export class GroupBuyService {
     exchangeRate?: number,
     roundingConfig?: RoundingConfig,
   ) {
-    const res = await this.client.updatePriceTemplate({ templateId, name, sourceCurrency, exchangeRate, roundingConfig });
+    const res = await this.client.updatePriceTemplate({
+      templateId,
+      name,
+      sourceCurrency,
+      exchangeRate,
+      roundingConfig,
+    });
     return res.template;
   }
 

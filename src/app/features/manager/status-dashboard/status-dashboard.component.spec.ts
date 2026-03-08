@@ -155,14 +155,35 @@ describe('StatusDashboardComponent', () => {
         {
           paymentStatus: 1,
           items: [
-            { productId: 'p1', specId: 's1', status: 1, quantity: 3, productName: 'Product A', specName: 'Red' },
+            {
+              productId: 'p1',
+              specId: 's1',
+              status: 1,
+              quantity: 3,
+              productName: 'Product A',
+              specName: 'Red',
+            },
           ],
         },
         {
           paymentStatus: 2,
           items: [
-            { productId: 'p1', specId: 's1', status: 1, quantity: 2, productName: 'Product A', specName: 'Red' },
-            { productId: 'p1', specId: 's1', status: 2, quantity: 5, productName: 'Product A', specName: 'Red' },
+            {
+              productId: 'p1',
+              specId: 's1',
+              status: 1,
+              quantity: 2,
+              productName: 'Product A',
+              specName: 'Red',
+            },
+            {
+              productId: 'p1',
+              specId: 's1',
+              status: 2,
+              quantity: 5,
+              productName: 'Product A',
+              specName: 'Red',
+            },
           ],
         },
       ]);
@@ -180,13 +201,27 @@ describe('StatusDashboardComponent', () => {
         {
           paymentStatus: 4,
           items: [
-            { productId: 'p1', specId: 's1', status: 1, quantity: 10, productName: 'Product A', specName: 'Red' },
+            {
+              productId: 'p1',
+              specId: 's1',
+              status: 1,
+              quantity: 10,
+              productName: 'Product A',
+              specName: 'Red',
+            },
           ],
         },
         {
           paymentStatus: 1,
           items: [
-            { productId: 'p1', specId: 's1', status: 1, quantity: 3, productName: 'Product A', specName: 'Red' },
+            {
+              productId: 'p1',
+              specId: 's1',
+              status: 1,
+              quantity: 3,
+              productName: 'Product A',
+              specName: 'Red',
+            },
           ],
         },
       ]);
@@ -203,7 +238,14 @@ describe('StatusDashboardComponent', () => {
         {
           paymentStatus: 1,
           items: [
-            { productId: 'p1', specId: 's1', status: 0, quantity: 4, productName: 'Product A', specName: 'Red' },
+            {
+              productId: 'p1',
+              specId: 's1',
+              status: 0,
+              quantity: 4,
+              productName: 'Product A',
+              specName: 'Red',
+            },
           ],
         },
       ]);
