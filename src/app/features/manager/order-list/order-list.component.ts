@@ -2,7 +2,6 @@ import {
   Component,
   inject,
   OnInit,
-  effect,
   signal,
   computed,
   ViewChild,
@@ -202,12 +201,12 @@ export class OrderListComponent implements OnInit {
     return sharedGetPaymentStatusLabel(status);
   }
 
-  isReadyToShip(order: any): boolean {
-    return order.items.some((i: any) => i.status === 5);
+  isReadyToShip(order: { items: Array<{ status: number }> }): boolean {
+    return order.items.some((i) => i.status === 5);
   }
 
-  isFullyShipped(order: any): boolean {
-    return order.items.length > 0 && order.items.every((i: any) => i.status === 6);
+  isFullyShipped(order: { items: Array<{ status: number }> }): boolean {
+    return order.items.length > 0 && order.items.every((i) => i.status === 6);
   }
 
   async confirmPayment(orderId: string) {
@@ -222,7 +221,7 @@ export class OrderListComponent implements OnInit {
         await this.managerService.confirmPayment(orderId);
         this.managerService.loadGroupBuyOrders(this.groupBuyId());
         this.toast.show('Payment confirmed', 'success');
-      } catch (err: any) {
+      } catch {
         this.toast.show('Failed to confirm payment', 'error');
       }
     }

@@ -1,13 +1,5 @@
-import {
-  Component,
-  inject,
-  input,
-  computed,
-  effect,
-  signal,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { Component, inject, input, computed, effect, ChangeDetectionStrategy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GroupBuyService } from '../../../core/groupbuy/groupbuy.service';
 import { ManagerService } from '../../../core/manager/manager.service';
@@ -320,22 +312,25 @@ export class StatusDashboardComponent {
   }
 
   async confirmAction() {
-    if (!this.selectedAction) return;
+    const action = this.selectedAction;
+    const groupBuyId = this.id() as string;
+    if (!action) return;
 
     this.isLoading = true;
     try {
       await this.managerService.batchUpdateStatus(
-        this.id()!,
-        this.selectedAction.row.specId,
-        this.selectedAction.targetStatus,
+        groupBuyId,
+        action.row.specId,
+        action.targetStatus,
         this.moveCount,
       );
       // Reload
-      await this.managerService.loadGroupBuyOrders(this.id()!);
+      await this.managerService.loadGroupBuyOrders(groupBuyId);
       this.closeDialog();
       this.toast.show('Status updated successfully', 'success');
-    } catch (err: any) {
-      this.toast.show(err.message || 'Failed to update status', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update status';
+      this.toast.show(message, 'error');
     } finally {
       this.isLoading = false;
     }

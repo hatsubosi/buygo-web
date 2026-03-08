@@ -46,8 +46,11 @@ export class ManagerService {
           return o;
         }),
       );
-    } catch (err: any) {
-      this.toast.show('Failed to confirm payment: ' + err.message, 'error');
+    } catch (err: unknown) {
+      this.toast.show(
+        `Failed to confirm payment: ${this.errorMessage(err, 'unknown error')}`,
+        'error',
+      );
     }
   }
   async batchUpdateStatus(groupBuyId: string, specId: string, targetStatus: number, count: number) {
@@ -62,8 +65,13 @@ export class ManagerService {
       // We likely need to reload the orders to reflect changes in the UI or complex matrix update
       // For now, let the component handle reloading.
       return res;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to update status');
+    } catch (err: unknown) {
+      throw new Error(this.errorMessage(err, 'Failed to update status'));
     }
+  }
+
+  private errorMessage(err: unknown, fallback: string): string {
+    if (err instanceof Error) return err.message;
+    return fallback;
   }
 }

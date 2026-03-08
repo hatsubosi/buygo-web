@@ -40,7 +40,7 @@ export class UserDashboardComponent {
   activeTab = signal<'overview' | 'orders' | 'events' | 'settings'>('overview');
 
   orders = computed(() => [...this.groupBuyService.myOrders()].reverse());
-  registrations = signal<any[]>([]);
+  registrations = signal<RegistrationSummary[]>([]);
 
   pendingPaymentCount = computed(
     () => this.orders().filter((o) => o.paymentStatus === PaymentStatus.UNSET).length,
@@ -66,13 +66,13 @@ export class UserDashboardComponent {
   async loadRegistrations() {
     try {
       const regs = await this.eventService.getMyRegistrations();
-      this.registrations.set(regs ?? []);
+      this.registrations.set((regs as RegistrationSummary[] | undefined) ?? []);
     } catch (err) {
       console.error('Failed to load registrations', err);
     }
   }
 
-  Number(val: any): number {
+  Number(val: number | string | bigint): number {
     return Number(val);
   }
 
@@ -106,4 +106,11 @@ export class UserDashboardComponent {
   getRegStatusClass(status: number) {
     return toRegistrationStatusBadgeClass(status);
   }
+}
+
+interface RegistrationSummary {
+  id: string;
+  eventId: string;
+  status: number;
+  selectedItems: Array<{ eventItemId: string; quantity: number }>;
 }

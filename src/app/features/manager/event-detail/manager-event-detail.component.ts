@@ -1,7 +1,6 @@
 import {
   Component,
   inject,
-  computed,
   input,
   effect,
   signal,
@@ -21,6 +20,17 @@ import { Timestamp } from '@bufbuild/protobuf';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
 import { toEventStatusLabel, toRegistrationStatusLabel } from '../../../shared/utils/status-mapper';
 import { getPaymentStatusLabel } from '../../../shared/utils/status-label.util';
+interface RegistrationView {
+  id: string;
+  user?: { name?: string | null; email?: string | null } | null;
+  status: number;
+  paymentStatus: number;
+  contactInfo: string;
+  totalAmount: number | string | bigint;
+  discountApplied: number;
+  notes: string;
+  selectedItems?: Array<{ eventItemId: string; quantity: number }>;
+}
 
 @Component({
   selector: 'app-manager-event-detail',
@@ -48,7 +58,7 @@ export class ManagerEventDetailComponent {
   // Router input
   id = input<string>();
 
-  registrations = signal<any[]>([]); // Type Registration[]
+  registrations = signal<RegistrationView[]>([]);
 
   @ViewChild(UiDialogComponent) dialog!: UiDialogComponent;
 
@@ -91,8 +101,19 @@ export class ManagerEventDetailComponent {
     if (!e) return;
     try {
       const regs = await this.eventService.listEventRegistrations(e.id);
+      const normalized: RegistrationView[] = (regs ?? []).map((reg) => ({
+        id: reg.id,
+        user: reg.user,
+        status: reg.status,
+        paymentStatus: reg.paymentStatus ?? 0,
+        contactInfo: reg.contactInfo ?? '',
+        totalAmount: reg.totalAmount ?? 0,
+        discountApplied: Number(reg.discountApplied ?? 0),
+        notes: reg.notes ?? '',
+        selectedItems: reg.selectedItems,
+      }));
       // Sort by User Name, then by ID for stability
-      const sorted = (regs ?? []).sort((a, b) => {
+      const sorted = normalized.sort((a, b) => {
         const nameA = a.user?.name || 'Guest';
         const nameB = b.user?.name || 'Guest';
         const nameCompare = nameA.localeCompare(nameB);
@@ -105,11 +126,15 @@ export class ManagerEventDetailComponent {
     }
   }
 
-  async updateStatus(reg: any, status: any, paymentStatus: any) {
+  async updateStatus(
+    reg: { id: string },
+    status: number | string,
+    paymentStatus?: number | string,
+  ) {
     // Optimistic update or wait? Let's refresh after.
     // Convert string to number if coming from select
     const s = Number(status);
-    const ps = Number(paymentStatus);
+    const ps = Number(paymentStatus ?? 0);
 
     try {
       await this.eventService.updateRegistrationStatus(reg.id, s, ps);
@@ -134,11 +159,11 @@ export class ManagerEventDetailComponent {
     return toRegistrationStatusLabel(status);
   }
 
-  getPaymentStatus(status: number): string {
-    return getPaymentStatusLabel(status);
+  getPaymentStatus(status?: number): string {
+    return getPaymentStatusLabel(status ?? 0);
   }
 
-  toDate(ts: any): Date | null {
+  toDate(ts?: Timestamp | { toDate: () => Date } | null): Date | null {
     return ts ? ts.toDate() : null;
   }
 
@@ -178,8 +203,9 @@ export class ManagerEventDetailComponent {
       this.eventService.loadEvent(e.id);
       const pastTense = action.endsWith('e') ? `${action}d` : `${action}ed`;
       this.toastService.show(`Event ${pastTense} successfully`, 'success');
-    } catch (err: any) {
-      this.toastService.show(err.message || 'Failed to update status', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update status';
+      this.toastService.show(message, 'error');
     }
   }
 

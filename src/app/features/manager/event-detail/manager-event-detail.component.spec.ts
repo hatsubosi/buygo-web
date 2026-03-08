@@ -147,9 +147,9 @@ describe('ManagerEventDetailComponent', () => {
 
     const regs = component.registrations();
     expect(regs.length).toBe(3);
-    expect(regs[0].user.name).toBe('Alice');
-    expect(regs[1].user.name).toBe('Bob');
-    expect(regs[2].user.name).toBe('Zara');
+    expect(regs[0].user?.name).toBe('Alice');
+    expect(regs[1].user?.name).toBe('Bob');
+    expect(regs[2].user?.name).toBe('Zara');
   });
 
   it('should sort by id when user names are the same', async () => {

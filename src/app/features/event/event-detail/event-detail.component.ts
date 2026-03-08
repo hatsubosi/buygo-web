@@ -94,8 +94,9 @@ export class EventDetailComponent implements OnInit {
       const current = qs[itemId] || 0;
       const next = current + delta;
       if (next <= 0) {
-        const { [itemId]: removed, ...rest } = qs;
-        return rest;
+        const updated = { ...qs };
+        delete updated[itemId];
+        return updated;
       }
       return { ...qs, [itemId]: next };
     });
@@ -104,8 +105,9 @@ export class EventDetailComponent implements OnInit {
   toggleItem(itemId: string) {
     this.itemQuantities.update((qs) => {
       if (qs[itemId]) {
-        const { [itemId]: removed, ...rest } = qs;
-        return rest;
+        const updated = { ...qs };
+        delete updated[itemId];
+        return updated;
       } else {
         return { ...qs, [itemId]: 1 };
       }
@@ -212,11 +214,12 @@ export class EventDetailComponent implements OnInit {
     }
 
     try {
-      if (this.myRegistration()) {
+      const registration = this.myRegistration();
+      if (registration) {
         await this.eventService.updateRegistration(
-          this.myRegistration()!.id,
+          registration.id,
           items,
-          this.myRegistration()!.contactInfo,
+          registration.contactInfo,
           this.notes,
         );
         this.toastService.show('Registration Updated!', 'success');
@@ -230,14 +233,16 @@ export class EventDetailComponent implements OnInit {
         this.toastService.show('Registration Successful!', 'success');
       }
       this.loadMyRegistration();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      this.toastService.show(err.message || 'Operation failed', 'error');
+      const message = err instanceof Error ? err.message : 'Operation failed';
+      this.toastService.show(message, 'error');
     }
   }
 
   async cancelRegistration() {
-    if (!this.myRegistration()) return;
+    const registration = this.myRegistration();
+    if (!registration) return;
 
     const confirmed = await this.dialog.open({
       title: 'Cancel Registration',
@@ -250,11 +255,12 @@ export class EventDetailComponent implements OnInit {
     if (!confirmed) return;
 
     try {
-      await this.eventService.cancelRegistration(this.myRegistration()!.id);
+      await this.eventService.cancelRegistration(registration.id);
       this.toastService.show('Registration Cancelled', 'info');
       this.loadMyRegistration();
-    } catch (err: any) {
-      this.toastService.show(err.message || 'Failed to cancel', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to cancel';
+      this.toastService.show(message, 'error');
     }
   }
 

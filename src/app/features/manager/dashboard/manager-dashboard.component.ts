@@ -9,6 +9,7 @@ import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
 import { UiCardComponent } from '../../../shared/ui/ui-card/ui-card.component';
 import { toEventStatusLabel, toGroupBuyStatusLabel } from '../../../shared/utils/status-mapper';
+import { Timestamp } from '@bufbuild/protobuf';
 
 @Component({
   selector: 'app-manager-dashboard',
@@ -42,7 +43,7 @@ export class ManagerDashboardComponent implements OnInit {
     return toEventStatusLabel(status);
   }
 
-  toDate(ts: any): Date | null {
+  toDate(ts?: Timestamp | { toDate: () => Date } | null): Date | null {
     return ts ? ts.toDate() : null;
   }
 }

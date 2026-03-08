@@ -3,7 +3,7 @@ import { TransportToken } from '../providers/transport.token';
 import { createPromiseClient } from '@connectrpc/connect';
 import { Timestamp } from '@bufbuild/protobuf';
 import { EventService as EventServiceDef } from '../api/api/v1/event_connect';
-import { Event, RegisterItem } from '../api/api/v1/event_pb';
+import { DiscountRule, Event, EventItem, RegisterItem } from '../api/api/v1/event_pb';
 import { Transport } from '@connectrpc/connect';
 import { AuthService } from '../auth/auth.service';
 import { withLoading } from '../utils/with-loading';
@@ -54,13 +54,38 @@ export class EventService {
 
   private authService = inject(AuthService);
 
+  private toErrorMessage(err: unknown): string {
+    return err instanceof Error ? err.message : 'Unknown error';
+  }
+
+  private mapEventItemInput(item: EventItemInput): EventItem {
+    return new EventItem({
+      id: item.id ?? '',
+      name: item.name,
+      price: BigInt(item.price),
+      minParticipants: item.minParticipants,
+      maxParticipants: item.maxParticipants,
+      allowMultiple: item.allowMultiple,
+      startTime: item.startTime ? Timestamp.fromDate(new Date(item.startTime)) : undefined,
+      endTime: item.endTime ? Timestamp.fromDate(new Date(item.endTime)) : undefined,
+    });
+  }
+
+  private mapDiscountInput(rule: DiscountRuleInput): DiscountRule {
+    return new DiscountRule({
+      minQuantity: rule.minQuantity,
+      minDistinctItems: rule.minDistinctItems,
+      discountAmount: BigInt(rule.discountAmount),
+    });
+  }
+
   async createEvent(
     title: string,
     description: string,
     start: Date,
     end: Date,
-    items: any[] = [],
-    discounts: any[] = [],
+    items: EventItemInput[] = [],
+    discounts: DiscountRuleInput[] = [],
   ) {
     this.actionLoading.set(true);
     this.actionError.set(null);
@@ -70,32 +95,24 @@ export class EventService {
         description,
         startTime: Timestamp.fromDate(start),
         endTime: Timestamp.fromDate(end),
-        items: items.map((i) => ({
-          name: i.name,
-          price: BigInt(i.price),
-          minParticipants: i.minParticipants,
-          maxParticipants: i.maxParticipants,
-          allowMultiple: i.allowMultiple,
-          startTime: i.startTime ? Timestamp.fromDate(new Date(i.startTime)) : undefined,
-          endTime: i.endTime ? Timestamp.fromDate(new Date(i.endTime)) : undefined,
-        })),
-        discounts: discounts.map((d) => ({
-          minQuantity: d.minQuantity,
-          minDistinctItems: d.minDistinctItems,
-          discountAmount: BigInt(d.discountAmount),
-        })),
+        items: items.map((i) => this.mapEventItemInput(i)),
+        discounts: discounts.map((d) => this.mapDiscountInput(d)),
       });
 
-      const newEvent = res.event!;
+      const newEvent = res.event;
+      if (!newEvent) {
+        throw new Error('Create event response missing event');
+      }
       // Manually populate creator if missing (backend might not return relation on create)
-      if (!newEvent.creator && this.authService.user()) {
-        newEvent.creator = this.authService.user()!;
+      const currentUser = this.authService.user();
+      if (!newEvent.creator && currentUser) {
+        newEvent.creator = currentUser;
       }
 
       // Optionally add to list immediately
       this.events.update((list) => [...list, newEvent]);
-    } catch (err: any) {
-      this.actionError.set(err.message);
+    } catch (err: unknown) {
+      this.actionError.set(this.toErrorMessage(err));
       throw err;
     } finally {
       this.actionLoading.set(false);
@@ -156,8 +173,8 @@ export class EventService {
     this.actionError.set(null);
     try {
       await this.client.cancelRegistration({ registrationId });
-    } catch (err: any) {
-      this.actionError.set(err.message);
+    } catch (err: unknown) {
+      this.actionError.set(this.toErrorMessage(err));
       throw err;
     } finally {
       this.actionLoading.set(false);
@@ -185,21 +202,18 @@ export class EventService {
         status,
         paymentStatus,
       });
-    } catch (err: any) {
-      this.actionError.set(err.message);
+    } catch (err: unknown) {
+      this.actionError.set(this.toErrorMessage(err));
       throw err;
     } finally {
       this.actionLoading.set(false);
     }
   }
 
-  async updateEvent(id: string, eventData: any) {
-    // Type as proper Request if possible, or any for now
+  async updateEvent(id: string, eventData: EventUpdateInput) {
     this.actionLoading.set(true);
     this.actionError.set(null);
     try {
-      // Map simple object to Proto compatible struct
-      // StartTime/EndTime need to be Timestamp
       await this.client.updateEvent({
         eventId: id,
         title: eventData.title,
@@ -209,26 +223,12 @@ export class EventService {
         endTime: Timestamp.fromDate(new Date(eventData.endTime)),
         coverImageUrl: eventData.coverImageUrl,
         allowModification: eventData.allowModification,
-        items: eventData.items.map((i: any) => ({
-          id: i.id || '', // Empty for new
-          name: i.name,
-          price: BigInt(i.price),
-          minParticipants: i.minParticipants,
-          maxParticipants: i.maxParticipants,
-          startTime: i.startTime ? Timestamp.fromDate(new Date(i.startTime)) : undefined,
-          endTime: i.endTime ? Timestamp.fromDate(new Date(i.endTime)) : undefined,
-          allowMultiple: i.allowMultiple,
-        })),
+        items: eventData.items.map((i) => this.mapEventItemInput(i)),
         managerIds: eventData.managerIds,
-        discounts:
-          eventData.discounts?.map((d: any) => ({
-            minQuantity: d.minQuantity,
-            minDistinctItems: d.minDistinctItems,
-            discountAmount: BigInt(d.discountAmount),
-          })) || [],
+        discounts: eventData.discounts?.map((d) => this.mapDiscountInput(d)) || [],
       });
-    } catch (err: any) {
-      this.actionError.set(err.message);
+    } catch (err: unknown) {
+      this.actionError.set(this.toErrorMessage(err));
       throw err;
     } finally {
       this.actionLoading.set(false);
@@ -242,11 +242,43 @@ export class EventService {
         eventId: id,
         status,
       });
-    } catch (err: any) {
-      this.actionError.set(err.message);
+    } catch (err: unknown) {
+      this.actionError.set(this.toErrorMessage(err));
       throw err;
     } finally {
       this.actionLoading.set(false);
     }
   }
+}
+
+type DateLike = Date | string;
+
+interface EventItemInput {
+  id?: string;
+  name: string;
+  price: bigint | number | string;
+  minParticipants: number;
+  maxParticipants: number;
+  allowMultiple: boolean;
+  startTime?: DateLike;
+  endTime?: DateLike;
+}
+
+interface DiscountRuleInput {
+  minQuantity: number;
+  minDistinctItems: number;
+  discountAmount: bigint | number | string;
+}
+
+interface EventUpdateInput {
+  title: string;
+  description: string;
+  location: string;
+  startTime: DateLike;
+  endTime: DateLike;
+  coverImageUrl: string;
+  allowModification: boolean;
+  items: EventItemInput[];
+  managerIds: string[];
+  discounts?: DiscountRuleInput[];
 }

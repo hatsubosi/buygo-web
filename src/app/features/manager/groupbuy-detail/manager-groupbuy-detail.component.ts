@@ -4,7 +4,6 @@ import {
   computed,
   input,
   effect,
-  signal,
   ViewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -18,10 +17,10 @@ import { UiContainerComponent } from '../../../shared/ui/ui-container/ui-contain
 import { UiBtnComponent } from '../../../shared/ui/ui-btn/ui-btn.component';
 import { UiDialogComponent } from '../../../shared/ui/ui-dialog/ui-dialog.component';
 import { ToastService } from '../../../shared/ui/ui-toast/toast.service';
-import { Timestamp } from '@bufbuild/protobuf';
 import { UserRole } from '../../../core/api/api/v1/auth_pb';
 import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 import { toGroupBuyStatusLabel } from '../../../shared/utils/status-mapper';
+import { Timestamp } from '@bufbuild/protobuf';
 
 @Component({
   selector: 'app-manager-groupbuy-detail',
@@ -143,7 +142,7 @@ export class ManagerGroupBuyDetailComponent {
     return toGroupBuyStatusLabel(status);
   }
 
-  toDate(ts: any): Date | null {
+  toDate(ts?: Timestamp | { toDate: () => Date } | null): Date | null {
     return ts ? ts.toDate() : null;
   }
 
